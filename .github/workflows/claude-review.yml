@@ -1,0 +1,104 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "src/**"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "services/**"
+      - "utils/**"
+      - "constants/**"
+      - "*.json"
+      - "*.ts"
+      - "*.tsx"
+      - "app.config.*"
+      - "babel.config.*"
+      - "metro.config.*"
+      - "tsconfig*.json"
+      - ".github/workflows/**"
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  id-token: write
+
+jobs:
+  code-review:
+    name: Revisao de Codigo e Seguranca
+    if: |
+      github.actor != 'dependabot[bot]' && (
+        github.event_name == 'pull_request' ||
+        (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+        (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude'))
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model: claude-sonnet-4-6
+          allowed_tools: "Bash,Read,Grep,Glob"
+          direct_prompt: |
+            Voce e um revisor senior de codigo para um aplicativo mobile financeiro de cashback (PCI-DSS/LGPD).
+            O projeto usa React Native + Expo com TypeScript.
+            Revise este PR com rigor proporcional ao risco. Siga estas prioridades (nesta ordem):
+
+            **1. Seguranca (critico — sistema financeiro PCI-DSS/LGPD)**
+            - Uso de `eval()`, `Function()` ou `dangerouslySetInnerHTML` → bloqueante
+            - Chamadas HTTP via `fetch()` direto em vez do servico centralizado de API → bloqueante
+            - Tokens JWT ou dados sensiveis armazenados em `AsyncStorage` sem criptografia → bloqueante
+            - Dados financeiros (dashboard, cashback, customers, transactions, stats) persistidos em storage local sem protecao → bloqueante
+            - Secrets, credenciais ou API keys hardcoded no codigo → bloqueante
+            - Uso de `expo-secure-store` sem validacao adequada → importante
+            - Inputs de formularios sem sanitizacao → importante
+            - Deep links sem validacao de origem → importante
+            - Dependencias com vulnerabilidades conhecidas (CVE) → importante
+            - Permissoes nativas excessivas no app.json/app.config → importante
+            - Comunicacao com APIs sem certificate pinning quando aplicavel → sugestao
+
+            **2. TypeScript**
+            - Uso de `as any`, `any` implicito, ou type assertions desnecessarias → importante
+            - Props de componentes sem tipos explicitos → sugestao
+            - Tipos `unknown` usados sem narrowing adequado → importante
+
+            **3. Performance**
+            - Dependencias desnecessarias em `useEffect` → importante
+            - Re-renders evitaveis (objetos/funcoes criados inline em props) → sugestao
+            - Listas longas sem `FlashList` ou virtualizacao → importante
+            - Imagens sem cache ou otimizacao (usar `expo-image`) → sugestao
+            - Animacoes rodando na JS thread em vez da UI thread (usar `react-native-reanimated`) → sugestao
+
+            **4. Padroes do projeto**
+            - Estado global: Zustand. Cache de servidor: React Query. Nao misturar.
+            - Componentes funcionais com hooks — sem class components
+            - Formularios: React Hook Form + Zod. Sem validacao manual.
+            - HTTP: Axios via servico centralizado. Sem fetch direto.
+            - Navegacao: Expo Router (file-based routing)
+            - Estilizacao: NativeWind (Tailwind para React Native) ou StyleSheet.create
+
+            **5. Acessibilidade (a11y)**
+            - Elementos interativos sem `accessibilityLabel` → sugestao
+            - Imagens sem `accessibilityLabel` ou `alt` → sugestao
+            - Tamanhos de toque menores que 44x44 pontos → sugestao
+            - Contraste insuficiente para texto sobre fundos coloridos → sugestao
+
+            **Formato da resposta:**
+            - Liste problemas **bloqueantes** primeiro (impedem merge), com localizacao exata (arquivo:linha)
+            - Depois problemas **importantes** (devem ser corrigidos antes do merge)
+            - Por ultimo **sugestoes** (melhorias opcionais)
+            - Se nao houver problemas, aprove com um resumo positivo
+            - Seja direto e objetivo — sem elogios genericos
