@@ -1,0 +1,116 @@
+name: Deploy EAS Update
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/**"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "services/**"
+      - "utils/**"
+      - "constants/**"
+      - "assets/**"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig*.json"
+      - "app.json"
+      - "app.config.*"
+      - "babel.config.*"
+      - "metro.config.*"
+      - ".github/workflows/deploy.yml"
+
+# Impede deploys simultaneos — um de cada vez, sem cancelar o que esta rodando
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Validar antes do Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Verificar tipos TypeScript
+        run: npm run type-check
+
+      - name: Executar testes
+        run: npm run test:run
+
+  update:
+    name: Publicar OTA Update
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Expo CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Publicar update via EAS
+        run: eas update --branch production --message "Deploy ${{ github.sha }}"
+
+  build:
+    name: Build Nativo (sob demanda)
+    if: contains(github.event.head_commit.message, '[build]')
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Expo CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Build Android (EAS)
+        run: eas build --platform android --profile production --non-interactive
+
+      - name: Build iOS (EAS)
+        run: eas build --platform ios --profile production --non-interactive
