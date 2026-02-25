@@ -45,3 +45,15 @@ export type {
 } from "./contestacao";
 
 export type { HistoricoUso, HistoricoUsoResponse } from "./historico";
+
+export type {
+  Empresa,
+  Campanha,
+  ClienteSearchResult,
+  ClienteSaldo,
+  GerarCashbackRequest,
+  GerarCashbackResponse,
+  UtilizarCashbackRequest,
+  UtilizarCashbackResponse,
+  SwitchEmpresaResponse,
+} from "./merchant";

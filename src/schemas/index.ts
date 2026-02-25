@@ -28,3 +28,6 @@ export type { NotificationPreferencesFormData } from "./notification";
 
 export { createContestacaoSchema } from "./contestacao";
 export type { CreateContestacaoFormData } from "./contestacao";
+
+export { gerarCashbackMerchantSchema, utilizarCashbackSchema } from "./merchant";
+export type { GerarCashbackMerchantFormData, UtilizarCashbackFormData } from "./merchant";

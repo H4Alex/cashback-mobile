@@ -9,3 +9,6 @@ export { TransactionCard } from "./TransactionCard";
 export { FilterChips } from "./FilterChips";
 export { StatusBadge } from "./StatusBadge";
 export { ContestacaoForm } from "./ContestacaoForm";
+export { FAB } from "./FAB";
+export { CPFSearchInput } from "./CPFSearchInput";
+export { CashbackConfirmation, makeConfirmationItems } from "./CashbackConfirmation";

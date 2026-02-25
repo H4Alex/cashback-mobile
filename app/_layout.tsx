@@ -43,6 +43,7 @@ export default function RootLayout() {
             <Stack.Screen name="index" options={{ headerShown: true, title: "Cashback" }} />
             <Stack.Screen name="(auth)" />
             <Stack.Screen name="(consumer)" />
+            <Stack.Screen name="(merchant)" />
             <Stack.Screen name="(shared)" />
           </Stack>
         </AuthGuard>
