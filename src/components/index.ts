@@ -20,3 +20,6 @@ export { BiometricPrompt } from "./BiometricPrompt";
 export { ThemeToggle } from "./ThemeToggle";
 export { SessionCard } from "./SessionCard";
 export { OfflineIndicator } from "./OfflineIndicator";
+export { StatsCard } from "./StatsCard";
+export { SearchBar } from "./SearchBar";
+export { MetricCard } from "./MetricCard";

@@ -4,11 +4,11 @@ import { useAuthStore } from "@/src/stores";
 import { useMultilojaStore } from "@/src/stores/multiloja.store";
 
 const MENU_ITEMS = [
-  { icon: "📢", label: "Campanhas", route: null },
-  { icon: "🛒", label: "Vendas", route: null },
-  { icon: "⚖️", label: "Contestações", route: null },
-  { icon: "📊", label: "Relatórios", route: null },
-  { icon: "⚙️", label: "Configurações", route: null },
+  { icon: "📢", label: "Campanhas", route: "/(merchant)/(tabs)/more/campanhas" },
+  { icon: "🛒", label: "Vendas", route: "/(merchant)/(tabs)/more/vendas" },
+  { icon: "⚖️", label: "Contestações", route: "/(merchant)/(tabs)/more/contestacoes" },
+  { icon: "📊", label: "Relatórios", route: "/(merchant)/(tabs)/more/relatorios" },
+  { icon: "⚙️", label: "Configurações", route: "/(merchant)/(tabs)/more/config" },
 ] as const;
 
 export default function MoreMenuScreen() {
@@ -39,7 +39,7 @@ export default function MoreMenuScreen() {
           <TouchableOpacity
             key={item.label}
             className={`flex-row items-center px-4 py-4 ${i < MENU_ITEMS.length - 1 ? "border-b border-gray-100" : ""}`}
-            onPress={() => Alert.alert("Em breve", `${item.label} será implementado no Sprint 7.`)}
+            onPress={() => router.push(item.route)}
           >
             <Text className="text-lg mr-3">{item.icon}</Text>
             <Text className="flex-1 text-base">{item.label}</Text>

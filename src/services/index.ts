@@ -9,3 +9,4 @@ export { merchantCashbackService } from "./merchant.cashback.service";
 export { merchantEmpresaService } from "./merchant.empresa.service";
 export { biometricService } from "./biometric.service";
 export { sessionService } from "./session.service";
+export { merchantManagementService } from "./merchant.management.service";
