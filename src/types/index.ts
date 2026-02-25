@@ -1,9 +1,4 @@
-export type {
-  ApiResponse,
-  PaginatedResponse,
-  CursorPaginatedResponse,
-  ApiError,
-} from "./api";
+export type { ApiResponse, PaginatedResponse, CursorPaginatedResponse, ApiError } from "./api";
 
 export type {
   OAuthProvider,

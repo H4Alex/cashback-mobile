@@ -53,8 +53,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemScheme = useColorScheme();
   const [mode, setMode] = useState<ThemeMode>("system");
 
-  const isDark =
-    mode === "system" ? systemScheme === "dark" : mode === "dark";
+  const isDark = mode === "system" ? systemScheme === "dark" : mode === "dark";
 
   const resolvedColors = useMemo(() => resolveColors(isDark), [isDark]);
 
@@ -63,9 +62,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     [mode, isDark, resolvedColors],
   );
 
-  return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme(): ThemeContextValue {

@@ -1,9 +1,4 @@
-export type CashbackStatus =
-  | "creditado"
-  | "pendente"
-  | "resgatado"
-  | "expirado"
-  | "processando";
+export type CashbackStatus = "creditado" | "pendente" | "resgatado" | "expirado" | "processando";
 
 export interface CashbackEntry {
   id: string;

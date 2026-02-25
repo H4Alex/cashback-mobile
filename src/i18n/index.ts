@@ -19,9 +19,7 @@ export function getLocale(): Locale {
 
 type NestedKeyOf<T> = T extends object
   ? {
-      [K in keyof T & string]: T[K] extends object
-        ? `${K}.${NestedKeyOf<T[K]>}`
-        : K;
+      [K in keyof T & string]: T[K] extends object ? `${K}.${NestedKeyOf<T[K]>}` : K;
     }[keyof T & string]
   : never;
 

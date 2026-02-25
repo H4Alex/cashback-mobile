@@ -1,9 +1,4 @@
-import {
-  formatCurrency,
-  formatCPF,
-  formatPhone,
-  formatDate,
-} from "@/src/utils/formatters";
+import { formatCurrency, formatCPF, formatPhone, formatDate } from "@/src/utils/formatters";
 
 describe("formatters", () => {
   it("formats currency in BRL", () => {

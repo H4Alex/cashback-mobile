@@ -1,8 +1,4 @@
-import axios, {
-  AxiosError,
-  AxiosInstance,
-  InternalAxiosRequestConfig,
-} from "axios";
+import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { env } from "@/src/config/env";
 import { secureStorage } from "./secureStorageService";
 
@@ -69,10 +65,7 @@ function createApiClient(): AxiosInstance {
             throw new Error("No refresh token");
           }
 
-          const { data } = await axios.post(
-            `${env.API_BASE_URL}/auth/refresh`,
-            { refreshToken },
-          );
+          const { data } = await axios.post(`${env.API_BASE_URL}/auth/refresh`, { refreshToken });
 
           await secureStorage.setToken(data.accessToken);
           if (data.refreshToken) {
