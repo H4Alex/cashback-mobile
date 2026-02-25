@@ -80,8 +80,17 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
+      - name: Verificar configuracao EAS
+        run: |
+          PROJECT_ID=$(node -e "const c = require('./app.json'); console.log(c.expo?.extra?.eas?.projectId || '')")
+          if [ -z "$PROJECT_ID" ]; then
+            echo "::error::EAS projectId nao configurado em app.json. Execute 'npx eas init' localmente e faça commit do app.json atualizado."
+            exit 1
+          fi
+          echo "EAS projectId: $PROJECT_ID"
+
       - name: Publicar update via EAS
-        run: eas update --branch production --message "Deploy ${{ github.sha }}"
+        run: eas update --branch production --message "Deploy ${{ github.sha }}" --non-interactive
 
   build:
     name: Build Nativo (sob demanda)
@@ -108,6 +117,14 @@ jobs:
 
       - name: Instalar dependencias
         run: npm ci
+
+      - name: Verificar configuracao EAS
+        run: |
+          PROJECT_ID=$(node -e "const c = require('./app.json'); console.log(c.expo?.extra?.eas?.projectId || '')")
+          if [ -z "$PROJECT_ID" ]; then
+            echo "::error::EAS projectId nao configurado em app.json. Execute 'npx eas init' localmente e faça commit do app.json atualizado."
+            exit 1
+          fi
 
       - name: Build Android (EAS)
         run: eas build --platform android --profile production --non-interactive
