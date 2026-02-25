@@ -30,12 +30,7 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-secure-store",
-      "expo-updates",
-      "expo-font"
-    ],
+    "plugins": ["expo-router", "expo-secure-store", "expo-updates", "expo-font"],
     "experiments": {
       "typedRoutes": true
     },
