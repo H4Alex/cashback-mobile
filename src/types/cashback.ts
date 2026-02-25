@@ -29,3 +29,28 @@ export interface EmpresaSaldo {
   saldo: number;
   logo_url?: string;
 }
+
+export interface QRCodeToken {
+  qr_token: string;
+  cliente_id: number;
+  empresa_id: number;
+  valor: number;
+  expira_em: string;
+}
+
+export interface GerarQRCodeRequest {
+  empresa_id: number;
+  valor: number;
+}
+
+export interface ValidarQRCodeRequest {
+  qr_token: string;
+}
+
+export interface ValidarQRCodeResponse {
+  valid?: boolean;
+  cliente: { id: number; nome: string };
+  valor: number;
+  saldo: number;
+  expira_em: string;
+}

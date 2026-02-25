@@ -6,10 +6,20 @@ export type {
 } from "./api";
 
 export type {
+  OAuthProvider,
   LoginRequest,
   LoginResponse,
-  UserProfile,
   RegisterRequest,
+  ClienteResource,
+  TokenPair,
+  OAuthRequest,
+  OAuthResponse,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+  UpdateProfileRequest,
+  ChangePasswordRequest,
+  DeleteAccountRequest,
+  BiometricEnrollRequest,
 } from "./auth";
 
 export type {
@@ -17,4 +27,15 @@ export type {
   CashbackEntry,
   CashbackSaldo,
   EmpresaSaldo,
+  QRCodeToken,
+  GerarQRCodeRequest,
+  ValidarQRCodeRequest,
+  ValidarQRCodeResponse,
 } from "./cashback";
+
+export type {
+  NotificationType,
+  MobileNotification,
+  NotificationListResponse,
+  NotificationPreferences,
+} from "./notification";
