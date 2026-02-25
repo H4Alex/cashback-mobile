@@ -5,3 +5,5 @@ export { mobileNotificationService } from "./mobile.notification.service";
 export { mobileQRCodeService } from "./mobile.qrcode.service";
 export { mobileCashbackService } from "./mobile.cashback.service";
 export { mobileContestacaoService } from "./mobile.contestacao.service";
+export { merchantCashbackService } from "./merchant.cashback.service";
+export { merchantEmpresaService } from "./merchant.empresa.service";

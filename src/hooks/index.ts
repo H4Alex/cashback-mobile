@@ -27,4 +27,14 @@ export { useContestacoes, useContestacaoCreate } from "./useContestacao";
 
 export { useHistorico } from "./useHistorico";
 
+export {
+  useClienteSearch,
+  useClienteSaldo,
+  useCampanhas,
+  useCashbackCreate,
+  useCashbackUtilizar,
+  useEmpresas,
+  useSwitchEmpresa,
+} from "./useMerchant";
+
 export { useRefreshOnFocus } from "./useRefreshOnFocus";
