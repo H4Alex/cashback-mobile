@@ -14,6 +14,7 @@
     "type-check": "tsc --noEmit",
     "test": "jest --watchAll",
     "test:run": "jest",
+    "test:changed": "jest --onlyChanged --passWithNoTests",
     "test:coverage": "jest --coverage",
     "format": "prettier --write \"**/*.{ts,tsx,json}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,json}\""
