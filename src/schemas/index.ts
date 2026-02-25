@@ -25,3 +25,6 @@ export type { GerarQRCodeFormData, ValidarQRCodeFormData } from "./cashback";
 
 export { notificationPreferencesSchema } from "./notification";
 export type { NotificationPreferencesFormData } from "./notification";
+
+export { createContestacaoSchema } from "./contestacao";
+export type { CreateContestacaoFormData } from "./contestacao";

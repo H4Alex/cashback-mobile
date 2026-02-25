@@ -53,12 +53,40 @@ export default function DashboardScreen() {
         <SaldoCard saldo={saldo} onPress={() => router.push("/(consumer)/(tabs)/saldo")} />
       ) : null}
 
+      {/* Quick actions */}
+      <View className="flex-row px-4 mt-4 gap-3">
+        <TouchableOpacity
+          className="flex-1 bg-white rounded-xl p-3 items-center"
+          style={{ shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}
+          onPress={() => router.push("/(consumer)/(tabs)/home/extrato")}
+        >
+          <Text className="text-lg">📋</Text>
+          <Text className="text-xs font-medium text-gray-700 mt-1">Extrato</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="flex-1 bg-white rounded-xl p-3 items-center"
+          style={{ shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}
+          onPress={() => router.push("/(consumer)/(tabs)/home/historico")}
+        >
+          <Text className="text-lg">🔄</Text>
+          <Text className="text-xs font-medium text-gray-700 mt-1">Histórico</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="flex-1 bg-white rounded-xl p-3 items-center"
+          style={{ shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}
+          onPress={() => router.push("/(consumer)/contestacao")}
+        >
+          <Text className="text-lg">⚠️</Text>
+          <Text className="text-xs font-medium text-gray-700 mt-1">Contestações</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* Recent transactions */}
       <View className="mt-6 px-4">
         <View className="flex-row items-center justify-between mb-3">
           <Text className="text-lg font-bold">Últimas transações</Text>
           {recentEntries.length > 0 && (
-            <TouchableOpacity onPress={() => router.push("/(consumer)/(tabs)/saldo")}>
+            <TouchableOpacity onPress={() => router.push("/(consumer)/(tabs)/home/extrato")}>
               <Text className="text-blue-600 text-sm">Ver tudo</Text>
             </TouchableOpacity>
           )}

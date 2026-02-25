@@ -5,3 +5,7 @@ export { SaldoCard } from "./SaldoCard";
 export { CashbackTimeline } from "./CashbackTimeline";
 export { NotificationBell } from "./NotificationBell";
 export { OfflineBanner } from "./OfflineBanner";
+export { TransactionCard } from "./TransactionCard";
+export { FilterChips } from "./FilterChips";
+export { StatusBadge } from "./StatusBadge";
+export { ContestacaoForm } from "./ContestacaoForm";
