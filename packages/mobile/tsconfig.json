@@ -1,0 +1,23 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@/*": ["./*"],
+      "@cashback/shared": ["../shared/src"],
+      "@cashback/shared/*": ["../shared/src/*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "../shared/src/**/*.ts",
+    "../shared/src/**/*.json"
+  ],
+  "exclude": [
+    "node_modules",
+    "__tests__"
+  ]
+}

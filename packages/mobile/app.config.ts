@@ -1,0 +1,45 @@
+import type { ExpoConfig, ConfigContext } from "expo/config";
+
+export default ({ config }: ConfigContext): ExpoConfig => ({
+  ...config,
+  name: "H4 Cashback",
+  slug: "cashback-mobile",
+  version: "1.0.0",
+  orientation: "portrait",
+  icon: "./assets/images/icon.png",
+  scheme: "cashback",
+  userInterfaceStyle: "automatic",
+  newArchEnabled: true,
+  splash: {
+    image: "./assets/images/splash-icon.png",
+    resizeMode: "contain",
+    backgroundColor: "#ffffff",
+  },
+  ios: {
+    supportsTablet: true,
+    bundleIdentifier: "com.h4alex.cashback",
+  },
+  android: {
+    adaptiveIcon: {
+      foregroundImage: "./assets/images/adaptive-icon.png",
+      backgroundColor: "#ffffff",
+    },
+    package: "com.h4alex.cashback",
+  },
+  web: {
+    bundler: "metro",
+    output: "static",
+    favicon: "./assets/images/favicon.png",
+  },
+  plugins: ["expo-router", "expo-secure-store"],
+  experiments: {
+    typedRoutes: true,
+  },
+  extra: {
+    apiUrl: process.env.API_URL ?? "http://localhost:4000",
+    appEnv: process.env.APP_ENV ?? "development",
+    eas: {
+      projectId: process.env.EAS_PROJECT_ID,
+    },
+  },
+});

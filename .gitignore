@@ -19,3 +19,14 @@ ios/
 .env
 .env.local
 .env.production
+
+# Shared package build output
+packages/shared/dist/
+
+# IDE
+.vscode/
+.idea/
+
+# Coverage
+coverage/
+packages/shared/tsconfig.tsbuildinfo
