@@ -1,29 +1,26 @@
-/** Standard API error response */
-export interface ApiError {
-  status: false;
-  error: {
-    code: string;
-    message: string;
-    details?: Record<string, string[]>;
-  };
-}
-
-/** Standard API success response */
-export interface ApiSuccess<T = unknown> {
-  status: true;
+export interface ApiResponse<T> {
   data: T;
+  message?: string;
+  status: "success" | "error";
 }
 
-/** Cursor-based pagination meta */
-export interface CursorMeta {
-  next_cursor: string | null;
-  has_more: boolean;
-}
-
-/** Offset-based pagination meta */
-export interface PaginationMeta {
-  current_page: number;
-  per_page: number;
+export interface PaginatedResponse<T> {
+  data: T[];
   total: number;
+  page: number;
+  per_page: number;
   last_page: number;
+}
+
+export interface CursorPaginatedResponse<T> {
+  data: T[];
+  cursor?: string;
+  has_more: boolean;
+  limit: number;
+}
+
+export interface ApiError {
+  message: string;
+  statusCode: number;
+  errors?: Record<string, string[]>;
 }
