@@ -7,3 +7,5 @@ export { mobileCashbackService } from "./mobile.cashback.service";
 export { mobileContestacaoService } from "./mobile.contestacao.service";
 export { merchantCashbackService } from "./merchant.cashback.service";
 export { merchantEmpresaService } from "./merchant.empresa.service";
+export { biometricService } from "./biometric.service";
+export { sessionService } from "./session.service";

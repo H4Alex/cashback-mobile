@@ -16,3 +16,7 @@ export { QRCodeDisplay } from "./QRCodeDisplay";
 export { CountdownTimer } from "./CountdownTimer";
 export { PermissionRequest } from "./PermissionRequest";
 export { NotificationItem, formatDateGroup } from "./NotificationItem";
+export { BiometricPrompt } from "./BiometricPrompt";
+export { ThemeToggle } from "./ThemeToggle";
+export { SessionCard } from "./SessionCard";
+export { OfflineIndicator } from "./OfflineIndicator";
