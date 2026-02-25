@@ -21,9 +21,18 @@ function PreferenceRow({
         <Text className="text-base font-medium">{label}</Text>
         <Text className="text-gray-500 text-sm mt-1">{description}</Text>
       </View>
-      <Switch value={value} onValueChange={onValueChange} disabled={disabled} />
+      <Switch
+        value={value}
+        onValueChange={onValueChange}
+        disabled={disabled}
+        trackColor={{ true: "#3b82f6" }}
+      />
     </View>
   );
+}
+
+function SectionHeader({ title }: { title: string }) {
+  return <Text className="text-xs font-semibold text-gray-400 uppercase mt-6 mb-2">{title}</Text>;
 }
 
 export default function NotificationPreferencesScreen() {
@@ -49,27 +58,50 @@ export default function NotificationPreferencesScreen() {
 
   return (
     <View className="flex-1 bg-white px-6 pt-6">
-      <Text className="text-2xl font-bold mb-6">Preferências de Notificação</Text>
+      <Text className="text-2xl font-bold mb-2">Preferências</Text>
+      <Text className="text-gray-500 text-sm mb-4">
+        Escolha como e quando deseja ser notificado.
+      </Text>
+
+      <SectionHeader title="Canais" />
 
       <PreferenceRow
-        label="Notificações Push"
-        description="Receber alertas de cashback, campanhas e transações"
+        label="Push Notifications"
+        description="Receber alertas no celular em tempo real"
         value={prefs.push_enabled}
         onValueChange={(v) => handleToggle("push_enabled", v)}
         disabled={updateMutation.isPending}
       />
 
       <PreferenceRow
-        label="Notificações por Email"
+        label="Email"
         description="Receber resumos e alertas por email"
         value={prefs.email_enabled}
         onValueChange={(v) => handleToggle("email_enabled", v)}
         disabled={updateMutation.isPending}
       />
 
+      <SectionHeader title="Categorias" />
+
+      <PreferenceRow
+        label="Transações"
+        description="Cashback recebido, resgates e expirações"
+        value={prefs.push_enabled}
+        onValueChange={(v) => handleToggle("push_enabled", v)}
+        disabled={updateMutation.isPending}
+      />
+
+      <PreferenceRow
+        label="Promoções"
+        description="Ofertas e campanhas de lojistas parceiros"
+        value={prefs.marketing_enabled}
+        onValueChange={(v) => handleToggle("marketing_enabled", v)}
+        disabled={updateMutation.isPending}
+      />
+
       <PreferenceRow
         label="Marketing"
-        description="Receber ofertas e promoções de parceiros"
+        description="Novidades, dicas e conteúdo do app"
         value={prefs.marketing_enabled}
         onValueChange={(v) => handleToggle("marketing_enabled", v)}
         disabled={updateMutation.isPending}

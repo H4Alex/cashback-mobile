@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, SectionList, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import {
   useNotifications,
@@ -6,31 +6,27 @@ import {
   useMarkAllNotificationsRead,
 } from "@/src/hooks";
 import { useNotificationStore } from "@/src/stores";
+import { NotificationItem, formatDateGroup } from "@/src/components/NotificationItem";
+import { EmptyState } from "@/src/components";
 import type { MobileNotification } from "@/src/types";
 
-function NotificationItem({ item, onPress }: { item: MobileNotification; onPress: () => void }) {
-  return (
-    <TouchableOpacity
-      className={`px-4 py-3 border-b border-gray-100 ${item.lida ? "bg-white" : "bg-blue-50"}`}
-      onPress={onPress}
-    >
-      <View className="flex-row items-start">
-        {!item.lida && <View className="w-2 h-2 rounded-full bg-blue-600 mt-2 mr-2" />}
-        <View className="flex-1">
-          <Text className="font-semibold text-base">{item.titulo}</Text>
-          <Text className="text-gray-600 text-sm mt-1">{item.mensagem}</Text>
-          <Text className="text-gray-400 text-xs mt-1">
-            {new Date(item.created_at).toLocaleDateString("pt-BR", {
-              day: "2-digit",
-              month: "short",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+interface NotificationSection {
+  title: string;
+  data: MobileNotification[];
+}
+
+function groupByDay(notifications: MobileNotification[]): NotificationSection[] {
+  const groups = new Map<string, MobileNotification[]>();
+  for (const n of notifications) {
+    const key = formatDateGroup(n.created_at);
+    const existing = groups.get(key);
+    if (existing) {
+      existing.push(n);
+    } else {
+      groups.set(key, [n]);
+    }
+  }
+  return Array.from(groups.entries()).map(([title, data]) => ({ title, data }));
 }
 
 export default function NotificationsScreen() {
@@ -41,6 +37,7 @@ export default function NotificationsScreen() {
   const markAllRead = useMarkAllNotificationsRead();
 
   const notifications = data?.pages.flatMap((p) => p.notifications) ?? [];
+  const sections = groupByDay(notifications);
 
   const handlePress = (notification: MobileNotification) => {
     if (!notification.lida) {
@@ -58,7 +55,7 @@ export default function NotificationsScreen() {
         <View className="flex-row gap-3">
           {unreadCount > 0 && (
             <TouchableOpacity onPress={() => markAllRead.mutate()}>
-              <Text className="text-blue-600 text-sm">Marcar todas lidas</Text>
+              <Text className="text-blue-600 text-sm font-medium">✓ Todas</Text>
             </TouchableOpacity>
           )}
           <TouchableOpacity
@@ -74,13 +71,19 @@ export default function NotificationsScreen() {
           <ActivityIndicator size="large" />
         </View>
       ) : notifications.length === 0 ? (
-        <View className="flex-1 items-center justify-center px-6">
-          <Text className="text-gray-500 text-center">Nenhuma notificação ainda.</Text>
-        </View>
+        <EmptyState
+          title="Nenhuma notificação"
+          message="Você será avisado quando receber cashback, promoções e novidades."
+        />
       ) : (
-        <FlatList
-          data={notifications}
+        <SectionList
+          sections={sections}
           keyExtractor={(item) => String(item.id)}
+          renderSectionHeader={({ section }) => (
+            <View className="bg-gray-50 px-4 py-2">
+              <Text className="text-xs font-semibold text-gray-500 uppercase">{section.title}</Text>
+            </View>
+          )}
           renderItem={({ item }) => (
             <NotificationItem item={item} onPress={() => handlePress(item)} />
           )}
@@ -91,6 +94,7 @@ export default function NotificationsScreen() {
           }}
           onEndReachedThreshold={0.5}
           ListFooterComponent={isFetchingNextPage ? <ActivityIndicator className="py-4" /> : null}
+          stickySectionHeadersEnabled={false}
         />
       )}
     </View>

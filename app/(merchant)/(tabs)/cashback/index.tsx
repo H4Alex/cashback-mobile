@@ -14,6 +14,12 @@ const MENU_ITEMS = [
     description: "Cliente resgata cashback na compra",
     route: "/(merchant)/(tabs)/cashback/utilizar" as const,
   },
+  {
+    icon: "📷",
+    title: "Escanear QR Code",
+    description: "Validar QR Code do cliente para resgate",
+    route: "/(merchant)/(tabs)/cashback/qr-scan" as const,
+  },
 ];
 
 export default function CashbackMenuScreen() {

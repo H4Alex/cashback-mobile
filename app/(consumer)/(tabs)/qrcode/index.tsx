@@ -1,110 +1,172 @@
-import { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { useGerarQRCode } from "@/src/hooks";
-import type { QRCodeToken } from "@/src/types";
+import { useLojasComSaldo } from "@/src/hooks/useCashback";
+import { QRCodeDisplay } from "@/src/components/QRCodeDisplay";
+import { EmptyState } from "@/src/components";
+import { formatCurrency } from "@/src/utils/formatters";
+import type { QRCodeToken, EmpresaSaldo } from "@/src/types";
+
+type Step = "select" | "qr";
 
 export default function QRCodeScreen() {
   const gerarMutation = useGerarQRCode();
+  const { data: lojas, isLoading: isLoadingLojas } = useLojasComSaldo();
+  const [step, setStep] = useState<Step>("select");
+  const [selectedLoja, setSelectedLoja] = useState<EmpresaSaldo | null>(null);
+  const [valor, setValor] = useState("");
   const [qrData, setQrData] = useState<QRCodeToken | null>(null);
-  const [timeLeft, setTimeLeft] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!qrData) return;
-
-    const expiresAt = new Date(qrData.expira_em).getTime();
-    const updateTimer = () => {
-      const remaining = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
-      setTimeLeft(remaining);
-      if (remaining <= 0 && timerRef.current) {
-        clearInterval(timerRef.current);
-        setQrData(null);
-      }
-    };
-
-    updateTimer();
-    timerRef.current = setInterval(updateTimer, 1000);
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [qrData]);
+  const valorNum = parseFloat(valor) || 0;
+  const maxValor = selectedLoja?.saldo ?? 0;
+  const canGenerate = selectedLoja && valorNum > 0 && valorNum <= maxValor;
 
   const handleGerar = () => {
-    // In production, empresa_id and valor come from user selection
+    if (!selectedLoja) return;
     gerarMutation.mutate(
-      { empresa_id: 1, valor: 0 },
+      { empresa_id: Number(selectedLoja.empresa_id), valor: valorNum },
       {
-        onSuccess: (data) => setQrData(data),
+        onSuccess: (data) => {
+          setQrData(data);
+          setStep("qr");
+        },
         onError: () => Alert.alert("Erro", "Não foi possível gerar o QR Code."),
       },
     );
   };
 
-  const formatTime = (seconds: number) => {
-    const min = Math.floor(seconds / 60);
-    const sec = seconds % 60;
-    return `${min}:${sec.toString().padStart(2, "0")}`;
+  const handleReset = () => {
+    setStep("select");
+    setQrData(null);
+    setValor("");
+    setSelectedLoja(null);
   };
 
+  const handleExpire = () => {
+    setQrData(null);
+    setStep("select");
+  };
+
+  // QR Code display step
+  if (step === "qr" && qrData && selectedLoja) {
+    return (
+      <View className="flex-1 bg-white items-center justify-center px-6">
+        <QRCodeDisplay
+          token={qrData.qr_token}
+          valor={qrData.valor}
+          empresaNome={selectedLoja.empresa_nome}
+          expiresAt={qrData.expira_em}
+          onExpire={handleExpire}
+        />
+
+        <TouchableOpacity className="bg-blue-600 rounded-xl py-4 px-10 mt-8" onPress={handleReset}>
+          <Text className="text-white font-semibold">Gerar Novo</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  // Selection step
   return (
-    <View className="flex-1 bg-white items-center justify-center px-6">
-      {qrData ? (
-        <>
-          {/* QR Code display area */}
-          <View className="w-64 h-64 bg-gray-100 rounded-2xl items-center justify-center mb-6 border-2 border-gray-200">
-            <Text className="text-xs text-gray-400 mb-2">QR Token</Text>
-            <Text className="text-sm font-mono text-center px-4" numberOfLines={3}>
-              {qrData.qr_token}
-            </Text>
-          </View>
+    <ScrollView className="flex-1 bg-gray-50" keyboardShouldPersistTaps="handled">
+      <View className="px-4 pt-6 pb-2">
+        <Text className="text-2xl font-bold">Resgatar</Text>
+      </View>
 
-          {/* Timer */}
-          <View className="items-center mb-6">
-            <Text className="text-gray-500 text-sm">Expira em</Text>
-            <Text
-              className={`text-3xl font-bold ${timeLeft <= 60 ? "text-red-500" : "text-blue-600"}`}
-            >
-              {formatTime(timeLeft)}
-            </Text>
-          </View>
-
-          <Text className="text-gray-500 text-sm text-center mb-4">
-            Mostre este QR Code ao lojista para utilizar seu cashback. O token é armazenado com
-            segurança e expira automaticamente.
-          </Text>
-
-          <TouchableOpacity className="bg-blue-600 rounded-lg py-4 px-8" onPress={handleGerar}>
-            <Text className="text-white font-semibold">Gerar Novo</Text>
-          </TouchableOpacity>
-        </>
+      {isLoadingLojas ? (
+        <View className="items-center py-12">
+          <ActivityIndicator size="large" />
+        </View>
+      ) : !lojas || lojas.length === 0 ? (
+        <EmptyState
+          title="Nenhuma loja com saldo"
+          message="Você ainda não possui cashback disponível para resgate."
+        />
       ) : (
         <>
-          <Text className="text-2xl font-bold mb-2">QR Code</Text>
-          <Text className="text-gray-500 text-center mb-8">
-            Gere um QR Code para utilizar seu cashback em uma loja parceira. O código é válido por 5
-            minutos e protegido com criptografia.
-          </Text>
+          {/* Empresa selection */}
+          <View className="px-4 mt-4">
+            <Text className="text-sm font-semibold text-gray-700 mb-2">Selecione a loja</Text>
+            {lojas.map((loja) => {
+              const isSelected = selectedLoja?.empresa_id === loja.empresa_id;
+              return (
+                <TouchableOpacity
+                  key={loja.empresa_id}
+                  className={`bg-white rounded-xl p-4 mb-2 flex-row items-center ${isSelected ? "border-2 border-blue-500" : "border border-gray-200"}`}
+                  onPress={() => setSelectedLoja(loja)}
+                  activeOpacity={0.7}
+                >
+                  <View className="w-10 h-10 bg-blue-100 rounded-full items-center justify-center mr-3">
+                    <Text className="text-blue-700 font-bold">
+                      {loja.empresa_nome.charAt(0).toUpperCase()}
+                    </Text>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-base font-medium">{loja.empresa_nome}</Text>
+                    <Text className="text-green-600 text-sm font-semibold">
+                      Saldo: {formatCurrency(loja.saldo)}
+                    </Text>
+                  </View>
+                  {isSelected && <Text className="text-blue-500 text-lg">✓</Text>}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
-          <TouchableOpacity
-            className="bg-blue-600 rounded-lg py-4 px-8"
-            onPress={handleGerar}
-            disabled={gerarMutation.isPending}
-          >
-            {gerarMutation.isPending ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text className="text-white font-semibold text-base">Gerar QR Code</Text>
-            )}
-          </TouchableOpacity>
+          {/* Valor input */}
+          {selectedLoja && (
+            <View className="px-4 mt-6">
+              <Text className="text-sm font-semibold text-gray-700 mb-2">Valor do resgate</Text>
+              <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-4">
+                <Text className="text-gray-400 text-base mr-1">R$</Text>
+                <TextInput
+                  className="flex-1 py-3 text-base"
+                  placeholder="0,00"
+                  placeholderTextColor="#9ca3af"
+                  value={valor}
+                  onChangeText={setValor}
+                  keyboardType="decimal-pad"
+                />
+              </View>
+              <Text className="text-gray-400 text-xs mt-1">
+                Máx: {formatCurrency(selectedLoja.saldo)}
+              </Text>
+              {valorNum > maxValor && (
+                <Text className="text-red-500 text-xs mt-1">Valor excede o saldo disponível</Text>
+              )}
+            </View>
+          )}
+
+          {/* Generate button */}
+          {selectedLoja && (
+            <View className="px-4 mt-8 mb-8">
+              <TouchableOpacity
+                className={`rounded-xl py-4 items-center ${canGenerate ? "bg-blue-600" : "bg-gray-200"}`}
+                onPress={handleGerar}
+                disabled={!canGenerate || gerarMutation.isPending}
+              >
+                {gerarMutation.isPending ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text
+                    className={`font-semibold text-base ${canGenerate ? "text-white" : "text-gray-400"}`}
+                  >
+                    GERAR QR CODE
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          )}
         </>
       )}
-    </View>
+    </ScrollView>
   );
 }
