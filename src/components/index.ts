@@ -12,3 +12,7 @@ export { ContestacaoForm } from "./ContestacaoForm";
 export { FAB } from "./FAB";
 export { CPFSearchInput } from "./CPFSearchInput";
 export { CashbackConfirmation, makeConfirmationItems } from "./CashbackConfirmation";
+export { QRCodeDisplay } from "./QRCodeDisplay";
+export { CountdownTimer } from "./CountdownTimer";
+export { PermissionRequest } from "./PermissionRequest";
+export { NotificationItem, formatDateGroup } from "./NotificationItem";

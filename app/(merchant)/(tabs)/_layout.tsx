@@ -51,6 +51,7 @@ export default function MerchantTabsLayout() {
       {/* Hidden screens */}
       <Tabs.Screen name="cashback/gerar" options={{ href: null, title: "Gerar Cashback" }} />
       <Tabs.Screen name="cashback/utilizar" options={{ href: null, title: "Utilizar Cashback" }} />
+      <Tabs.Screen name="cashback/qr-scan" options={{ href: null, title: "Escanear QR" }} />
     </Tabs>
   );
 }

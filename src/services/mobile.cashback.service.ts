@@ -1,5 +1,5 @@
 import { apiClient } from "@/src/lib/api-client";
-import type { CashbackStatus, CashbackSaldo, ExtratoResponse } from "@/src/types";
+import type { CashbackStatus, CashbackSaldo, ExtratoResponse, EmpresaSaldo } from "@/src/types";
 import type { HistoricoUsoResponse } from "@/src/types/historico";
 
 const PREFIX = "/api/mobile/v1";
@@ -24,6 +24,11 @@ export const mobileCashbackService = {
       params,
     });
     return res.data;
+  },
+
+  async getLojasComSaldo(): Promise<EmpresaSaldo[]> {
+    const res = await apiClient.get<{ data: EmpresaSaldo[] }>(`${PREFIX}/utilizacao/lojas`);
+    return res.data.data;
   },
 
   async getHistorico(params?: {

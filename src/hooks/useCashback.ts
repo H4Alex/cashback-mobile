@@ -5,6 +5,7 @@ import type { ExtratoFilters } from "./useExtratoFilters";
 const KEYS = {
   saldo: ["cashback", "saldo"] as const,
   extrato: ["cashback", "extrato"] as const,
+  lojas: ["cashback", "lojas"] as const,
 };
 
 export function useSaldo() {
@@ -12,6 +13,14 @@ export function useSaldo() {
     queryKey: KEYS.saldo,
     queryFn: () => mobileCashbackService.getSaldo(),
     staleTime: 30_000, // 30 seconds — financial data must stay fresh
+  });
+}
+
+/** Empresas with available cashback balance (for QR Code flow) */
+export function useLojasComSaldo() {
+  return useQuery({
+    queryKey: KEYS.lojas,
+    queryFn: () => mobileCashbackService.getLojasComSaldo(),
   });
 }
 

@@ -19,7 +19,7 @@ export {
 
 export { useGerarQRCode, useValidarQRCode } from "./useQRCode";
 
-export { useSaldo, useExtrato, useExtratoInfinite } from "./useCashback";
+export { useSaldo, useExtrato, useExtratoInfinite, useLojasComSaldo } from "./useCashback";
 
 export { useExtratoFilters } from "./useExtratoFilters";
 
@@ -36,5 +36,11 @@ export {
   useEmpresas,
   useSwitchEmpresa,
 } from "./useMerchant";
+
+export { useCountdown } from "./useCountdown";
+
+export { useCamera } from "./useCamera";
+
+export { usePushSetup } from "./usePushSetup";
 
 export { useRefreshOnFocus } from "./useRefreshOnFocus";
