@@ -29,6 +29,14 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
+    "extra": {
+  "eas": {
+    "projectId": "89aa8fa1-4ffa-4d64-aa1b-eb399aa3e07b"
+  }
+},
+"updates": {
+  "url": "https://u.expo.dev/89aa8fa1-4ffa-4d64-aa1b-eb399aa3e07b"
+},
     "plugins": ["expo-router", "expo-secure-store"],
     "experiments": {
       "typedRoutes": true
