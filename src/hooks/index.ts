@@ -43,4 +43,12 @@ export { useCamera } from "./useCamera";
 
 export { usePushSetup } from "./usePushSetup";
 
+export { useBiometric } from "./useBiometric";
+
+export { useSessionTimeout } from "./useSessionTimeout";
+
+export { useSessions, useRevokeSession } from "./useSessions";
+
+export { useOfflineQueue } from "./useOfflineQueue";
+
 export { useRefreshOnFocus } from "./useRefreshOnFocus";
