@@ -19,6 +19,12 @@ export {
 
 export { useGerarQRCode, useValidarQRCode } from "./useQRCode";
 
-export { useSaldo, useExtrato } from "./useCashback";
+export { useSaldo, useExtrato, useExtratoInfinite } from "./useCashback";
+
+export { useExtratoFilters } from "./useExtratoFilters";
+
+export { useContestacoes, useContestacaoCreate } from "./useContestacao";
+
+export { useHistorico } from "./useHistorico";
 
 export { useRefreshOnFocus } from "./useRefreshOnFocus";

@@ -35,3 +35,13 @@ export type {
   NotificationListResponse,
   NotificationPreferences,
 } from "./notification";
+
+export type {
+  ContestacaoStatus,
+  ContestacaoTipo,
+  Contestacao,
+  ContestacaoListResponse,
+  CreateContestacaoRequest,
+} from "./contestacao";
+
+export type { HistoricoUso, HistoricoUsoResponse } from "./historico";

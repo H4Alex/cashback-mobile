@@ -66,6 +66,8 @@ export default function ConsumerTabsLayout() {
       />
 
       {/* Hidden screens (accessible via navigation, not shown in tab bar) */}
+      <Tabs.Screen name="home/extrato" options={{ href: null, title: "Extrato" }} />
+      <Tabs.Screen name="home/historico" options={{ href: null, title: "Histórico de Uso" }} />
       <Tabs.Screen
         name="notifications/preferences"
         options={{ href: null, title: "Preferências" }}
