@@ -49,6 +49,9 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
+      - name: Lint
+        run: npm run lint
+
       - name: Verificar tipos TypeScript
         run: npm run type-check
 
@@ -82,12 +85,29 @@ jobs:
 
       - name: Verificar configuracao EAS
         run: |
-          PROJECT_ID=$(node -e "const c = require('./app.json'); console.log(c.expo?.extra?.eas?.projectId || '')")
-          if [ -z "$PROJECT_ID" ]; then
-            echo "::error::EAS projectId nao configurado em app.json. Execute 'npx eas init' localmente e faça commit do app.json atualizado."
-            exit 1
-          fi
-          echo "EAS projectId: $PROJECT_ID"
+          node -e "
+            const c = require('./app.json');
+            const projectId = c.expo?.extra?.eas?.projectId;
+            const updatesUrl = c.expo?.updates?.url;
+            const runtimeVersion = c.expo?.runtimeVersion;
+
+            if (!projectId) {
+              console.error('::error::EAS projectId nao configurado em app.json (expo.extra.eas.projectId)');
+              process.exit(1);
+            }
+            if (!updatesUrl) {
+              console.error('::error::updates.url nao configurado em app.json (expo.updates.url)');
+              process.exit(1);
+            }
+            if (!runtimeVersion) {
+              console.error('::error::runtimeVersion nao configurado em app.json (expo.runtimeVersion)');
+              process.exit(1);
+            }
+
+            console.log('EAS projectId:', projectId);
+            console.log('Updates URL:', updatesUrl);
+            console.log('Runtime version policy:', JSON.stringify(runtimeVersion));
+          "
 
       - name: Publicar update via EAS
         run: eas update --branch production --message "Deploy ${{ github.sha }}" --non-interactive
@@ -122,7 +142,7 @@ jobs:
         run: |
           PROJECT_ID=$(node -e "const c = require('./app.json'); console.log(c.expo?.extra?.eas?.projectId || '')")
           if [ -z "$PROJECT_ID" ]; then
-            echo "::error::EAS projectId nao configurado em app.json. Execute 'npx eas init' localmente e faça commit do app.json atualizado."
+            echo "::error::EAS projectId nao configurado em app.json. Execute 'npx eas init' localmente e faca commit do app.json atualizado."
             exit 1
           fi
 
