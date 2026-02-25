@@ -26,6 +26,7 @@ export type {
   GerarQRCodeRequest,
   ValidarQRCodeRequest,
   ValidarQRCodeResponse,
+  ExtratoResponse,
 } from "./cashback";
 
 export type {

@@ -18,3 +18,7 @@ export {
 } from "./useNotifications";
 
 export { useGerarQRCode, useValidarQRCode } from "./useQRCode";
+
+export { useSaldo, useExtrato } from "./useCashback";
+
+export { useRefreshOnFocus } from "./useRefreshOnFocus";

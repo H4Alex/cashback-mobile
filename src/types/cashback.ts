@@ -16,6 +16,18 @@ export interface CashbackSaldo {
   disponivel: number;
   pendente: number;
   empresas: EmpresaSaldo[];
+  proximo_a_expirar?: {
+    valor: number;
+    quantidade: number;
+  };
+}
+
+export interface ExtratoResponse {
+  extrato: CashbackEntry[];
+  meta: {
+    next_cursor: string | null;
+    has_more: boolean;
+  };
 }
 
 export interface EmpresaSaldo {
