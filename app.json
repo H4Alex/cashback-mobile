@@ -2,6 +2,7 @@
   "expo": {
     "name": "cashback-mobile",
     "slug": "cashback-mobile",
+    "owner": "alexh4",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -29,9 +30,20 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "expo-secure-store"],
+    "plugins": ["expo-router", "expo-secure-store", "expo-updates"],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "89aa8fa1-4ffa-4d64-aa1b-eb399aa3e07b"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/89aa8fa1-4ffa-4d64-aa1b-eb399aa3e07b"
     }
   }
 }

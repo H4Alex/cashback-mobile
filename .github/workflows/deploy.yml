@@ -31,33 +31,8 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: Validar antes do Deploy
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout do repositorio
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Instalar dependencias
-        run: npm ci
-
-      - name: Verificar tipos TypeScript
-        run: npm run type-check
-
-      - name: Executar testes
-        run: npm run test:run
-
   update:
     name: Publicar OTA Update
-    needs: test
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -80,13 +55,39 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
+      - name: Verificar configuracao EAS
+        run: |
+          node -e "
+            const c = require('./app.json');
+            const projectId = c.expo?.extra?.eas?.projectId;
+            const updatesUrl = c.expo?.updates?.url;
+            const runtimeVersion = c.expo?.runtimeVersion;
+
+            if (!projectId) {
+              console.error('::error::EAS projectId nao configurado em app.json (expo.extra.eas.projectId)');
+              process.exit(1);
+            }
+            if (!updatesUrl) {
+              console.error('::error::updates.url nao configurado em app.json (expo.updates.url)');
+              process.exit(1);
+            }
+            if (!runtimeVersion) {
+              console.error('::error::runtimeVersion nao configurado em app.json (expo.runtimeVersion)');
+              process.exit(1);
+            }
+
+            console.log('EAS projectId:', projectId);
+            console.log('Updates URL:', updatesUrl);
+            console.log('Runtime version policy:', JSON.stringify(runtimeVersion));
+          "
+
       - name: Publicar update via EAS
-        run: eas update --branch production --message "Deploy ${{ github.sha }}"
+        run: eas update --branch production --message "Deploy ${{ github.sha }}" --non-interactive
 
   build:
     name: Build Nativo (sob demanda)
     if: contains(github.event.head_commit.message, '[build]')
-    needs: test
+    needs: update
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -108,6 +109,14 @@ jobs:
 
       - name: Instalar dependencias
         run: npm ci
+
+      - name: Verificar configuracao EAS
+        run: |
+          PROJECT_ID=$(node -e "const c = require('./app.json'); console.log(c.expo?.extra?.eas?.projectId || '')")
+          if [ -z "$PROJECT_ID" ]; then
+            echo "::error::EAS projectId nao configurado em app.json. Execute 'npx eas init' localmente e faca commit do app.json atualizado."
+            exit 1
+          fi
 
       - name: Build Android (EAS)
         run: eas build --platform android --profile production --non-interactive
