@@ -4,11 +4,11 @@
 
 Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, construção e code review de aplicações React Native com Expo. Cada pilar é um eixo independente de análise com critérios objetivos, organizados em três níveis de maturidade:
 
-| Nível | Descrição | Quando atingir |
-|-------|-----------|----------------|
-| 🟢 **Essencial** | Mínimo para ir a produção | MVP / Sprint final |
-| 🟡 **Recomendado** | Qualidade profissional | Pós-MVP imediato |
-| 🔴 **Avançado** | Excelência / escala | Versões futuras |
+| Nível              | Descrição                 | Quando atingir     |
+| ------------------ | ------------------------- | ------------------ |
+| 🟢 **Essencial**   | Mínimo para ir a produção | MVP / Sprint final |
+| 🟡 **Recomendado** | Qualidade profissional    | Pós-MVP imediato   |
+| 🔴 **Avançado**    | Excelência / escala       | Versões futuras    |
 
 ### Como usar este framework
 
@@ -26,6 +26,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] Estrutura de pastas clara e consistente (feature-based ou domain-based)
 - [ ] Separação de responsabilidades: UI / lógica de negócio / data / serviços
 - [ ] Expo managed workflow configurado corretamente (app.json/app.config.ts)
@@ -35,6 +36,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] `.gitignore` adequado (sem node_modules, builds locais, .env com secrets)
 
 **🟡 Recomendado**
+
 - [ ] Padrão de barrels (index.ts) para exportação limpa de módulos
 - [ ] Inversão de dependência: services abstraídos por interfaces (facilita testes e mock)
 - [ ] Configuração centralizada (API URLs, feature toggles, timeouts) em um único módulo
@@ -43,12 +45,14 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Scripts npm/yarn padronizados (lint, test, build, type-check)
 
 **🔴 Avançado**
+
 - [ ] Módulos carregados sob demanda (lazy loading de telas/features)
 - [ ] Plugin architecture para features opcionais
 - [ ] Geração automática de tipos a partir da API (OpenAPI → TypeScript)
 - [ ] Análise estática de dependências circulares automatizada no CI
 
 ### Antipadrões a Evitar
+
 - Lógica de negócio diretamente nos componentes de tela
 - Arquivos com mais de 300 linhas sem justificativa
 - Imports cruzados entre features (feature A importando internals de feature B)
@@ -63,6 +67,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] Biblioteca de navegação definida e configurada (Expo Router ou React Navigation)
 - [ ] Separação clara entre stacks: Auth (não autenticado) vs. Main (autenticado)
 - [ ] Bottom Tab Navigation funcional para os fluxos principais de cada perfil
@@ -73,6 +78,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Back button hardware (Android) tratado corretamente em cada contexto
 
 **🟡 Recomendado**
+
 - [ ] Deep linking configurado (app abre na tela correta via URL externa)
 - [ ] Universal links (iOS) e App Links (Android) para domínios próprios
 - [ ] Navegação por modal/bottom sheet para ações rápidas (QR Code, confirmações)
@@ -82,12 +88,14 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Transições customizadas para fluxos especiais (onboarding, resgate)
 
 **🔴 Avançado**
+
 - [ ] Navigation analytics: tracking automático de screen views
 - [ ] Conditional navigation baseada em feature flags
 - [ ] Animated shared element transitions entre telas
 - [ ] Prefetch de dados da próxima tela provável (predictive loading)
 
 ### Antipadrões a Evitar
+
 - Navegação imperativa espalhada pelos componentes (`navigation.navigate` em 50 lugares)
 - Passar dados complexos via params de rota (usar ID + fetch na tela destino)
 - Stacks profundos demais (mais de 5 níveis sem necessidade)
@@ -102,6 +110,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] Distinção clara entre os três tipos de estado:
   - **Estado local**: `useState` / `useReducer` (dados de um único componente)
   - **Estado global**: Zustand / Context (auth, preferências, device info)
@@ -112,6 +121,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Optimistic updates para ações frequentes (favoritar, marcar como lido)
 
 **🟡 Recomendado**
+
 - [ ] Store slices separados por domínio (useAuthStore, usePreferencesStore, useDeviceStore)
 - [ ] Selectors derivados para evitar re-renders desnecessários
 - [ ] React Query: staleTime e gcTime configurados por tipo de dado (dados financeiros: staleTime curto; dados estáticos: staleTime longo)
@@ -120,12 +130,14 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Hydration strategy: exibir dados do cache primeiro, atualizar em background
 
 **🔴 Avançado**
+
 - [ ] State machines (XState) para fluxos complexos multi-step (resgate, onboarding)
 - [ ] Middleware de logging/debugging para stores em ambiente dev
 - [ ] Sync automático de estado entre abas/instâncias (se aplicável via background fetch)
 - [ ] Rollback automático em caso de falha em optimistic updates
 
 ### Antipadrões a Evitar
+
 - "State blob": um único store global com todos os dados do app
 - Duplicar dados da API em Zustand (React Query já é o cache)
 - Persistir dados sensíveis (tokens, senhas) em AsyncStorage/MMKV sem criptografia
@@ -140,6 +152,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] Instância HTTP centralizada (Axios ou fetch wrapper) com configuração base:
   - baseURL por ambiente (dev, staging, prod)
   - Timeout configurado (ex: 15s para requests normais, 60s para uploads)
@@ -153,6 +166,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Tratamento de erro de rede: detecção de offline e feedback ao usuário
 
 **🟡 Recomendado**
+
 - [ ] Request/response logging em ambiente dev (removido em produção)
 - [ ] Retry automático com exponential backoff para erros 5xx e network errors
 - [ ] Rate limiting client-side para evitar spam de requests
@@ -162,6 +176,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Request deduplication (React Query já faz isso, mas garantir que services não duplicam)
 
 **🔴 Avançado**
+
 - [ ] Certificate pinning (SSL pinning) para endpoints sensíveis
 - [ ] Request signing (HMAC) para endpoints financeiros críticos
 - [ ] GraphQL/partial response para otimizar payload em telas com necessidades específicas
@@ -169,6 +184,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Background sync queue: requests feitos offline são enfileirados e enviados quando online
 
 ### Antipadrões a Evitar
+
 - Chamadas diretas ao Axios/fetch dentro de componentes (sem service layer)
 - Token hardcoded ou armazenado em plain text
 - Ignorar erros de rede silenciosamente (catch vazio)
@@ -184,6 +200,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] Tokens JWT armazenados exclusivamente em `expo-secure-store` (nunca AsyncStorage/MMKV)
 - [ ] Fluxo completo de auth: login → token storage → auto-refresh → logout (limpar todos os dados)
 - [ ] Logout limpa: tokens, cache React Query, stores Zustand, dados sensíveis do secure-store
@@ -193,6 +210,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] HTTPS obrigatório em toda comunicação com a API (sem exceções)
 
 **🟡 Recomendado**
+
 - [ ] Autenticação biométrica (expo-local-authentication):
   - Verificar disponibilidade/hardware no device
   - Enroll: vincular biometria ao device após login com senha
@@ -207,6 +225,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Certificate pinning para endpoints financeiros
 
 **🔴 Avançado**
+
 - [ ] MFA (Multi-Factor Authentication): SMS/email como segundo fator
 - [ ] Device fingerprinting para detecção de fraude
 - [ ] App attestation (Play Integrity API / App Attest)
@@ -214,6 +233,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Runtime protection: detecção de debugger e Frida/hooking
 
 ### Antipadrões a Evitar
+
 - Armazenar tokens em AsyncStorage (não criptografado por padrão)
 - Logout que deixa dados em cache (React Query, stores, storage)
 - Confiar apenas no biométrico sem fallback de senha
@@ -229,6 +249,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] Design system definido com componentes base:
   - Typography (hierarchy: h1-h6, body, caption, label)
   - Colors (primary, secondary, semantic: success/error/warning/info, surface, background)
@@ -246,6 +267,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Teclado: scroll automático para campo ativo, botão submit acessível, tipo de teclado correto (numeric, email, etc.)
 
 **🟡 Recomendado**
+
 - [ ] Dark mode funcional (React Native Paper theming ou context-based)
 - [ ] Animações de micro-interação (Reanimated):
   - Botão: press scale feedback
@@ -259,6 +281,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Formatação localizada: moeda (R$), data (dd/MM/yyyy), números (separador de milhar)
 
 **🔴 Avançado**
+
 - [ ] Temas customizáveis pelo usuário (além de light/dark)
 - [ ] Design tokens sincronizados com Figma via Style Dictionary ou similar
 - [ ] Storybook mobile para catálogo de componentes
@@ -266,6 +289,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Suporte a Dynamic Type (iOS) e font scaling (Android)
 
 ### Antipadrões a Evitar
+
 - Portar layout web diretamente para mobile (tabelas, sidebars, layouts largos)
 - Touch targets menores que 44pt (frustração do usuário)
 - Não tratar safe areas (conteúdo sob notch ou home indicator)
@@ -282,6 +306,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] Hermes engine habilitado (padrão no Expo SDK 50+)
 - [ ] Listas longas usando FlashList (@shopify/flash-list) ou FlatList com otimizações:
   - `keyExtractor` definido
@@ -300,6 +325,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Bundle size controlado: apenas importar o que usa de cada biblioteca
 
 **🟡 Recomendado**
+
 - [ ] Performance budgets definidos e monitorados:
   - Cold start: < 2 segundos
   - TTI (Time to Interactive): < 3 segundos
@@ -313,6 +339,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Profiling periódico com React DevTools e Flipper
 
 **🔴 Avançado**
+
 - [ ] Startup trace: medir e otimizar cada fase do cold start
 - [ ] Code splitting por feature (dynamic imports)
 - [ ] Background tasks otimizados (expo-background-fetch) sem drain de bateria
@@ -321,16 +348,17 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 
 ### Métricas-Chave
 
-| Métrica | Target MVP | Target Prod | Ferramenta de medição |
-|---------|-----------|-------------|----------------------|
-| Cold start | < 3s | < 2s | Sentry Performance / manual |
-| TTI | < 4s | < 3s | Custom trace |
-| Frame rate (scroll) | > 55fps | > 59fps | React DevTools / Perf Monitor |
-| JS Bundle | < 8MB | < 5MB | `npx expo export` |
-| RAM (uso normal) | < 250MB | < 200MB | Xcode Instruments / Android Profiler |
-| Crash-free rate | > 98% | > 99.5% | Sentry / Crashlytics |
+| Métrica             | Target MVP | Target Prod | Ferramenta de medição                |
+| ------------------- | ---------- | ----------- | ------------------------------------ |
+| Cold start          | < 3s       | < 2s        | Sentry Performance / manual          |
+| TTI                 | < 4s       | < 3s        | Custom trace                         |
+| Frame rate (scroll) | > 55fps    | > 59fps     | React DevTools / Perf Monitor        |
+| JS Bundle           | < 8MB      | < 5MB       | `npx expo export`                    |
+| RAM (uso normal)    | < 250MB    | < 200MB     | Xcode Instruments / Android Profiler |
+| Crash-free rate     | > 98%      | > 99.5%     | Sentry / Crashlytics                 |
 
 ### Antipadrões a Evitar
+
 - FlatList sem `keyExtractor` (re-renders de toda a lista)
 - Componente `<Image>` padrão para listas (sem cache, lento)
 - Animações no JS thread (Animated API padrão sem `useNativeDriver`)
@@ -347,6 +375,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] Estratégia de storage definida por tipo de dado:
   - **Dados sensíveis** (tokens, biometric keys): `expo-secure-store`
   - **Dados frequentes** (cache, preferências, último estado): `react-native-mmkv`
@@ -361,6 +390,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Graceful degradation: app não crasha sem conexão, exibe dados do cache
 
 **🟡 Recomendado**
+
 - [ ] Stale-while-revalidate: exibir dados do cache imediatamente, atualizar em background
 - [ ] Offline queue: ações do usuário feitas offline são enfileiradas e executadas ao reconectar
 - [ ] Indicação visual clara do que é dado "fresco" vs. dado "em cache" (timestamp, badge)
@@ -368,12 +398,14 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Migration strategy para schema de dados locais entre versões do app
 
 **🔴 Avançado**
+
 - [ ] Offline-first architecture: app funciona 100% offline para leitura
 - [ ] Conflict resolution para dados editados offline por múltiplos dispositivos
 - [ ] Background sync periódico (expo-background-fetch) para manter dados frescos
 - [ ] SQLite/WatermelonDB para dados estruturados complexos com queries locais
 
 ### Antipadrões a Evitar
+
 - Crash ou tela branca quando sem conexão
 - Não diferenciar visualmente dados frescos de dados em cache
 - Armazenar dados sensíveis em MMKV/AsyncStorage sem criptografia
@@ -389,6 +421,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] Permissões gerenciadas corretamente:
   - Solicitação just-in-time (pedir permissão no momento do uso, não no app start)
   - Tratamento de permissão negada (explicar por que é necessária, link para Settings)
@@ -405,6 +438,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
   - Fallback gracioso
 
 **🟡 Recomendado**
+
 - [ ] Haptic feedback (expo-haptics) em ações-chave:
   - Sucesso: `notificationAsync(Success)` em resgate confirmado
   - Erro: `notificationAsync(Error)` em falha de operação
@@ -417,12 +451,14 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
   - Limpar dados sensíveis da tela ao ir para background (privacy)
 
 **🔴 Avançado**
+
 - [ ] Geolocalização (expo-location) para lojas próximas
 - [ ] Widgets (expo-widgets, experimental) para saldo na home screen
 - [ ] NFC para pagamentos ou check-in em lojas
 - [ ] In-app review prompt (expo-store-review) após ações positivas
 
 ### Antipadrões a Evitar
+
 - Pedir todas as permissões no primeiro launch (assusta o usuário)
 - Não tratar device sem feature nativa (crash ao tentar usar câmera inexistente)
 - Ignorar app state lifecycle (dados desatualizados ao voltar do background)
@@ -437,6 +473,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] Setup completo de push notifications (expo-notifications):
   - Registro de device token (Expo Push Token ou FCM/APNs nativo)
   - Envio do token para o backend (endpoint de device registration)
@@ -447,6 +484,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Unregister do device token no logout
 
 **🟡 Recomendado**
+
 - [ ] Categorias de notificação (o usuário pode escolher quais receber):
   - Transações (cashback recebido, resgate confirmado)
   - Promoções (novas ofertas de lojistas)
@@ -457,12 +495,14 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Rich notifications: imagem, ações inline (Android), actionable notifications
 
 **🔴 Avançado**
+
 - [ ] Notificações agendadas localmente (lembretes, expiração de cashback)
 - [ ] A/B testing de copy de notificações
 - [ ] Analytics de notificação: delivered, opened, converted
 - [ ] Silent push para sincronização de dados em background
 
 ### Antipadrões a Evitar
+
 - Pedir permissão de notificação no primeiro launch (baixa taxa de aceite)
 - Enviar notificações excessivas (causa desinstalação)
 - Não tratar tap na notificação (abre o app na home ao invés da tela relevante)
@@ -478,6 +518,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] Framework de testes configurado e funcional:
   - Jest + React Native Testing Library para testes unitários e de componente
   - Cobertura mínima de testes nos services (API layer) e hooks de negócio
@@ -492,6 +533,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Lint: ESLint configurado com regras para React Native (sem erros em CI)
 
 **🟡 Recomendado**
+
 - [ ] Testes de integração:
   - Fluxos completos (login → dashboard → ação) com MSW (Mock Service Worker)
   - Navegação: verificar que ações levam às telas corretas
@@ -501,6 +543,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Testes de acessibilidade automatizados (labels, roles, contrast)
 
 **🔴 Avançado**
+
 - [ ] E2E tests com Maestro ou Detox:
   - Fluxo de login completo
   - Fluxo de resgate de cashback
@@ -511,6 +554,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Chaos testing: simular condições adversas (rede lenta, respostas parciais)
 
 ### Antipadrões a Evitar
+
 - Zero testes ("funciona no meu device")
 - Testes que testam implementação ao invés de comportamento
 - Snapshot tests em componentes que mudam frequentemente (snapshots quebram toda hora)
@@ -526,6 +570,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] EAS Build configurado com profiles:
   - `development`: build de dev com dev client
   - `preview`: build para testers internos (TestFlight / Internal Track)
@@ -538,6 +583,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Builds de preview distribuídos para QA/testers via EAS
 
 **🟡 Recomendado**
+
 - [ ] OTA Updates via EAS Update:
   - Atualizações JS sem passar pela revisão da store
   - Canais de update: production, staging, preview
@@ -548,6 +594,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Branch preview builds: cada PR gera um build de preview para teste
 
 **🔴 Avançado**
+
 - [ ] Staged rollout: OTA update para 10% → 50% → 100% dos usuários
 - [ ] Canary releases: build separado para beta testers
 - [ ] Automated rollback: detectar aumento de crash rate e reverter OTA automaticamente
@@ -555,6 +602,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Multi-environment deployments (dev, staging, production) com pipelines separados
 
 ### Antipadrões a Evitar
+
 - Build manual na máquina do dev para produção
 - Sem CI: merge direto na main sem checks
 - Mesmo bundle de produção para todos os ambientes (staging apontando para prod)
@@ -570,6 +618,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] Crash reporting configurado (Sentry ou Firebase Crashlytics):
   - Captura automática de JS errors e native crashes
   - Source maps enviados para simbolização do stack trace
@@ -580,6 +629,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Erros de API logados com contexto (endpoint, status code, response body)
 
 **🟡 Recomendado**
+
 - [ ] Performance monitoring:
   - App start time (cold/warm)
   - Screen load time por tela
@@ -594,6 +644,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Alertas proativos: crash rate > threshold, latência de API > threshold
 
 **🔴 Avançado**
+
 - [ ] Distributed tracing: correlacionar request do app com logs do backend
 - [ ] User session replay (Sentry Session Replay ou equivalente)
 - [ ] Custom performance metrics (tempo do fluxo de resgate, etc.)
@@ -601,6 +652,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] A/B testing integrado com analytics
 
 ### Antipadrões a Evitar
+
 - App em produção sem crash reporting ("os usuários vão avisar")
 - Source maps não enviados (stack traces ilegíveis em produção)
 - Logar dados sensíveis (PII, tokens, senhas)
@@ -616,6 +668,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] Labels de acessibilidade em todos os elementos interativos:
   - `accessibilityLabel`: descrição para screen reader
   - `accessibilityRole`: tipo do elemento (button, link, header, image, etc.)
@@ -627,6 +680,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Feedback não-visual: ações confirmadas com haptics e/ou `accessibilityLiveRegion`
 
 **🟡 Recomendado**
+
 - [ ] Navegação completa via VoiceOver (iOS) e TalkBack (Android):
   - Ordem de leitura lógica
   - Agrupamento de elementos relacionados (`accessibilityElementsHidden`, `importantForAccessibility`)
@@ -637,12 +691,14 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Formulários: labels associados a inputs, erros anunciados para screen reader
 
 **🔴 Avançado**
+
 - [ ] Testes automatizados de acessibilidade no CI
 - [ ] Auditoria com usuários reais de tecnologias assistivas
 - [ ] Switch Control support (iOS)
 - [ ] RTL (Right-to-Left) layout support (se internacionalização incluir árabe, hebraico)
 
 ### Antipadrões a Evitar
+
 - Elementos interativos sem `accessibilityLabel` (screen reader lê "button" sem contexto)
 - Ícones-only sem label (usuário não sabe o que faz)
 - Informação transmitida apenas por cor (daltônicos não distinguem)
@@ -658,6 +714,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] i18next configurado e funcional com detecção de idioma do dispositivo
 - [ ] Toda string visível ao usuário vem de arquivos de tradução (zero hardcoded)
 - [ ] Estrutura de namespaces organizada por domínio (auth, dashboard, cashback, common)
@@ -669,6 +726,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
   - Números: separadores de milhar e decimal corretos por locale
 
 **🟡 Recomendado**
+
 - [ ] Interpolação e pluralização configuradas (`{{count}} item` / `{{count}} items`)
 - [ ] Fallback chain: pt-BR → pt → en (se chave não encontrada)
 - [ ] Layout adaptável a textos mais longos (alemão pode ser 40% mais longo que inglês)
@@ -676,12 +734,14 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Troca de idioma em runtime sem restart do app
 
 **🔴 Avançado**
+
 - [ ] Over-the-air translation updates (sem rebuild do app)
 - [ ] Integração com plataforma de tradução (Crowdin, Lokalise, Phrase)
 - [ ] RTL layout support
 - [ ] Variantes regionais (pt-BR vs pt-PT se necessário)
 
 ### Antipadrões a Evitar
+
 - Strings hardcoded na UI ("Salvar" ao invés de `t('common.save')`)
 - Concatenação de strings traduzidas (quebra em idiomas com ordem de palavras diferente)
 - Formatação de moeda/data manual (usar sempre APIs de localização)
@@ -696,6 +756,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 ### Critérios de Avaliação
 
 **🟢 Essencial**
+
 - [ ] **Apple App Store**:
   - Conta Apple Developer ativa ($99/ano)
   - Privacy Manifest (PrivacyInfo.xcprivacy) declarando APIs acessadas e data collected
@@ -719,6 +780,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
   - Permissões justificadas (por que o app precisa de câmera, notificações, etc.)
 
 **🟡 Recomendado**
+
 - [ ] LGPD compliance:
   - Tela de consentimento de dados no primeiro uso
   - Opção de download dos dados pessoais
@@ -734,6 +796,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
   - Descrição curta e longa otimizadas
 
 **🔴 Avançado**
+
 - [ ] In-app purchases / subscriptions (se modelo de negócio exigir)
   - Apple IAP e Google Play Billing integrados
   - Restore purchases funcional
@@ -743,6 +806,7 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 - [ ] Preparação para regulamentações futuras (Digital Markets Act, etc.)
 
 ### Antipadrões a Evitar
+
 - Submeter sem Privacy Manifest/Data Safety Form (rejeição automática)
 - Screenshots genéricas ou de baixa qualidade
 - Não ter conta demo para review da Apple (atrasa aprovação)
@@ -753,24 +817,24 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 
 ## Matriz de Priorização por Sprint
 
-| Pilar | Sprint 0 | Sprint 1 | Sprint 2-4 | Sprint 5-7 | Sprint 8 |
-|-------|----------|----------|------------|------------|----------|
-| 1. Arquitetura | 🟢🟡 | — | — | — | Audit |
-| 2. Navegação | 🟢 | 🟢 | 🟡 | 🟡 | — |
-| 3. Estado | 🟢 | 🟢 | 🟡 | 🟡 | — |
-| 4. Rede/API | 🟢 | 🟢🟡 | — | — | — |
-| 5. Auth/Segurança | — | 🟢 | — | 🟡 | Audit |
-| 6. UI/UX | 🟢 | 🟢 | 🟢🟡 | 🟡 | Polish |
-| 7. Performance | — | — | 🟢 | 🟡 | 🟡 Audit |
-| 8. Offline/Persist | — | 🟢 | 🟢 | 🟡 | — |
-| 9. Nativo | — | — | — | 🟢 | — |
-| 10. Push | — | — | — | 🟢🟡 | — |
-| 11. Testes | 🟢 setup | 🟢 | 🟢 | 🟡 | 🟡🔴 |
-| 12. CI/CD | 🟢 | — | — | 🟡 | 🟡 |
-| 13. Monitoramento | 🟢 setup | — | — | 🟡 | 🟡 |
-| 14. Acessibilidade | — | 🟢 | 🟢 | 🟡 | Audit |
-| 15. i18n | 🟢 | 🟢 | 🟢 | — | — |
-| 16. App Stores | — | — | — | — | 🟢🟡 |
+| Pilar              | Sprint 0 | Sprint 1 | Sprint 2-4 | Sprint 5-7 | Sprint 8 |
+| ------------------ | -------- | -------- | ---------- | ---------- | -------- |
+| 1. Arquitetura     | 🟢🟡     | —        | —          | —          | Audit    |
+| 2. Navegação       | 🟢       | 🟢       | 🟡         | 🟡         | —        |
+| 3. Estado          | 🟢       | 🟢       | 🟡         | 🟡         | —        |
+| 4. Rede/API        | 🟢       | 🟢🟡     | —          | —          | —        |
+| 5. Auth/Segurança  | —        | 🟢       | —          | 🟡         | Audit    |
+| 6. UI/UX           | 🟢       | 🟢       | 🟢🟡       | 🟡         | Polish   |
+| 7. Performance     | —        | —        | 🟢         | 🟡         | 🟡 Audit |
+| 8. Offline/Persist | —        | 🟢       | 🟢         | 🟡         | —        |
+| 9. Nativo          | —        | —        | —          | 🟢         | —        |
+| 10. Push           | —        | —        | —          | 🟢🟡       | —        |
+| 11. Testes         | 🟢 setup | 🟢       | 🟢         | 🟡         | 🟡🔴     |
+| 12. CI/CD          | 🟢       | —        | —          | 🟡         | 🟡       |
+| 13. Monitoramento  | 🟢 setup | —        | —          | 🟡         | 🟡       |
+| 14. Acessibilidade | —        | 🟢       | 🟢         | 🟡         | Audit    |
+| 15. i18n           | 🟢       | 🟢       | 🟢         | —          | —        |
+| 16. App Stores     | —        | —        | —          | —          | 🟢🟡     |
 
 ---
 
@@ -778,14 +842,14 @@ Este documento define os **16 Pilares de Qualidade Mobile** para avaliação, co
 
 Use esta tabela para avaliar o app em cada pilar (0-5):
 
-| Score | Significado |
-|-------|-------------|
-| 0 | Não implementado |
-| 1 | Implementação parcial, com falhas críticas |
-| 2 | Critérios essenciais parcialmente atendidos |
-| 3 | Todos os critérios essenciais (🟢) atendidos |
-| 4 | Essenciais + recomendados (🟢🟡) atendidos |
-| 5 | Todos os níveis atendidos (🟢🟡🔴) — excelência |
+| Score | Significado                                     |
+| ----- | ----------------------------------------------- |
+| 0     | Não implementado                                |
+| 1     | Implementação parcial, com falhas críticas      |
+| 2     | Critérios essenciais parcialmente atendidos     |
+| 3     | Todos os critérios essenciais (🟢) atendidos    |
+| 4     | Essenciais + recomendados (🟢🟡) atendidos      |
+| 5     | Todos os níveis atendidos (🟢🟡🔴) — excelência |
 
 **Score mínimo para MVP**: 3 em todos os pilares (todos os 🟢 atendidos)
 **Score target para produção madura**: 4+ em pilares 1-8, 3+ nos demais
