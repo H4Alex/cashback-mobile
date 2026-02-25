@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import type { NotificationPreferences } from '@/src/types';
+import { create } from "zustand";
+import type { NotificationPreferences } from "@/src/types";
 
 interface NotificationState {
   unreadCount: number;

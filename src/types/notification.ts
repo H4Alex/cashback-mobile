@@ -1,11 +1,11 @@
 /** Notification type enum */
 export type NotificationType =
-  | 'cashback_recebido'
-  | 'cashback_expirado'
-  | 'cashback_utilizado'
-  | 'campanha_nova'
-  | 'contestacao_atualizada'
-  | 'sistema';
+  | "cashback_recebido"
+  | "cashback_expirado"
+  | "cashback_utilizado"
+  | "campanha_nova"
+  | "contestacao_atualizada"
+  | "sistema";
 
 /** In-app notification */
 export interface MobileNotification {

@@ -7,15 +7,12 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  deleteAccountSchema,
-  type DeleteAccountFormData,
-} from '@/src/schemas';
-import { useDeleteAccount } from '@/src/hooks';
+} from "react-native";
+import { useRouter } from "expo-router";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { deleteAccountSchema, type DeleteAccountFormData } from "@/src/schemas";
+import { useDeleteAccount } from "@/src/hooks";
 
 export default function DeleteAccountScreen() {
   const router = useRouter();
@@ -27,38 +24,31 @@ export default function DeleteAccountScreen() {
     formState: { errors },
   } = useForm<DeleteAccountFormData>({
     resolver: zodResolver(deleteAccountSchema),
-    defaultValues: { senha: '', motivo: '' },
+    defaultValues: { senha: "", motivo: "" },
   });
 
   const onSubmit = (data: DeleteAccountFormData) => {
     // Double confirmation as required by LGPD compliance
     Alert.alert(
-      'Excluir Conta',
-      'Esta ação é irreversível. Todos os seus dados serão removidos permanentemente. Deseja continuar?',
+      "Excluir Conta",
+      "Esta ação é irreversível. Todos os seus dados serão removidos permanentemente. Deseja continuar?",
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: "Cancelar", style: "cancel" },
         {
-          text: 'Excluir Permanentemente',
-          style: 'destructive',
+          text: "Excluir Permanentemente",
+          style: "destructive",
           onPress: () => {
             mutation.mutate(data, {
               onSuccess: () => {
-                Alert.alert(
-                  'Conta Excluída',
-                  'Sua conta foi excluída com sucesso.',
-                  [
-                    {
-                      text: 'OK',
-                      onPress: () => router.replace('/(auth)/login'),
-                    },
-                  ],
-                );
+                Alert.alert("Conta Excluída", "Sua conta foi excluída com sucesso.", [
+                  {
+                    text: "OK",
+                    onPress: () => router.replace("/(auth)/login"),
+                  },
+                ]);
               },
               onError: () =>
-                Alert.alert(
-                  'Erro',
-                  'Não foi possível excluir a conta. Verifique sua senha.',
-                ),
+                Alert.alert("Erro", "Não foi possível excluir a conta. Verifique sua senha."),
             });
           },
         },
@@ -69,21 +59,16 @@ export default function DeleteAccountScreen() {
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-white px-6 pt-6"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Text className="text-2xl font-bold mb-2 text-red-600">
-        Excluir Conta
-      </Text>
+      <Text className="text-2xl font-bold mb-2 text-red-600">Excluir Conta</Text>
       <Text className="text-gray-600 mb-6">
-        Ao excluir sua conta, todos os seus dados pessoais, saldo de cashback e
-        histórico serão removidos permanentemente conforme a LGPD. Esta ação não
-        pode ser desfeita.
+        Ao excluir sua conta, todos os seus dados pessoais, saldo de cashback e histórico serão
+        removidos permanentemente conforme a LGPD. Esta ação não pode ser desfeita.
       </Text>
 
       {/* Password confirmation */}
-      <Text className="text-sm font-medium text-gray-700 mb-1">
-        Confirme sua senha
-      </Text>
+      <Text className="text-sm font-medium text-gray-700 mb-1">Confirme sua senha</Text>
       <Controller
         control={control}
         name="senha"
@@ -98,16 +83,10 @@ export default function DeleteAccountScreen() {
           />
         )}
       />
-      {errors.senha && (
-        <Text className="text-red-500 text-xs mb-3">
-          {errors.senha.message}
-        </Text>
-      )}
+      {errors.senha && <Text className="text-red-500 text-xs mb-3">{errors.senha.message}</Text>}
 
       {/* Optional reason */}
-      <Text className="text-sm font-medium text-gray-700 mb-1 mt-3">
-        Motivo (opcional)
-      </Text>
+      <Text className="text-sm font-medium text-gray-700 mb-1 mt-3">Motivo (opcional)</Text>
       <Controller
         control={control}
         name="motivo"
@@ -135,9 +114,7 @@ export default function DeleteAccountScreen() {
         {mutation.isPending ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text className="text-white font-semibold text-base">
-            Excluir Minha Conta
-          </Text>
+          <Text className="text-white font-semibold text-base">Excluir Minha Conta</Text>
         )}
       </TouchableOpacity>
     </KeyboardAvoidingView>

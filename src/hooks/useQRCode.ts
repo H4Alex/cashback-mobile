@@ -1,6 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
-import { mobileQRCodeService } from '@/src/services';
-import type { GerarQRCodeRequest, ValidarQRCodeRequest } from '@/src/types';
+import { useMutation } from "@tanstack/react-query";
+import { mobileQRCodeService } from "@/src/services";
+import type { GerarQRCodeRequest, ValidarQRCodeRequest } from "@/src/types";
 
 /**
  * Hook to generate a QR code for cashback redemption.
@@ -8,8 +8,7 @@ import type { GerarQRCodeRequest, ValidarQRCodeRequest } from '@/src/types';
  */
 export function useGerarQRCode() {
   return useMutation({
-    mutationFn: (data: GerarQRCodeRequest) =>
-      mobileQRCodeService.gerarQRCode(data),
+    mutationFn: (data: GerarQRCodeRequest) => mobileQRCodeService.gerarQRCode(data),
   });
 }
 
@@ -19,7 +18,6 @@ export function useGerarQRCode() {
  */
 export function useValidarQRCode() {
   return useMutation({
-    mutationFn: (data: ValidarQRCodeRequest) =>
-      mobileQRCodeService.validarQRCode(data),
+    mutationFn: (data: ValidarQRCodeRequest) => mobileQRCodeService.validarQRCode(data),
   });
 }

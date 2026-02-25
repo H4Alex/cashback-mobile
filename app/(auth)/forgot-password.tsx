@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
-  View,
   Text,
   TextInput,
   TouchableOpacity,
@@ -8,68 +7,66 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from "react-native";
+import { useRouter } from "expo-router";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   forgotPasswordSchema,
   resetPasswordSchema,
   type ForgotPasswordFormData,
   type ResetPasswordFormData,
-} from '@/src/schemas';
-import { useForgotPassword, useResetPassword } from '@/src/hooks';
+} from "@/src/schemas";
+import { useForgotPassword, useResetPassword } from "@/src/hooks";
 
-type Step = 'email' | 'token' | 'done';
+type Step = "email" | "token" | "done";
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
-  const [step, setStep] = useState<Step>('email');
+  const [step, setStep] = useState<Step>("email");
   const forgotMutation = useForgotPassword();
   const resetMutation = useResetPassword();
 
   const emailForm = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
-    defaultValues: { email: '' },
+    defaultValues: { email: "" },
   });
 
   const resetForm = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
-    defaultValues: { email: '', token: '', senha: '' },
+    defaultValues: { email: "", token: "", senha: "" },
   });
 
   const onSendEmail = (data: ForgotPasswordFormData) => {
     forgotMutation.mutate(data, {
       onSuccess: () => {
-        resetForm.setValue('email', data.email);
-        setStep('token');
+        resetForm.setValue("email", data.email);
+        setStep("token");
       },
-      onError: () =>
-        Alert.alert('Erro', 'Não foi possível enviar o email de recuperação.'),
+      onError: () => Alert.alert("Erro", "Não foi possível enviar o email de recuperação."),
     });
   };
 
   const onResetPassword = (data: ResetPasswordFormData) => {
     resetMutation.mutate(data, {
       onSuccess: () => {
-        setStep('done');
-        Alert.alert('Sucesso', 'Senha redefinida com sucesso!', [
-          { text: 'OK', onPress: () => router.replace('/(auth)/login') },
+        setStep("done");
+        Alert.alert("Sucesso", "Senha redefinida com sucesso!", [
+          { text: "OK", onPress: () => router.replace("/(auth)/login") },
         ]);
       },
-      onError: () =>
-        Alert.alert('Erro', 'Token inválido ou expirado. Tente novamente.'),
+      onError: () => Alert.alert("Erro", "Token inválido ou expirado. Tente novamente."),
     });
   };
 
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-white px-6 justify-center"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <Text className="text-2xl font-bold mb-2">Recuperar Senha</Text>
 
-      {step === 'email' && (
+      {step === "email" && (
         <>
           <Text className="text-gray-600 mb-6">
             Informe seu email para receber o link de recuperação.
@@ -105,23 +102,19 @@ export default function ForgotPasswordScreen() {
             {forgotMutation.isPending ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text className="text-white font-semibold text-base">
-                Enviar Email
-              </Text>
+              <Text className="text-white font-semibold text-base">Enviar Email</Text>
             )}
           </TouchableOpacity>
         </>
       )}
 
-      {step === 'token' && (
+      {step === "token" && (
         <>
           <Text className="text-gray-600 mb-6">
             Insira o código recebido por email e sua nova senha.
           </Text>
 
-          <Text className="text-sm font-medium text-gray-700 mb-1">
-            Código
-          </Text>
+          <Text className="text-sm font-medium text-gray-700 mb-1">Código</Text>
           <Controller
             control={resetForm.control}
             name="token"
@@ -142,9 +135,7 @@ export default function ForgotPasswordScreen() {
             </Text>
           )}
 
-          <Text className="text-sm font-medium text-gray-700 mb-1 mt-3">
-            Nova Senha
-          </Text>
+          <Text className="text-sm font-medium text-gray-700 mb-1 mt-3">Nova Senha</Text>
           <Controller
             control={resetForm.control}
             name="senha"
@@ -173,19 +164,14 @@ export default function ForgotPasswordScreen() {
             {resetMutation.isPending ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text className="text-white font-semibold text-base">
-                Redefinir Senha
-              </Text>
+              <Text className="text-white font-semibold text-base">Redefinir Senha</Text>
             )}
           </TouchableOpacity>
         </>
       )}
 
-      {step !== 'done' && (
-        <TouchableOpacity
-          onPress={() => router.back()}
-          className="mt-6 items-center"
-        >
+      {step !== "done" && (
+        <TouchableOpacity onPress={() => router.back()} className="mt-6 items-center">
           <Text className="text-blue-600">Voltar ao login</Text>
         </TouchableOpacity>
       )}

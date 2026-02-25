@@ -7,7 +7,7 @@ export {
   useUpdateProfile,
   useChangePassword,
   useDeleteAccount,
-} from './useAuth';
+} from "./useAuth";
 
 export {
   useNotifications,
@@ -15,6 +15,6 @@ export {
   useMarkAllNotificationsRead,
   useNotificationPreferences,
   useUpdateNotificationPreferences,
-} from './useNotifications';
+} from "./useNotifications";
 
-export { useGerarQRCode, useValidarQRCode } from './useQRCode';
+export { useGerarQRCode, useValidarQRCode } from "./useQRCode";

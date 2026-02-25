@@ -13,7 +13,7 @@ export interface ClienteResource {
 /** JWT token pair */
 export interface TokenPair {
   token: string;
-  token_type: 'bearer';
+  token_type: "bearer";
   expires_in: number;
 }
 
@@ -39,7 +39,7 @@ export interface RegisterRequest {
 }
 
 /** OAuth provider type */
-export type OAuthProvider = 'google' | 'apple';
+export type OAuthProvider = "google" | "apple";
 
 /** OAuth request */
 export interface OAuthRequest {
@@ -92,7 +92,7 @@ export interface BiometricEnrollRequest {
 export interface DeviceSession {
   id: string;
   device_name: string;
-  plataforma: 'ios' | 'android';
+  plataforma: "ios" | "android";
   last_active: string;
   current: boolean;
 }

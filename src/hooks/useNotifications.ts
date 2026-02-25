@@ -1,15 +1,10 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  useInfiniteQuery,
-} from '@tanstack/react-query';
-import { mobileNotificationService } from '@/src/services';
-import { useNotificationStore } from '@/src/stores';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
+import { mobileNotificationService } from "@/src/services";
+import { useNotificationStore } from "@/src/stores";
 
 const KEYS = {
-  list: ['notifications'] as const,
-  preferences: ['notifications', 'preferences'] as const,
+  list: ["notifications"] as const,
+  preferences: ["notifications", "preferences"] as const,
 };
 
 export function useNotifications(params?: { unread_only?: boolean }) {

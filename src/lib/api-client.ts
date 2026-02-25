@@ -1,20 +1,16 @@
-import axios, {
-  AxiosError,
-  AxiosInstance,
-  InternalAxiosRequestConfig,
-} from 'axios';
-import * as SecureStore from 'expo-secure-store';
-import type { ApiError, TokenPair } from '@/src/types';
+import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
+import * as SecureStore from "expo-secure-store";
+import type { ApiError, TokenPair } from "@/src/types";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://api.h4cashback.com';
-const TOKEN_KEY = 'auth_token';
-const REFRESH_KEY = 'refresh_token';
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? "https://api.h4cashback.com";
+const TOKEN_KEY = "auth_token";
+const REFRESH_KEY = "refresh_token";
 
 let isRefreshing = false;
-let failedQueue: Array<{
+let failedQueue: {
   resolve: (token: string) => void;
   reject: (error: unknown) => void;
-}> = [];
+}[] = [];
 
 function processQueue(error: unknown, token: string | null) {
   failedQueue.forEach((prom) => {
@@ -32,8 +28,8 @@ function createApiClient(): AxiosInstance {
     baseURL: BASE_URL,
     timeout: 15_000,
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   });
 
@@ -75,7 +71,7 @@ function createApiClient(): AxiosInstance {
         try {
           const refreshToken = await SecureStore.getItemAsync(REFRESH_KEY);
           if (!refreshToken) {
-            throw new Error('No refresh token');
+            throw new Error("No refresh token");
           }
 
           const { data } = await axios.post<TokenPair>(
@@ -107,10 +103,7 @@ function createApiClient(): AxiosInstance {
   return client;
 }
 
-export async function saveTokens(
-  token: string,
-  refreshToken?: string,
-): Promise<void> {
+export async function saveTokens(token: string, refreshToken?: string): Promise<void> {
   await SecureStore.setItemAsync(TOKEN_KEY, token);
   if (refreshToken) {
     await SecureStore.setItemAsync(REFRESH_KEY, refreshToken);

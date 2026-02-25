@@ -1,9 +1,6 @@
-import { View, Text, Switch, ActivityIndicator, Alert } from 'react-native';
-import {
-  useNotificationPreferences,
-  useUpdateNotificationPreferences,
-} from '@/src/hooks';
-import type { NotificationPreferences } from '@/src/types';
+import { View, Text, Switch, ActivityIndicator, Alert } from "react-native";
+import { useNotificationPreferences, useUpdateNotificationPreferences } from "@/src/hooks";
+import type { NotificationPreferences } from "@/src/types";
 
 function PreferenceRow({
   label,
@@ -33,15 +30,11 @@ export default function NotificationPreferencesScreen() {
   const { data: prefs, isLoading } = useNotificationPreferences();
   const updateMutation = useUpdateNotificationPreferences();
 
-  const handleToggle = (
-    key: keyof NotificationPreferences,
-    value: boolean,
-  ) => {
+  const handleToggle = (key: keyof NotificationPreferences, value: boolean) => {
     updateMutation.mutate(
       { [key]: value },
       {
-        onError: () =>
-          Alert.alert('Erro', 'Não foi possível atualizar preferência.'),
+        onError: () => Alert.alert("Erro", "Não foi possível atualizar preferência."),
       },
     );
   };
@@ -56,15 +49,13 @@ export default function NotificationPreferencesScreen() {
 
   return (
     <View className="flex-1 bg-white px-6 pt-6">
-      <Text className="text-2xl font-bold mb-6">
-        Preferências de Notificação
-      </Text>
+      <Text className="text-2xl font-bold mb-6">Preferências de Notificação</Text>
 
       <PreferenceRow
         label="Notificações Push"
         description="Receber alertas de cashback, campanhas e transações"
         value={prefs.push_enabled}
-        onValueChange={(v) => handleToggle('push_enabled', v)}
+        onValueChange={(v) => handleToggle("push_enabled", v)}
         disabled={updateMutation.isPending}
       />
 
@@ -72,7 +63,7 @@ export default function NotificationPreferencesScreen() {
         label="Notificações por Email"
         description="Receber resumos e alertas por email"
         value={prefs.email_enabled}
-        onValueChange={(v) => handleToggle('email_enabled', v)}
+        onValueChange={(v) => handleToggle("email_enabled", v)}
         disabled={updateMutation.isPending}
       />
 
@@ -80,7 +71,7 @@ export default function NotificationPreferencesScreen() {
         label="Marketing"
         description="Receber ofertas e promoções de parceiros"
         value={prefs.marketing_enabled}
-        onValueChange={(v) => handleToggle('marketing_enabled', v)}
+        onValueChange={(v) => handleToggle("marketing_enabled", v)}
         disabled={updateMutation.isPending}
       />
     </View>

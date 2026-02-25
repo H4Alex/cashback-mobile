@@ -1,5 +1,4 @@
 import {
-  View,
   Text,
   TextInput,
   TouchableOpacity,
@@ -7,13 +6,13 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { updateProfileSchema, type UpdateProfileFormData } from '@/src/schemas';
-import { useUpdateProfile } from '@/src/hooks';
-import { useAuthStore } from '@/src/stores';
+} from "react-native";
+import { useRouter } from "expo-router";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { updateProfileSchema, type UpdateProfileFormData } from "@/src/schemas";
+import { useUpdateProfile } from "@/src/hooks";
+import { useAuthStore } from "@/src/stores";
 
 export default function EditProfileScreen() {
   const router = useRouter();
@@ -27,27 +26,26 @@ export default function EditProfileScreen() {
   } = useForm<UpdateProfileFormData>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
-      nome: cliente?.nome ?? '',
-      email: cliente?.email ?? '',
-      telefone: cliente?.telefone ?? '',
+      nome: cliente?.nome ?? "",
+      email: cliente?.email ?? "",
+      telefone: cliente?.telefone ?? "",
     },
   });
 
   const onSubmit = (data: UpdateProfileFormData) => {
     updateMutation.mutate(data, {
       onSuccess: () => {
-        Alert.alert('Sucesso', 'Perfil atualizado com sucesso!');
+        Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
         router.back();
       },
-      onError: () =>
-        Alert.alert('Erro', 'Não foi possível atualizar o perfil.'),
+      onError: () => Alert.alert("Erro", "Não foi possível atualizar o perfil."),
     });
   };
 
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-white px-6 pt-6"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <Text className="text-2xl font-bold mb-6">Editar Perfil</Text>
 
@@ -65,15 +63,9 @@ export default function EditProfileScreen() {
           />
         )}
       />
-      {errors.nome && (
-        <Text className="text-red-500 text-xs mb-3">
-          {errors.nome.message}
-        </Text>
-      )}
+      {errors.nome && <Text className="text-red-500 text-xs mb-3">{errors.nome.message}</Text>}
 
-      <Text className="text-sm font-medium text-gray-700 mb-1 mt-3">
-        Email
-      </Text>
+      <Text className="text-sm font-medium text-gray-700 mb-1 mt-3">Email</Text>
       <Controller
         control={control}
         name="email"
@@ -89,15 +81,9 @@ export default function EditProfileScreen() {
           />
         )}
       />
-      {errors.email && (
-        <Text className="text-red-500 text-xs mb-3">
-          {errors.email.message}
-        </Text>
-      )}
+      {errors.email && <Text className="text-red-500 text-xs mb-3">{errors.email.message}</Text>}
 
-      <Text className="text-sm font-medium text-gray-700 mb-1 mt-3">
-        Telefone
-      </Text>
+      <Text className="text-sm font-medium text-gray-700 mb-1 mt-3">Telefone</Text>
       <Controller
         control={control}
         name="telefone"

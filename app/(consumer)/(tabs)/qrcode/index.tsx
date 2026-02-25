@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { useGerarQRCode } from '@/src/hooks';
-import type { QRCodeToken } from '@/src/types';
+import { useState, useEffect, useRef } from "react";
+import { View, Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { useGerarQRCode } from "@/src/hooks";
+import type { QRCodeToken } from "@/src/types";
 
 export default function QRCodeScreen() {
   const gerarMutation = useGerarQRCode();
@@ -20,10 +20,7 @@ export default function QRCodeScreen() {
 
     const expiresAt = new Date(qrData.expira_em).getTime();
     const updateTimer = () => {
-      const remaining = Math.max(
-        0,
-        Math.floor((expiresAt - Date.now()) / 1000),
-      );
+      const remaining = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
       setTimeLeft(remaining);
       if (remaining <= 0 && timerRef.current) {
         clearInterval(timerRef.current);
@@ -45,8 +42,7 @@ export default function QRCodeScreen() {
       { empresa_id: 1, valor: 0 },
       {
         onSuccess: (data) => setQrData(data),
-        onError: () =>
-          Alert.alert('Erro', 'Não foi possível gerar o QR Code.'),
+        onError: () => Alert.alert("Erro", "Não foi possível gerar o QR Code."),
       },
     );
   };
@@ -54,7 +50,7 @@ export default function QRCodeScreen() {
   const formatTime = (seconds: number) => {
     const min = Math.floor(seconds / 60);
     const sec = seconds % 60;
-    return `${min}:${sec.toString().padStart(2, '0')}`;
+    return `${min}:${sec.toString().padStart(2, "0")}`;
   };
 
   return (
@@ -73,23 +69,18 @@ export default function QRCodeScreen() {
           <View className="items-center mb-6">
             <Text className="text-gray-500 text-sm">Expira em</Text>
             <Text
-              className={`text-3xl font-bold ${
-                timeLeft <= 60 ? 'text-red-500' : 'text-blue-600'
-              }`}
+              className={`text-3xl font-bold ${timeLeft <= 60 ? "text-red-500" : "text-blue-600"}`}
             >
               {formatTime(timeLeft)}
             </Text>
           </View>
 
           <Text className="text-gray-500 text-sm text-center mb-4">
-            Mostre este QR Code ao lojista para utilizar seu cashback. O token é
-            armazenado com segurança e expira automaticamente.
+            Mostre este QR Code ao lojista para utilizar seu cashback. O token é armazenado com
+            segurança e expira automaticamente.
           </Text>
 
-          <TouchableOpacity
-            className="bg-blue-600 rounded-lg py-4 px-8"
-            onPress={handleGerar}
-          >
+          <TouchableOpacity className="bg-blue-600 rounded-lg py-4 px-8" onPress={handleGerar}>
             <Text className="text-white font-semibold">Gerar Novo</Text>
           </TouchableOpacity>
         </>
@@ -97,8 +88,8 @@ export default function QRCodeScreen() {
         <>
           <Text className="text-2xl font-bold mb-2">QR Code</Text>
           <Text className="text-gray-500 text-center mb-8">
-            Gere um QR Code para utilizar seu cashback em uma loja parceira. O
-            código é válido por 5 minutos e protegido com criptografia.
+            Gere um QR Code para utilizar seu cashback em uma loja parceira. O código é válido por 5
+            minutos e protegido com criptografia.
           </Text>
 
           <TouchableOpacity
@@ -109,9 +100,7 @@ export default function QRCodeScreen() {
             {gerarMutation.isPending ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text className="text-white font-semibold text-base">
-                Gerar QR Code
-              </Text>
+              <Text className="text-white font-semibold text-base">Gerar QR Code</Text>
             )}
           </TouchableOpacity>
         </>

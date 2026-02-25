@@ -1,4 +1,4 @@
-import { apiClient, saveTokens, clearTokens } from '@/src/lib/api-client';
+import { apiClient, saveTokens, clearTokens } from "@/src/lib/api-client";
 import type {
   LoginRequest,
   LoginResponse,
@@ -13,9 +13,9 @@ import type {
   ClienteResource,
   BiometricEnrollRequest,
   TokenPair,
-} from '@/src/types';
+} from "@/src/types";
 
-const PREFIX = '/api/mobile/v1/auth';
+const PREFIX = "/api/mobile/v1/auth";
 
 export const mobileAuthService = {
   async register(data: RegisterRequest): Promise<LoginResponse> {
@@ -47,9 +47,7 @@ export const mobileAuthService = {
   },
 
   async me(): Promise<ClienteResource> {
-    const res = await apiClient.get<{ cliente: ClienteResource }>(
-      `${PREFIX}/me`,
-    );
+    const res = await apiClient.get<{ cliente: ClienteResource }>(`${PREFIX}/me`);
     return res.data.cliente;
   },
 
@@ -71,13 +69,8 @@ export const mobileAuthService = {
   },
 
   /** Update consumer profile */
-  async updateProfile(
-    data: UpdateProfileRequest,
-  ): Promise<ClienteResource> {
-    const res = await apiClient.patch<{ cliente: ClienteResource }>(
-      `${PREFIX}/profile`,
-      data,
-    );
+  async updateProfile(data: UpdateProfileRequest): Promise<ClienteResource> {
+    const res = await apiClient.patch<{ cliente: ClienteResource }>(`${PREFIX}/profile`, data);
     return res.data.cliente;
   },
 
@@ -93,24 +86,14 @@ export const mobileAuthService = {
   },
 
   /** Enroll biometric authentication */
-  async enrollBiometric(
-    data: BiometricEnrollRequest,
-  ): Promise<{ enrolled: boolean }> {
-    const res = await apiClient.post<{ enrolled: boolean }>(
-      `${PREFIX}/biometric/enroll`,
-      data,
-    );
+  async enrollBiometric(data: BiometricEnrollRequest): Promise<{ enrolled: boolean }> {
+    const res = await apiClient.post<{ enrolled: boolean }>(`${PREFIX}/biometric/enroll`, data);
     return res.data;
   },
 
   /** Verify biometric and get token */
-  async verifyBiometric(
-    data: BiometricEnrollRequest,
-  ): Promise<TokenPair> {
-    const res = await apiClient.post<TokenPair>(
-      `${PREFIX}/biometric/verify`,
-      data,
-    );
+  async verifyBiometric(data: BiometricEnrollRequest): Promise<TokenPair> {
+    const res = await apiClient.post<TokenPair>(`${PREFIX}/biometric/verify`, data);
     await saveTokens(res.data.token);
     return res.data;
   },

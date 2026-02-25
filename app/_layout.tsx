@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useAuthStore } from '@/src/stores';
-import '../global.css';
+import { useEffect } from "react";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useAuthStore } from "@/src/stores";
+import "../global.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,18 +30,12 @@ export default function RootLayout() {
       <AppInitializer>
         <StatusBar style="auto" />
         <Stack>
-          <Stack.Screen name="index" options={{ title: 'Cashback' }} />
-          <Stack.Screen
-            name="(auth)"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="(consumer)"
-            options={{ headerShown: false }}
-          />
+          <Stack.Screen name="index" options={{ title: "Cashback" }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(consumer)" options={{ headerShown: false }} />
           <Stack.Screen
             name="(shared)/privacy-policy"
-            options={{ title: 'Política de Privacidade' }}
+            options={{ title: "Política de Privacidade" }}
           />
         </Stack>
       </AppInitializer>

@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import type { ClienteResource } from '@/src/types';
-import { mobileAuthService } from '@/src/services';
-import { clearTokens, getToken } from '@/src/lib/api-client';
+import { create } from "zustand";
+import type { ClienteResource } from "@/src/types";
+import { mobileAuthService } from "@/src/services";
+import { clearTokens, getToken } from "@/src/lib/api-client";
 
 interface AuthState {
   cliente: ClienteResource | null;
@@ -17,8 +17,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
   isLoading: true,
 
-  setCliente: (cliente) =>
-    set({ cliente, isAuthenticated: cliente !== null }),
+  setCliente: (cliente) => set({ cliente, isAuthenticated: cliente !== null }),
 
   initialize: async () => {
     try {

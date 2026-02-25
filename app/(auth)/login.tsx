@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   View,
   Text,
@@ -9,18 +9,17 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, type LoginFormData } from '@/src/schemas';
-import { useLogin, useOAuth } from '@/src/hooks';
-import type { OAuthProvider } from '@/src/types';
+} from "react-native";
+import { useRouter } from "expo-router";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginFormData } from "@/src/schemas";
+import { useLogin } from "@/src/hooks";
+import type { OAuthProvider } from "@/src/types";
 
 export default function LoginScreen() {
   const router = useRouter();
   const loginMutation = useLogin();
-  const oauthMutation = useOAuth();
   const [oauthLoading, setOAuthLoading] = useState<OAuthProvider | null>(null);
 
   const {
@@ -29,14 +28,13 @@ export default function LoginScreen() {
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', senha: '' },
+    defaultValues: { email: "", senha: "" },
   });
 
   const onSubmit = (data: LoginFormData) => {
     loginMutation.mutate(data, {
-      onSuccess: () => router.replace('/'),
-      onError: (err) =>
-        Alert.alert('Erro', err.message || 'Credenciais inválidas'),
+      onSuccess: () => router.replace("/"),
+      onError: (err) => Alert.alert("Erro", err.message || "Credenciais inválidas"),
     });
   };
 
@@ -48,8 +46,8 @@ export default function LoginScreen() {
       // This is the integration point — the id_token comes from the native
       // OAuth flow and is sent to our backend for verification.
       Alert.alert(
-        'OAuth',
-        `Integração ${provider === 'google' ? 'Google' : 'Apple'} Sign-In será ativada com expo-auth-session. Configure as credenciais OAuth no app.json.`,
+        "OAuth",
+        `Integração ${provider === "google" ? "Google" : "Apple"} Sign-In será ativada com expo-auth-session. Configure as credenciais OAuth no app.json.`,
       );
     } finally {
       setOAuthLoading(null);
@@ -59,7 +57,7 @@ export default function LoginScreen() {
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-white"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
         contentContainerClassName="flex-grow justify-center px-6"
@@ -84,16 +82,10 @@ export default function LoginScreen() {
             />
           )}
         />
-        {errors.email && (
-          <Text className="text-red-500 text-xs mb-3">
-            {errors.email.message}
-          </Text>
-        )}
+        {errors.email && <Text className="text-red-500 text-xs mb-3">{errors.email.message}</Text>}
 
         {/* Password */}
-        <Text className="text-sm font-medium text-gray-700 mb-1 mt-3">
-          Senha
-        </Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1 mt-3">Senha</Text>
         <Controller
           control={control}
           name="senha"
@@ -108,15 +100,11 @@ export default function LoginScreen() {
             />
           )}
         />
-        {errors.senha && (
-          <Text className="text-red-500 text-xs mb-3">
-            {errors.senha.message}
-          </Text>
-        )}
+        {errors.senha && <Text className="text-red-500 text-xs mb-3">{errors.senha.message}</Text>}
 
         {/* Forgot password link */}
         <TouchableOpacity
-          onPress={() => router.push('/(auth)/forgot-password')}
+          onPress={() => router.push("/(auth)/forgot-password")}
           className="self-end mt-1 mb-6"
         >
           <Text className="text-blue-600 text-sm">Esqueceu a senha?</Text>
@@ -145,10 +133,10 @@ export default function LoginScreen() {
         {/* Google Sign-In */}
         <TouchableOpacity
           className="border border-gray-300 rounded-lg py-4 items-center mb-3 flex-row justify-center"
-          onPress={() => handleOAuth('google')}
+          onPress={() => handleOAuth("google")}
           disabled={oauthLoading !== null}
         >
-          {oauthLoading === 'google' ? (
+          {oauthLoading === "google" ? (
             <ActivityIndicator />
           ) : (
             <Text className="font-medium text-base">Entrar com Google</Text>
@@ -156,18 +144,16 @@ export default function LoginScreen() {
         </TouchableOpacity>
 
         {/* Apple Sign-In */}
-        {Platform.OS === 'ios' && (
+        {Platform.OS === "ios" && (
           <TouchableOpacity
             className="bg-black rounded-lg py-4 items-center mb-3 flex-row justify-center"
-            onPress={() => handleOAuth('apple')}
+            onPress={() => handleOAuth("apple")}
             disabled={oauthLoading !== null}
           >
-            {oauthLoading === 'apple' ? (
+            {oauthLoading === "apple" ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text className="text-white font-medium text-base">
-                Entrar com Apple
-              </Text>
+              <Text className="text-white font-medium text-base">Entrar com Apple</Text>
             )}
           </TouchableOpacity>
         )}
@@ -175,7 +161,7 @@ export default function LoginScreen() {
         {/* Register link */}
         <View className="flex-row justify-center mt-6">
           <Text className="text-gray-600">Não tem conta? </Text>
-          <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
+          <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
             <Text className="text-blue-600 font-semibold">Cadastre-se</Text>
           </TouchableOpacity>
         </View>

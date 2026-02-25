@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { mobileAuthService } from '@/src/services';
-import { useAuthStore } from '@/src/stores';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { mobileAuthService } from "@/src/services";
+import { useAuthStore } from "@/src/stores";
 import type {
   LoginRequest,
   RegisterRequest,
@@ -10,7 +10,7 @@ import type {
   UpdateProfileRequest,
   ChangePasswordRequest,
   DeleteAccountRequest,
-} from '@/src/types';
+} from "@/src/types";
 
 export function useLogin() {
   const setCliente = useAuthStore((s) => s.setCliente);
@@ -38,15 +38,13 @@ export function useOAuth() {
 
 export function useForgotPassword() {
   return useMutation({
-    mutationFn: (data: ForgotPasswordRequest) =>
-      mobileAuthService.forgotPassword(data),
+    mutationFn: (data: ForgotPasswordRequest) => mobileAuthService.forgotPassword(data),
   });
 }
 
 export function useResetPassword() {
   return useMutation({
-    mutationFn: (data: ResetPasswordRequest) =>
-      mobileAuthService.resetPassword(data),
+    mutationFn: (data: ResetPasswordRequest) => mobileAuthService.resetPassword(data),
   });
 }
 
@@ -54,19 +52,17 @@ export function useUpdateProfile() {
   const setCliente = useAuthStore((s) => s.setCliente);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: UpdateProfileRequest) =>
-      mobileAuthService.updateProfile(data),
+    mutationFn: (data: UpdateProfileRequest) => mobileAuthService.updateProfile(data),
     onSuccess: (cliente) => {
       setCliente(cliente);
-      queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
+      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
     },
   });
 }
 
 export function useChangePassword() {
   return useMutation({
-    mutationFn: (data: ChangePasswordRequest) =>
-      mobileAuthService.changePassword(data),
+    mutationFn: (data: ChangePasswordRequest) => mobileAuthService.changePassword(data),
   });
 }
 
@@ -74,8 +70,7 @@ export function useDeleteAccount() {
   const logout = useAuthStore((s) => s.logout);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: DeleteAccountRequest) =>
-      mobileAuthService.deleteAccount(data),
+    mutationFn: (data: DeleteAccountRequest) => mobileAuthService.deleteAccount(data),
     onSuccess: async () => {
       queryClient.clear();
       await logout();

@@ -1,10 +1,7 @@
-import { apiClient } from '@/src/lib/api-client';
-import type {
-  NotificationListResponse,
-  NotificationPreferences,
-} from '@/src/types';
+import { apiClient } from "@/src/lib/api-client";
+import type { NotificationListResponse, NotificationPreferences } from "@/src/types";
 
-const PREFIX = '/api/mobile/v1/notifications';
+const PREFIX = "/api/mobile/v1/notifications";
 
 export const mobileNotificationService = {
   /** List notifications with cursor-based pagination */
@@ -26,24 +23,18 @@ export const mobileNotificationService = {
 
   /** Mark all notifications as read */
   async markAllAsRead(): Promise<{ updated: number }> {
-    const res = await apiClient.post<{ updated: number }>(
-      `${PREFIX}/read-all`,
-    );
+    const res = await apiClient.post<{ updated: number }>(`${PREFIX}/read-all`);
     return res.data;
   },
 
   /** Get notification preferences */
   async getPreferences(): Promise<NotificationPreferences> {
-    const res = await apiClient.get<NotificationPreferences>(
-      `${PREFIX}/preferences`,
-    );
+    const res = await apiClient.get<NotificationPreferences>(`${PREFIX}/preferences`);
     return res.data;
   },
 
   /** Update notification preferences */
-  async updatePreferences(
-    data: Partial<NotificationPreferences>,
-  ): Promise<void> {
+  async updatePreferences(data: Partial<NotificationPreferences>): Promise<void> {
     await apiClient.patch(`${PREFIX}/preferences`, data);
   },
 };
