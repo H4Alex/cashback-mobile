@@ -1,0 +1,149 @@
+name: Store Submission
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "Plataforma para submeter"
+        required: true
+        type: choice
+        options:
+          - all
+          - ios
+          - android
+      build_id:
+        description: "EAS Build ID (deixe vazio para usar o build mais recente)"
+        required: false
+        type: string
+
+concurrency:
+  group: store-submission
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validar Pre-requisitos
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Verificar EXPO_TOKEN
+        run: |
+          if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
+            echo "::error::EXPO_TOKEN nao configurado. Configure em Settings > Secrets."
+            exit 1
+          fi
+
+      - name: Verificar metadata das lojas
+        run: |
+          echo "Validando metadata..."
+
+          for file in store-metadata/pt-BR.json store-metadata/en.json store-metadata/privacy-labels.json; do
+            if [ ! -f "$file" ]; then
+              echo "::error::Arquivo de metadata faltando: $file"
+              exit 1
+            fi
+          done
+
+          node -e "
+            const pt = require('./store-metadata/pt-BR.json');
+            const en = require('./store-metadata/en.json');
+            const required = ['title', 'short_description', 'full_description', 'keywords', 'category', 'privacy_policy_url'];
+
+            for (const field of required) {
+              if (!pt[field]) {
+                console.error('::error::Campo faltando em pt-BR.json: ' + field);
+                process.exit(1);
+              }
+              if (!en[field]) {
+                console.error('::error::Campo faltando em en.json: ' + field);
+                process.exit(1);
+              }
+            }
+
+            // Validate character limits
+            if (pt.title.length > 30) {
+              console.error('::error::pt-BR title excede 30 caracteres (' + pt.title.length + ')');
+              process.exit(1);
+            }
+            if (pt.short_description.length > 80) {
+              console.error('::error::pt-BR short_description excede 80 caracteres (' + pt.short_description.length + ')');
+              process.exit(1);
+            }
+
+            console.log('Metadata validado com sucesso');
+          "
+
+  submit-ios:
+    name: Submeter iOS (App Store Connect)
+    needs: validate
+    if: inputs.platform == 'all' || inputs.platform == 'ios'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Expo CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Submeter para App Store Connect
+        run: |
+          if [ -n "${{ inputs.build_id }}" ]; then
+            eas submit --platform ios --id "${{ inputs.build_id }}" --non-interactive
+          else
+            eas submit --platform ios --latest --non-interactive
+          fi
+
+  submit-android:
+    name: Submeter Android (Google Play)
+    needs: validate
+    if: inputs.platform == 'all' || inputs.platform == 'android'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Expo CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Submeter para Google Play (internal track)
+        run: |
+          if [ -n "${{ inputs.build_id }}" ]; then
+            eas submit --platform android --id "${{ inputs.build_id }}" --non-interactive
+          else
+            eas submit --platform android --latest --non-interactive
+          fi
