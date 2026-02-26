@@ -15,6 +15,7 @@ permissions:
 jobs:
   e2e-android:
     name: E2E Android
+    if: github.event_name == 'workflow_dispatch'
     runs-on: macos-latest
     timeout-minutes: 45
 

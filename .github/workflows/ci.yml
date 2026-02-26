@@ -315,10 +315,15 @@ jobs:
           node-version: 20
 
       - name: Restaurar node_modules
+        id: cache-restore
         uses: actions/cache/restore@v4
         with:
           path: node_modules
           key: nm-${{ github.sha }}
+
+      - name: Instalar dependencias (fallback)
+        if: steps.cache-restore.outputs.cache-hit != 'true'
+        run: npm ci
 
       - name: Verificar configuracao Expo
         run: npx expo-doctor
