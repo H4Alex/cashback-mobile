@@ -28,12 +28,12 @@ function extractHost(url: string | undefined): string | null {
  * Axios request interceptor that enforces HTTPS and validates the target host
  * against the allow-list. Only active in production.
  */
-export function sslPinningInterceptor(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig {
+export function sslPinningInterceptor(
+  config: InternalAxiosRequestConfig,
+): InternalAxiosRequestConfig {
   if (!isProd) return config;
 
-  const fullUrl = config.baseURL
-    ? `${config.baseURL}${config.url ?? ""}`
-    : config.url ?? "";
+  const fullUrl = config.baseURL ? `${config.baseURL}${config.url ?? ""}` : (config.url ?? "");
 
   const host = extractHost(fullUrl);
 
