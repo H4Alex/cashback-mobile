@@ -1,9 +1,9 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import * as SecureStore from "expo-secure-store";
 import type { ApiError, TokenPair } from "@/src/types";
+import { env } from "@/src/config/env";
 import { sslPinningInterceptor } from "./ssl-pinning";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? "https://api.h4cashback.com";
 const TOKEN_KEY = "auth_token";
 const REFRESH_KEY = "refresh_token";
 
@@ -26,7 +26,7 @@ function processQueue(error: unknown, token: string | null) {
 
 function createApiClient(): AxiosInstance {
   const client = axios.create({
-    baseURL: BASE_URL,
+    baseURL: env.API_BASE_URL,
     timeout: 15_000,
     headers: {
       Accept: "application/json",
@@ -79,7 +79,7 @@ function createApiClient(): AxiosInstance {
           }
 
           const { data } = await axios.post<TokenPair>(
-            `${BASE_URL}/api/mobile/v1/auth/refresh`,
+            `${env.API_BASE_URL}/api/mobile/v1/auth/refresh`,
             {},
             { headers: { Authorization: `Bearer ${refreshToken}` } },
           );
