@@ -64,6 +64,7 @@ export default function RegisterScreen() {
           name="nome"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
+              testID="input-nome"
               className="border border-gray-300 rounded-lg px-4 py-3 mb-1 text-base"
               placeholder="Seu nome completo"
               autoCapitalize="words"
@@ -82,6 +83,7 @@ export default function RegisterScreen() {
           name="email"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
+              testID="input-email"
               className="border border-gray-300 rounded-lg px-4 py-3 mb-1 text-base"
               placeholder="seu@email.com"
               keyboardType="email-address"
@@ -101,6 +103,7 @@ export default function RegisterScreen() {
           name="cpf"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
+              testID="input-cpf"
               className="border border-gray-300 rounded-lg px-4 py-3 mb-1 text-base"
               placeholder="00000000000"
               keyboardType="numeric"
@@ -120,6 +123,7 @@ export default function RegisterScreen() {
           name="senha"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
+              testID="input-password"
               className="border border-gray-300 rounded-lg px-4 py-3 mb-1 text-base"
               placeholder="Mínimo 6 caracteres"
               secureTextEntry
@@ -138,6 +142,7 @@ export default function RegisterScreen() {
           name="senha_confirmation"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
+              testID="input-confirm-password"
               className="border border-gray-300 rounded-lg px-4 py-3 mb-1 text-base"
               placeholder="Repita a senha"
               secureTextEntry
