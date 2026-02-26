@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import * as SecureStore from "expo-secure-store";
 import type { ApiError, TokenPair } from "@/src/types";
+import { sslPinningInterceptor } from "./ssl-pinning";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? "https://api.h4cashback.com";
 const TOKEN_KEY = "auth_token";
@@ -32,6 +33,9 @@ function createApiClient(): AxiosInstance {
       "Content-Type": "application/json",
     },
   });
+
+  // SSL host validation (runs first, before auth)
+  client.interceptors.request.use(sslPinningInterceptor);
 
   // Request interceptor — attach JWT
   client.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {

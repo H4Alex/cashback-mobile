@@ -7,10 +7,15 @@ import { ThemeProvider } from "@/src/theme";
 import { queryClient } from "@/src/config";
 import { useAuthStore } from "@/src/stores";
 import { useConnectivity } from "@/src/hooks/useConnectivity";
-import { OfflineBanner } from "@/src/components";
+import { ErrorBoundary, OfflineBanner } from "@/src/components";
+import { initSentry } from "@/src/lib/sentry";
+import { validateApiHost } from "@/src/lib/ssl-pinning";
 import { hasCompletedOnboarding } from "./(auth)/onboarding";
 import { hasGivenConsent } from "./(auth)/consent";
 import "../global.css";
+
+initSentry();
+validateApiHost();
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -55,22 +60,24 @@ function ConnectivityBanner() {
 
 export default function RootLayout() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthGuard>
-          <View className="flex-1">
-            <ConnectivityBanner />
-            <StatusBar style="auto" />
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" options={{ headerShown: true, title: "Cashback" }} />
-              <Stack.Screen name="(auth)" />
-              <Stack.Screen name="(consumer)" />
-              <Stack.Screen name="(merchant)" />
-              <Stack.Screen name="(shared)" />
-            </Stack>
-          </View>
-        </AuthGuard>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <AuthGuard>
+            <View className="flex-1">
+              <ConnectivityBanner />
+              <StatusBar style="auto" />
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="index" options={{ headerShown: true, title: "Cashback" }} />
+                <Stack.Screen name="(auth)" />
+                <Stack.Screen name="(consumer)" />
+                <Stack.Screen name="(merchant)" />
+                <Stack.Screen name="(shared)" />
+              </Stack>
+            </View>
+          </AuthGuard>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
