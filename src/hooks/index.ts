@@ -76,3 +76,7 @@ export {
 export { useStartupPerformance } from "./useStartupPerformance";
 
 export { useAppUpdate } from "./useAppUpdate";
+
+export { useConnectivity } from "./useConnectivity";
+
+export { useAppState } from "./useAppState";
