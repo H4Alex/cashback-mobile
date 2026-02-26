@@ -1,0 +1,5 @@
+{
+  "CFBundleDisplayName": "H4 Cashback",
+  "NSCameraUsageDescription": "Necessário para escanear QR Codes de cashback.",
+  "NSFaceIDUsageDescription": "Usar biometria para login seguro."
+}
