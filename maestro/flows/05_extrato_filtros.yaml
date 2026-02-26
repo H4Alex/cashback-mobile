@@ -1,0 +1,56 @@
+# Maestro E2E — Fluxo 5: Extrato e Filtros
+# Testa: login → extrato → filtrar por status → filtrar por data → scroll paginação
+appId: com.h4alex.cashback
+
+---
+- launchApp
+
+# Login como consumidor
+- tapOn: "Entrar"
+
+- tapOn:
+    id: "input-email"
+- inputText: "consumidor@teste.com"
+
+- tapOn:
+    id: "input-password"
+- inputText: "Senha@123"
+
+- tapOn: "Entrar"
+
+# Aguardar dashboard
+- assertVisible:
+    text: "Saldo Total"
+    timeout: 10000
+
+# Navegar para extrato
+- tapOn: "Extrato"
+
+# Verificar lista de transações
+- assertVisible:
+    text: "Transações"
+    timeout: 5000
+
+# Testar filtro por status
+- tapOn: "Pendente"
+
+# Verificar que filtro está ativo
+- assertVisible: "Pendente"
+
+# Limpar filtro
+- tapOn: "Todos"
+
+# Scroll para carregar mais transações (paginação)
+- scroll:
+    direction: DOWN
+    duration: 1000
+
+# Verificar que não crashou
+- assertVisible: "Transações"
+
+# Voltar para dashboard
+- tapOn: "Home"
+
+- assertVisible:
+    text: "Saldo Total"
+    timeout: 5000

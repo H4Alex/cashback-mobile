@@ -1,0 +1,52 @@
+# Maestro E2E — Fluxo 4: Registro de Consumidor
+# Testa: abrir app → ir para registro → preencher dados → aceitar termos → cadastrar
+appId: com.h4alex.cashback
+
+---
+- launchApp
+
+# Navegar para registro
+- tapOn: "Entrar"
+- tapOn: "Criar conta"
+
+# Preencher nome
+- tapOn:
+    id: "input-nome"
+- inputText: "Teste E2E"
+
+# Preencher email
+- tapOn:
+    id: "input-email"
+- inputText: "e2e_teste@teste.com"
+
+# Preencher CPF
+- tapOn:
+    id: "input-cpf"
+- inputText: "98765432100"
+
+# Preencher telefone
+- tapOn:
+    id: "input-telefone"
+- inputText: "11999999999"
+
+# Preencher senha
+- tapOn:
+    id: "input-password"
+- inputText: "Senha@E2E123"
+
+# Confirmar senha
+- tapOn:
+    id: "input-confirm-password"
+- inputText: "Senha@E2E123"
+
+# Aceitar termos
+- tapOn:
+    id: "checkbox-termos"
+
+# Submeter registro
+- tapOn: "Cadastrar"
+
+# Verificar tela de consentimento LGPD
+- assertVisible:
+    text: "Consentimento"
+    timeout: 10000
