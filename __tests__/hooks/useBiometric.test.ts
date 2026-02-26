@@ -1,4 +1,5 @@
 import { renderHook, waitFor } from "@testing-library/react-native";
+import { biometricService } from "@/src/services/biometric.service";
 import { useBiometric } from "@/src/hooks/useBiometric";
 import { useDeviceStore } from "@/src/stores/device.store";
 
@@ -9,8 +10,6 @@ jest.mock("@/src/services/biometric.service", () => ({
     enroll: jest.fn().mockResolvedValue(undefined),
   },
 }));
-
-import { biometricService } from "@/src/services/biometric.service";
 
 describe("useBiometric", () => {
   beforeEach(() => {

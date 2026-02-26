@@ -1,9 +1,8 @@
+/* eslint-disable react/display-name */
 const React = require("react");
 
 const mockComponent = (name) =>
-  React.forwardRef((props, ref) =>
-    React.createElement(name, { ...props, ref }, props.children),
-  );
+  React.forwardRef((props, ref) => React.createElement(name, { ...props, ref }, props.children));
 
 module.exports = {
   __esModule: true,

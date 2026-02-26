@@ -8,6 +8,7 @@ const makeNotification = (overrides: Partial<MobileNotification> = {}): MobileNo
   titulo: "Cashback recebido",
   mensagem: "Você recebeu R$ 10,00 de cashback",
   lida: false,
+  dados_extras: null,
   created_at: new Date().toISOString(),
   ...overrides,
 });
@@ -20,7 +21,12 @@ describe("NotificationItem", () => {
   });
 
   it("shows correct icon for cashback_recebido type", () => {
-    render(<NotificationItem item={makeNotification({ tipo: "cashback_recebido" })} onPress={jest.fn()} />);
+    render(
+      <NotificationItem
+        item={makeNotification({ tipo: "cashback_recebido" })}
+        onPress={jest.fn()}
+      />,
+    );
     expect(screen.getByText("🟢")).toBeTruthy();
   });
 

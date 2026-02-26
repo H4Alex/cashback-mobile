@@ -9,9 +9,7 @@ jest.mock("@/src/components/ErrorBoundary", () => ({
 describe("Merchant Navigation Flow", () => {
   it("merchant layout wraps with ErrorBoundary", () => {
     // Simulates the merchant layout structure
-    const MerchantLayout = () => (
-      <Text>Merchant Dashboard</Text>
-    );
+    const MerchantLayout = () => <Text>Merchant Dashboard</Text>;
 
     render(<MerchantLayout />);
     expect(screen.getByText("Merchant Dashboard")).toBeTruthy();

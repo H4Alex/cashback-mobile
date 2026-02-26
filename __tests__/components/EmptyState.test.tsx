@@ -11,12 +11,7 @@ describe("EmptyState", () => {
   it("renders action button when actionLabel and onAction provided", () => {
     const onAction = jest.fn();
     render(
-      <EmptyState
-        title="Vazio"
-        message="Nada aqui"
-        actionLabel="Recarregar"
-        onAction={onAction}
-      />,
+      <EmptyState title="Vazio" message="Nada aqui" actionLabel="Recarregar" onAction={onAction} />,
     );
     const button = screen.getByText("Recarregar");
     expect(button).toBeTruthy();

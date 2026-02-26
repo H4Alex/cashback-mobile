@@ -1,3 +1,4 @@
+/* global jest */
 const store = new Map();
 
 const mmkvInstance = {

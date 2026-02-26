@@ -5,6 +5,7 @@ const baseSession = {
   id: "sess-1",
   device_name: "iPhone 15",
   platform: "iOS 17.0",
+  ip_address: "192.168.1.1",
   is_current: false,
   last_active_at: new Date().toISOString(),
 };

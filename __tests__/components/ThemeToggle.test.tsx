@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react-native";
+import { useTheme } from "@/src/theme";
 import { ThemeToggle } from "@/src/components/ThemeToggle";
 
 jest.mock("@/src/theme", () => ({
@@ -7,8 +8,6 @@ jest.mock("@/src/theme", () => ({
     setMode: jest.fn(),
   })),
 }));
-
-import { useTheme } from "@/src/theme";
 
 describe("ThemeToggle", () => {
   const mockSetMode = jest.fn();

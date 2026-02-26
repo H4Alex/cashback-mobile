@@ -28,7 +28,7 @@ describe("CPFSearchInput", () => {
     render(
       <CPFSearchInput
         {...defaultProps}
-        selectedCliente={{ id: 1, nome: "João Silva", email: "joao@test.com" }}
+        selectedCliente={{ id: 1, nome: "João Silva", email: "joao@test.com", cpf: "12345678901" }}
       />,
     );
     expect(screen.getByText("João Silva")).toBeTruthy();
@@ -39,7 +39,7 @@ describe("CPFSearchInput", () => {
     render(
       <CPFSearchInput
         {...defaultProps}
-        results={[{ id: 1, nome: "Maria", email: "maria@test.com" }]}
+        results={[{ id: 1, nome: "Maria", email: "maria@test.com", cpf: "98765432100" }]}
       />,
     );
     expect(screen.getByText("Maria")).toBeTruthy();
@@ -47,13 +47,7 @@ describe("CPFSearchInput", () => {
   });
 
   it("shows no results message for complete CPF with empty results", () => {
-    render(
-      <CPFSearchInput
-        {...defaultProps}
-        cpf="123.456.789-01"
-        results={[]}
-      />,
-    );
+    render(<CPFSearchInput {...defaultProps} cpf="123.456.789-01" results={[]} />);
     expect(screen.getByText(/Nenhum cliente encontrado/)).toBeTruthy();
   });
 });

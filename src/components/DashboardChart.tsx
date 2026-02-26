@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import Svg, { Path, Circle, Line, Text as SvgText } from "react-native-svg";
+import Svg, { Path, Circle, G, Line, Text as SvgText } from "react-native-svg";
 import { Skeleton } from "./Skeleton";
 
 interface ChartPoint {
@@ -32,8 +32,8 @@ export function DashboardChart({ data, isLoading }: DashboardChartProps) {
   if (isLoading) {
     return (
       <View className="bg-white rounded-xl p-4" style={{ height: 180 }}>
-        <Skeleton style={{ width: 120, height: 16, borderRadius: 4, marginBottom: 12 }} />
-        <Skeleton style={{ width: "100%", height: 120, borderRadius: 8 }} />
+        <Skeleton width={120} height={16} borderRadius={4} className="mb-3" />
+        <Skeleton height={120} borderRadius={8} />
       </View>
     );
   }
@@ -51,8 +51,18 @@ export function DashboardChart({ data, isLoading }: DashboardChartProps) {
   const allValues = data.flatMap((d) => [d.gerado, d.utilizado]);
   const maxVal = Math.max(...allValues, 1);
 
-  const geradoPath = buildPath(data.map((d) => d.gerado), chartW, chartH, maxVal);
-  const utilizadoPath = buildPath(data.map((d) => d.utilizado), chartW, chartH, maxVal);
+  const geradoPath = buildPath(
+    data.map((d) => d.gerado),
+    chartW,
+    chartH,
+    maxVal,
+  );
+  const utilizadoPath = buildPath(
+    data.map((d) => d.utilizado),
+    chartW,
+    chartH,
+    maxVal,
+  );
 
   const stepX = chartW / (data.length - 1 || 1);
 
@@ -87,8 +97,22 @@ export function DashboardChart({ data, isLoading }: DashboardChartProps) {
         ))}
 
         {/* Lines */}
-        <Path d={geradoPath} stroke="#22c55e" strokeWidth={2.5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        <Path d={utilizadoPath} stroke="#3b82f6" strokeWidth={2.5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <Path
+          d={geradoPath}
+          stroke="#22c55e"
+          strokeWidth={2.5}
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <Path
+          d={utilizadoPath}
+          stroke="#3b82f6"
+          strokeWidth={2.5}
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
 
         {/* Dots */}
         {data.map((d, i) => {
@@ -96,10 +120,10 @@ export function DashboardChart({ data, isLoading }: DashboardChartProps) {
           const yG = 4 + (chartH - 8) - (maxVal > 0 ? (d.gerado / maxVal) * (chartH - 8) : 0);
           const yU = 4 + (chartH - 8) - (maxVal > 0 ? (d.utilizado / maxVal) * (chartH - 8) : 0);
           return (
-            <View key={i}>
+            <G key={i}>
               <Circle cx={x} cy={yG} r={3} fill="#22c55e" />
               <Circle cx={x} cy={yU} r={3} fill="#3b82f6" />
-            </View>
+            </G>
           );
         })}
 
@@ -122,7 +146,13 @@ export function DashboardChart({ data, isLoading }: DashboardChartProps) {
 }
 
 /** Mini sparkline for consumer dashboard */
-export function SparklineChart({ values, color = "#22c55e" }: { values: number[]; color?: string }) {
+export function SparklineChart({
+  values,
+  color = "#22c55e",
+}: {
+  values: number[];
+  color?: string;
+}) {
   if (!values || values.length < 2) return null;
 
   const w = 80;

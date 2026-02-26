@@ -1,11 +1,10 @@
 import { render, screen } from "@testing-library/react-native";
+import { useCountdown } from "@/src/hooks/useCountdown";
 import { CountdownTimer } from "@/src/components/CountdownTimer";
 
 jest.mock("@/src/hooks/useCountdown", () => ({
   useCountdown: jest.fn(),
 }));
-
-import { useCountdown } from "@/src/hooks/useCountdown";
 
 describe("CountdownTimer", () => {
   it("renders formatted time when not expired", () => {

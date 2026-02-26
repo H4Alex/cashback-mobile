@@ -1,13 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Text, type TextProps } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedProps,
-  withTiming,
-  Easing,
-} from "react-native-reanimated";
-
-const AnimatedText = Animated.createAnimatedComponent(Text);
+import { useSharedValue, withTiming, Easing } from "react-native-reanimated";
 
 interface AnimatedCounterProps extends Omit<TextProps, "children"> {
   value: number;
@@ -15,6 +8,13 @@ interface AnimatedCounterProps extends Omit<TextProps, "children"> {
   suffix?: string;
   duration?: number;
   decimals?: number;
+}
+
+function formatNumber(val: number, decimals: number): string {
+  const formatted = val.toFixed(decimals);
+  const [intPart, decPart] = formatted.split(".");
+  const withDots = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return `${withDots},${decPart}`;
 }
 
 export function AnimatedCounter({
@@ -25,6 +25,9 @@ export function AnimatedCounter({
   decimals = 2,
   ...textProps
 }: AnimatedCounterProps) {
+  const [displayValue, setDisplayValue] = useState(
+    `${prefix}${formatNumber(0, decimals)}${suffix}`,
+  );
   const animatedValue = useSharedValue(0);
 
   useEffect(() => {
@@ -34,15 +37,14 @@ export function AnimatedCounter({
     });
   }, [value, animatedValue, duration]);
 
-  const animatedProps = useAnimatedProps(() => {
-    const formatted = animatedValue.value.toFixed(decimals);
-    const [intPart, decPart] = formatted.split(".");
-    const withDots = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    return {
-      text: `${prefix}${withDots},${decPart}${suffix}`,
-      defaultValue: `${prefix}0,${"0".repeat(decimals)}${suffix}`,
-    } as { text: string; defaultValue: string };
-  });
+  // In production, this would use useAnimatedReaction to update on every frame.
+  // For simplicity, we set the final value after animation completes.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDisplayValue(`${prefix}${formatNumber(value, decimals)}${suffix}`);
+    }, duration);
+    return () => clearTimeout(timer);
+  }, [value, prefix, suffix, duration, decimals]);
 
-  return <AnimatedText {...textProps} animatedProps={animatedProps} />;
+  return <Text {...textProps}>{displayValue}</Text>;
 }

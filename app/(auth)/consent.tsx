@@ -88,8 +88,7 @@ export default function ConsentScreen() {
           {accepted && <Text className="text-white text-xs font-bold">✓</Text>}
         </View>
         <Text className="flex-1 text-sm text-gray-800">
-          Li e aceito os{" "}
-          <Text className="text-blue-600 font-medium">Termos de Uso</Text> e a{" "}
+          Li e aceito os <Text className="text-blue-600 font-medium">Termos de Uso</Text> e a{" "}
           <Text className="text-blue-600 font-medium">Política de Privacidade</Text>
         </Text>
       </TouchableOpacity>
@@ -109,9 +108,7 @@ export default function ConsentScreen() {
 
       {/* Accept button */}
       <TouchableOpacity
-        className={`rounded-xl py-4 items-center mt-6 ${
-          accepted ? "bg-green-500" : "bg-gray-300"
-        }`}
+        className={`rounded-xl py-4 items-center mt-6 ${accepted ? "bg-green-500" : "bg-gray-300"}`}
         onPress={handleAccept}
         disabled={!accepted}
         accessibilityLabel="Confirmar consentimento e continuar"

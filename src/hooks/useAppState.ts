@@ -5,10 +5,7 @@ import { AppState, type AppStateStatus } from "react-native";
  * Calls `onForeground` when app transitions from background → active.
  * Calls `onBackground` when app transitions from active → background.
  */
-export function useAppState(options?: {
-  onForeground?: () => void;
-  onBackground?: () => void;
-}) {
+export function useAppState(options?: { onForeground?: () => void; onBackground?: () => void }) {
   const appState = useRef<AppStateStatus>(AppState.currentState);
 
   useEffect(() => {

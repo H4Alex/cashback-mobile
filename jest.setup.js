@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 // --- Silence console warnings in tests ---
 const originalWarn = console.warn;
 console.warn = (...args) => {

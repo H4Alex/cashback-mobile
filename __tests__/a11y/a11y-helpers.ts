@@ -1,24 +1,24 @@
-import { type ReactTestInstance } from "react-test-renderer";
-
 /**
  * A11y test helper utilities for React Native Testing Library.
  * Checks accessibility properties on rendered components.
  */
 
-export function expectAccessibleButton(instance: ReactTestInstance) {
+type TestInstance = { props: Record<string, unknown>; type: string; children: unknown[] };
+
+export function expectAccessibleButton(instance: TestInstance) {
   const props = instance.props;
   expect(props.accessibilityRole ?? props.role).toBe("button");
   expect(props.accessibilityLabel ?? props["aria-label"]).toBeTruthy();
 }
 
-export function expectAccessibleLabel(instance: ReactTestInstance) {
+export function expectAccessibleLabel(instance: TestInstance) {
   const label = instance.props.accessibilityLabel ?? instance.props["aria-label"];
   expect(label).toBeTruthy();
   expect(typeof label).toBe("string");
-  expect(label.length).toBeGreaterThan(0);
+  expect((label as string).length).toBeGreaterThan(0);
 }
 
-export function expectNoEmptyText(instances: ReactTestInstance[]) {
+export function expectNoEmptyText(instances: TestInstance[]) {
   instances.forEach((instance) => {
     if (instance.type === "Text") {
       const children = instance.props.children;
@@ -29,24 +29,18 @@ export function expectNoEmptyText(instances: ReactTestInstance[]) {
   });
 }
 
-export function findAllByRole(
-  root: ReactTestInstance,
-  role: string,
-): ReactTestInstance[] {
-  const results: ReactTestInstance[] = [];
+export function findAllByRole(root: TestInstance, role: string): TestInstance[] {
+  const results: TestInstance[] = [];
   const queue = [root];
   while (queue.length > 0) {
     const node = queue.shift()!;
-    if (
-      node.props?.accessibilityRole === role ||
-      node.props?.role === role
-    ) {
+    if (node.props?.accessibilityRole === role || node.props?.role === role) {
       results.push(node);
     }
     if (node.children) {
       for (const child of node.children) {
         if (typeof child !== "string") {
-          queue.push(child);
+          queue.push(child as TestInstance);
         }
       }
     }

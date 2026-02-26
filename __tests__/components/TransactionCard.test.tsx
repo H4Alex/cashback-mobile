@@ -3,8 +3,9 @@ import { TransactionCard } from "@/src/components/TransactionCard";
 import type { CashbackEntry } from "@/src/types";
 
 const makeEntry = (overrides: Partial<CashbackEntry> = {}): CashbackEntry => ({
-  id: 1,
+  id: "1",
   empresa_nome: "Loja Teste",
+  empresa_id: "e1",
   valor: 45.9,
   status: "creditado",
   descricao: "Compra cartão",

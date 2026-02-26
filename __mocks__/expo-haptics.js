@@ -1,3 +1,4 @@
+/* global jest */
 module.exports = {
   notificationAsync: jest.fn(),
   impactAsync: jest.fn(),

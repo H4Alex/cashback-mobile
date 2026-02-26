@@ -5,7 +5,8 @@ const baseSaldo = {
   disponivel: 150.5,
   pendente: 30.0,
   total: 500.75,
-  proximo_a_expirar: null as { valor: number; quantidade: number } | null,
+  empresas: [],
+  proximo_a_expirar: undefined as { valor: number; quantidade: number } | undefined,
 };
 
 describe("SaldoCard", () => {

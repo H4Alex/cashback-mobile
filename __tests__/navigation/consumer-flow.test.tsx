@@ -7,9 +7,7 @@ jest.mock("@/src/components/ErrorBoundary", () => ({
 
 describe("Consumer Navigation Flow", () => {
   it("consumer layout wraps with ErrorBoundary", () => {
-    const ConsumerLayout = () => (
-      <Text>Consumer Dashboard</Text>
-    );
+    const ConsumerLayout = () => <Text>Consumer Dashboard</Text>;
 
     render(<ConsumerLayout />);
     expect(screen.getByText("Consumer Dashboard")).toBeTruthy();

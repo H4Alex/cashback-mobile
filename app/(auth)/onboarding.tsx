@@ -29,8 +29,7 @@ const slides = [
     id: "2",
     icon: "📱",
     title: "Resgate fácil",
-    description:
-      "Use seu saldo direto no app com QR Code. Rápido, seguro e sem burocracia.",
+    description: "Use seu saldo direto no app com QR Code. Rápido, seguro e sem burocracia.",
   },
   {
     id: "3",
@@ -60,13 +59,11 @@ export default function OnboardingScreen() {
     }
   };
 
-  const onViewableItemsChanged = useRef(
-    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
-      if (viewableItems.length > 0 && viewableItems[0].index != null) {
-        setCurrentIndex(viewableItems[0].index);
-      }
-    },
-  ).current;
+  const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+    if (viewableItems.length > 0 && viewableItems[0].index != null) {
+      setCurrentIndex(viewableItems[0].index);
+    }
+  }).current;
 
   const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
 

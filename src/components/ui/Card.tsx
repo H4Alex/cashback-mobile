@@ -24,11 +24,7 @@ const shadow = Platform.select({
 
 export function Card({ children, className = "", style, ...props }: CardProps) {
   return (
-    <View
-      className={`bg-white rounded-2xl ${className}`}
-      style={[shadow, style]}
-      {...props}
-    >
+    <View className={`bg-white rounded-2xl ${className}`} style={[shadow, style]} {...props}>
       {children}
     </View>
   );

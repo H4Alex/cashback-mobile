@@ -1,6 +1,5 @@
 describe("Deep Linking Configuration", () => {
   it("app uses h4cashback scheme", () => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const appJson = require("../../app.json");
     expect(appJson.expo.scheme).toBe("h4cashback");
   });

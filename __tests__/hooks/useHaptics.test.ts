@@ -27,9 +27,7 @@ describe("useHaptics", () => {
   it("calls Haptics.notificationAsync for hapticError", async () => {
     const { result } = renderHook(() => useHaptics());
     await result.current.hapticError();
-    expect(Haptics.notificationAsync).toHaveBeenCalledWith(
-      Haptics.NotificationFeedbackType.Error,
-    );
+    expect(Haptics.notificationAsync).toHaveBeenCalledWith(Haptics.NotificationFeedbackType.Error);
   });
 
   it("calls Haptics.impactAsync for hapticLight", async () => {

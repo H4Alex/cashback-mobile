@@ -5,10 +5,10 @@ import {
   useDashboardStats,
   useDashboardTransacoes,
   useDashboardTopClientes,
+  useDashboardChart,
 } from "@/src/hooks/useMerchantManagement";
 import { StatsCard } from "@/src/components/StatsCard";
 import { EmptyState, Skeleton, DashboardChart, AnimatedCardEntry } from "@/src/components";
-import { useDashboardChart } from "@/src/hooks/useMerchantManagement";
 import { formatCurrency } from "@/src/utils/formatters";
 
 const TIPO_COLORS: Record<string, string> = {
@@ -74,7 +74,14 @@ export default function MerchantDashboardScreen() {
 
       {/* Chart */}
       <AnimatedCardEntry index={1} className="mx-4 mt-4">
-        <DashboardChart data={chartData ?? []} isLoading={loadingChart} />
+        <DashboardChart
+          data={(chartData ?? []).map((d) => ({
+            label: d.data,
+            gerado: d.gerado,
+            utilizado: d.utilizado,
+          }))}
+          isLoading={loadingChart}
+        />
       </AnimatedCardEntry>
 
       {/* Últimas transações */}

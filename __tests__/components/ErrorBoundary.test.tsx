@@ -1,8 +1,8 @@
-import { render, screen, fireEvent } from "@testing-library/react-native";
+import { render, screen } from "@testing-library/react-native";
 import { Text } from "react-native";
 import { ErrorBoundary } from "@/src/components/ErrorBoundary";
 
-function ProblemChild() {
+function ProblemChild(): React.JSX.Element {
   throw new Error("Test error");
 }
 

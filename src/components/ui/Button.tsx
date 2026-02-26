@@ -1,4 +1,9 @@
-import { TouchableOpacity, Text, ActivityIndicator, type TouchableOpacityProps } from "react-native";
+import {
+  TouchableOpacity,
+  Text,
+  ActivityIndicator,
+  type TouchableOpacityProps,
+} from "react-native";
 
 type Variant = "primary" | "secondary" | "outline" | "ghost" | "danger";
 
@@ -46,7 +51,9 @@ export function Button({
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={variant === "outline" || variant === "ghost" ? "#374151" : "#fff"} />
+        <ActivityIndicator
+          color={variant === "outline" || variant === "ghost" ? "#374151" : "#fff"}
+        />
       ) : (
         <Text className={`font-semibold ${s.text} ${v.text}`}>{children}</Text>
       )}

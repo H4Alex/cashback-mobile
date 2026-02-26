@@ -54,9 +54,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
           {__DEV__ && this.state.error && (
             <ScrollView className="mt-4 max-h-40 w-full bg-red-50 rounded-lg p-3">
-              <Text className="text-red-700 text-xs font-mono">
-                {this.state.error.message}
-              </Text>
+              <Text className="text-red-700 text-xs font-mono">{this.state.error.message}</Text>
             </ScrollView>
           )}
         </View>

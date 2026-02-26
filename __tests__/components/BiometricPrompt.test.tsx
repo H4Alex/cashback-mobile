@@ -4,10 +4,7 @@ import { BiometricPrompt } from "@/src/components/BiometricPrompt";
 describe("BiometricPrompt", () => {
   it("renders title and buttons", () => {
     render(
-      <BiometricPrompt
-        onAuthenticate={jest.fn().mockResolvedValue(true)}
-        onFallback={jest.fn()}
-      />,
+      <BiometricPrompt onAuthenticate={jest.fn().mockResolvedValue(true)} onFallback={jest.fn()} />,
     );
     expect(screen.getByText("Autenticação Biométrica")).toBeTruthy();
     expect(screen.getByText("Autenticar")).toBeTruthy();
