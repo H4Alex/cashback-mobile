@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { env } from "@/src/config/env";
+import { sslPinningInterceptor } from "@/src/lib/ssl-pinning";
 import { secureStorage } from "./secureStorageService";
 
 let isRefreshing = false;
@@ -25,6 +26,9 @@ function createApiClient(): AxiosInstance {
     timeout: 15_000,
     headers: { "Content-Type": "application/json" },
   });
+
+  // SSL host validation (runs first, before auth)
+  client.interceptors.request.use(sslPinningInterceptor);
 
   client.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
     const token = await secureStorage.getToken();
