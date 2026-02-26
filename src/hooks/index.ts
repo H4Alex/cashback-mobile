@@ -80,3 +80,5 @@ export { useAppUpdate } from "./useAppUpdate";
 export { useConnectivity } from "./useConnectivity";
 
 export { useAppState } from "./useAppState";
+
+export { useHaptics } from "./useHaptics";

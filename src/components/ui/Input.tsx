@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, type TextInputProps } from "react-native";
 
-type InputType = "text" | "email" | "password" | "cpf" | "cnpj" | "phone";
+type InputType = "text" | "email" | "password" | "cpf" | "cnpj" | "phone" | "currency" | "cep";
 
 interface InputProps extends Omit<TextInputProps, "secureTextEntry"> {
   label?: string;
@@ -32,6 +32,19 @@ const masks: Partial<Record<InputType, (value: string) => string>> = {
     }
     return digits.replace(/(\d{2})(\d)/, "($1) $2").replace(/(\d{5})(\d)/, "$1-$2");
   },
+  currency: (v) => {
+    const digits = v.replace(/\D/g, "");
+    if (!digits) return "R$ 0,00";
+    const cents = parseInt(digits, 10);
+    const reais = (cents / 100).toFixed(2);
+    const [intPart, decPart] = reais.split(".");
+    const formatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return `R$ ${formatted},${decPart}`;
+  },
+  cep: (v) => {
+    const digits = v.replace(/\D/g, "").slice(0, 8);
+    return digits.replace(/(\d{5})(\d)/, "$1-$2");
+  },
 };
 
 const keyboardTypes: Partial<Record<InputType, TextInputProps["keyboardType"]>> = {
@@ -39,6 +52,8 @@ const keyboardTypes: Partial<Record<InputType, TextInputProps["keyboardType"]>> 
   cpf: "numeric",
   cnpj: "numeric",
   phone: "phone-pad",
+  currency: "numeric",
+  cep: "numeric",
 };
 
 export function Input({

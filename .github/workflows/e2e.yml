@@ -1,6 +1,8 @@
 name: E2E Tests (Maestro)
 
 on:
+  pull_request:
+    branches: [main, develop]
   workflow_dispatch:
 
 concurrency:
@@ -48,9 +50,18 @@ jobs:
           profile: pixel_6
           script: |
             npx expo run:android
-            maestro test maestro/flows/01_login_dashboard.yaml
-            maestro test maestro/flows/02_gerar_cashback.yaml
-            maestro test maestro/flows/03_qrcode_flow.yaml
+            maestro test maestro/flows/ --retry-failed-tests 2
+
+      - name: Upload Maestro artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-results
+          path: |
+            ~/.maestro/tests/**/*.mp4
+            ~/.maestro/tests/**/*.png
+            ~/.maestro/tests/**/report.xml
+          retention-days: 7
 
   coverage:
     name: Coverage Report
@@ -71,9 +82,22 @@ jobs:
         run: npm ci
 
       - name: Run tests with coverage
-        run: npx jest --coverage --passWithNoTests
+        run: npm run test:ci
 
-      - name: Check coverage thresholds
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
+
+      - name: Coverage summary
+        if: always()
         run: |
-          echo "Coverage report generated in coverage/ directory"
-          echo "Target: 70% statements, 50% branches, 30% functions"
+          if [ -f coverage/coverage-summary.json ]; then
+            echo "## Coverage Summary" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat coverage/coverage-summary.json | head -20 >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
