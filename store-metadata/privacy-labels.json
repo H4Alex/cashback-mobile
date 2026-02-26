@@ -32,7 +32,16 @@
         "linked_to_user": false
       }
     ],
-    "data_not_collected": ["Location", "Health & Fitness", "Browsing History", "Search History", "Contacts", "Photos or Videos", "Audio Data", "Sensitive Info"]
+    "data_not_collected": [
+      "Location",
+      "Health & Fitness",
+      "Browsing History",
+      "Search History",
+      "Contacts",
+      "Photos or Videos",
+      "Audio Data",
+      "Sensitive Info"
+    ]
   },
   "google_data_safety": {
     "data_shared": [],
