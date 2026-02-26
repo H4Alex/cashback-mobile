@@ -1,8 +1,14 @@
 {
-  "title": "H4 Cashback - Loyalty Program",
+  "title": "H4 Cashback - Loyalty",
+  "subtitle": "Real cashback at partner stores",
   "short_description": "Earn cashback on purchases at partner stores.",
+  "promotional_text": "New: real-time push notifications and secure QR Code countdown for safer redemptions!",
   "full_description": "H4 Cashback is the complete app for consumers and merchants to manage cashback programs.\n\nFor Consumers:\n- View your cashback balance in real time\n- Track detailed transaction history\n- Generate QR Codes for in-store redemption\n- Receive notifications for credited cashback\n- Manage notification preferences\n- Secure login with biometrics (FaceID/TouchID)\n\nFor Merchants:\n- Dashboard with generated, credited and redeemed cashback metrics\n- Manage customers and cashback campaigns\n- Generate and redeem cashback via CPF or QR Code\n- Track sales and disputes\n- Performance reports by period\n- Multi-store support\n\nSecurity:\n- Biometric authentication\n- Tokens stored in Secure Store\n- Automatic session timeout\n- LGPD compliance (data deletion)\n\nDownload now and start saving with cashback!",
-  "keywords": "cashback, loyalty, discount, savings, stores, shopping, QR code",
+  "keywords": "cashback, loyalty, discount, savings, stores, shopping, QR code, rewards, points, coupon, promotion, money back, merchant, loyalty program",
+  "whats_new": "v1.0.0\n- Real-time push notifications\n- QR Code with security countdown\n- Dark mode support\n- Biometric login (FaceID/TouchID)\n- Transaction history with filters\n- Full merchant dashboard\n- LGPD compliance",
   "category": "Finance",
-  "privacy_policy_url": "https://h4cashback.com.br/privacy-policy"
+  "content_rating": "Everyone",
+  "privacy_policy_url": "https://h4cashback.com.br/privacy-policy",
+  "support_url": "https://h4cashback.com.br/support",
+  "marketing_url": "https://h4cashback.com.br"
 }

@@ -18,7 +18,15 @@
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --passWithNoTests",
     "format": "prettier --write \"**/*.{ts,tsx,json}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,json}\""
+    "format:check": "prettier --check \"**/*.{ts,tsx,json}\"",
+    "build:dev": "eas build --profile development --platform all",
+    "build:preview": "eas build --profile preview --platform all",
+    "build:prod": "eas build --profile production --platform all",
+    "update:preview": "eas update --channel preview",
+    "update:prod": "eas update --channel production",
+    "submit:android": "eas submit --platform android --latest",
+    "submit:ios": "eas submit --platform ios --latest",
+    "submit:all": "eas submit --platform all --latest"
   },
   "dependencies": {
     "@expo/vector-icons": "~14.0.4",

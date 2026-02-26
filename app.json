@@ -55,8 +55,8 @@
       ]
     },
     "locales": {
-      "pt": "./store-metadata/pt-BR.json",
-      "en": "./store-metadata/en.json"
+      "pt": "./locales/pt-BR.json",
+      "en": "./locales/en.json"
     },
     "web": {
       "bundler": "metro",

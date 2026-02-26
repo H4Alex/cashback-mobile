@@ -1,8 +1,14 @@
 {
-  "title": "H4 Cashback - Programa de Fidelidade",
+  "title": "H4 Cashback - Fidelidade",
+  "subtitle": "Cashback real nas lojas parceiras",
   "short_description": "Ganhe cashback em compras nas lojas parceiras.",
+  "promotional_text": "Novidade: notificações push em tempo real e QR Code com countdown para resgates mais seguros!",
   "full_description": "O H4 Cashback é o app completo para consumidores e lojistas gerenciarem programas de cashback.\n\nPara Consumidores:\n- Visualize seu saldo de cashback em tempo real\n- Acompanhe o extrato detalhado de transações\n- Gere QR Codes para resgate nas lojas parceiras\n- Receba notificações de cashback creditado\n- Gerencie preferências de notificação\n- Login seguro com biometria (FaceID/TouchID)\n\nPara Lojistas:\n- Dashboard com métricas de cashback gerado, creditado e resgatado\n- Gerencie clientes e campanhas de cashback\n- Gere e utilize cashback via CPF ou QR Code\n- Acompanhe vendas e contestações\n- Relatórios de performance por período\n- Suporte a múltiplas empresas (multiloja)\n\nSegurança:\n- Autenticação biométrica\n- Tokens armazenados em Secure Store\n- Timeout de sessão automático\n- Conformidade LGPD (exclusão de dados)\n\nBaixe agora e comece a economizar com cashback!",
-  "keywords": "cashback, fidelidade, desconto, economia, lojas, compras, QR code",
+  "keywords": "cashback, fidelidade, desconto, economia, lojas, compras, QR code, programa fidelidade, pontos, recompensa, cupom, promoção, dinheiro de volta, lojista",
+  "whats_new": "v1.0.0\n- Notificações push em tempo real\n- QR Code com countdown de segurança\n- Suporte a modo escuro\n- Login com biometria (FaceID/TouchID)\n- Extrato com filtros e paginação\n- Dashboard completo para lojistas\n- Conformidade LGPD",
   "category": "Finanças",
-  "privacy_policy_url": "https://h4cashback.com.br/politica-de-privacidade"
+  "content_rating": "Livre",
+  "privacy_policy_url": "https://h4cashback.com.br/politica-de-privacidade",
+  "support_url": "https://h4cashback.com.br/suporte",
+  "marketing_url": "https://h4cashback.com.br"
 }

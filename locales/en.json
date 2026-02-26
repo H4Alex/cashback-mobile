@@ -1,0 +1,5 @@
+{
+  "CFBundleDisplayName": "H4 Cashback",
+  "NSCameraUsageDescription": "Required to scan cashback QR Codes.",
+  "NSFaceIDUsageDescription": "Use biometrics for secure login."
+}
