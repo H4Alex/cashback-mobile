@@ -1,0 +1,72 @@
+# Maestro E2E — Fluxo 8: Dashboard do Lojista
+# Testa: login lojista → dashboard métricas → clientes → busca → config loja
+appId: com.h4alex.cashback
+
+---
+- launchApp
+
+# Login como lojista
+- tapOn: "Entrar"
+- tapOn: "Lojista"
+
+- tapOn:
+    id: "input-email"
+- inputText: "lojista@teste.com"
+
+- tapOn:
+    id: "input-password"
+- inputText: "Senha@123"
+
+- tapOn: "Entrar"
+
+# Aguardar dashboard lojista
+- assertVisible:
+    text: "Dashboard"
+    timeout: 10000
+
+# Verificar métricas do dashboard
+- assertVisible: "Total Cashback"
+
+# Navegar para aba Clientes
+- tapOn: "Clientes"
+
+# Verificar tela de clientes
+- assertVisible:
+    text: "Clientes"
+    timeout: 5000
+
+# Testar busca de cliente
+- tapOn:
+    id: "search-input"
+    optional: true
+- inputText: "teste"
+
+# Limpar busca
+- tapOn:
+    id: "clear-search"
+    optional: true
+
+# Navegar para Mais
+- tapOn: "Mais"
+
+# Verificar menu expandido
+- assertVisible:
+    text: "Configurações"
+    timeout: 5000
+
+# Acessar configurações
+- tapOn: "Configurações"
+
+- assertVisible:
+    text: "Configurações"
+    timeout: 5000
+
+# Voltar
+- tapOn: "Voltar"
+
+# Verificar contestações
+- tapOn: "Contestações"
+
+- assertVisible:
+    text: "Contestações"
+    timeout: 5000

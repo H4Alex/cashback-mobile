@@ -1,2 +1,2 @@
-export { env, isDev, isProd } from "./env";
+export { env, isDev, isProd, validateEnv } from "./env";
 export { queryClient } from "./queryClient";

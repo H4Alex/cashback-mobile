@@ -1,0 +1,74 @@
+# Maestro E2E — Fluxo 7: Perfil do Consumidor
+# Testa: login → perfil → editar dados → alterar senha → política de privacidade → theme toggle
+appId: com.h4alex.cashback
+
+---
+- launchApp
+
+# Login como consumidor
+- tapOn: "Entrar"
+
+- tapOn:
+    id: "input-email"
+- inputText: "consumidor@teste.com"
+
+- tapOn:
+    id: "input-password"
+- inputText: "Senha@123"
+
+- tapOn: "Entrar"
+
+# Aguardar dashboard
+- assertVisible:
+    text: "Saldo Total"
+    timeout: 10000
+
+# Navegar para Perfil
+- tapOn: "Perfil"
+
+# Verificar tela de perfil
+- assertVisible:
+    text: "Meus Dados"
+    timeout: 5000
+
+# Testar edição de dados
+- tapOn: "Editar"
+
+# Verificar tela de edição
+- assertVisible:
+    text: "Salvar"
+    timeout: 5000
+
+# Voltar sem salvar
+- tapOn: "Voltar"
+
+# Acessar alteração de senha
+- tapOn: "Alterar Senha"
+
+- assertVisible:
+    text: "Senha atual"
+    timeout: 5000
+
+- tapOn: "Voltar"
+
+# Acessar política de privacidade
+- scrollUntilVisible:
+    element: "Política de Privacidade"
+    direction: DOWN
+
+- tapOn: "Política de Privacidade"
+
+- assertVisible:
+    text: "LGPD"
+    timeout: 5000
+
+- tapOn: "Voltar"
+
+# Testar toggle de tema
+- scrollUntilVisible:
+    element: "Tema"
+    direction: DOWN
+
+- tapOn:
+    id: "theme-toggle"
+    optional: true

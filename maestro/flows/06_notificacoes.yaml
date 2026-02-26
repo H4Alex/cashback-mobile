@@ -1,0 +1,51 @@
+# Maestro E2E — Fluxo 6: Notificações
+# Testa: login → aba notificações → marcar como lida → marcar todas → preferências
+appId: com.h4alex.cashback
+
+---
+- launchApp
+
+# Login como consumidor
+- tapOn: "Entrar"
+
+- tapOn:
+    id: "input-email"
+- inputText: "consumidor@teste.com"
+
+- tapOn:
+    id: "input-password"
+- inputText: "Senha@123"
+
+- tapOn: "Entrar"
+
+# Aguardar dashboard
+- assertVisible:
+    text: "Saldo Total"
+    timeout: 10000
+
+# Navegar para aba Notificações
+- tapOn: "Notificações"
+
+# Verificar tela de notificações carregou
+- assertVisible:
+    text: "Notificações"
+    timeout: 5000
+
+# Testar "marcar todas como lidas" se houver notificações
+- tapOn:
+    text: "Marcar todas como lidas"
+    optional: true
+
+# Navegar para preferências de notificação
+- tapOn: "Preferências"
+
+# Verificar tela de preferências
+- assertVisible:
+    text: "Push"
+    timeout: 5000
+
+# Voltar
+- tapOn: "Voltar"
+
+# Verificar retorno à lista
+- assertVisible: "Notificações"

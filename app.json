@@ -17,6 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.h4alex.cashback",
+      "associatedDomains": ["applinks:h4cashback.com.br"],
       "infoPlist": {
         "NSCameraUsageDescription": "Necessário para escanear QR Codes de cashback.",
         "NSFaceIDUsageDescription": "Usar biometria para login seguro.",
@@ -32,7 +33,26 @@
         "backgroundColor": "#16a34a"
       },
       "package": "com.h4alex.cashback",
-      "permissions": ["CAMERA", "VIBRATE", "RECEIVE_BOOT_COMPLETED"]
+      "permissions": ["CAMERA", "VIBRATE", "RECEIVE_BOOT_COMPLETED"],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "h4cashback.com.br",
+              "pathPrefix": "/cashback"
+            },
+            {
+              "scheme": "https",
+              "host": "h4cashback.com.br",
+              "pathPrefix": "/qrcode"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "locales": {
       "pt": "./store-metadata/pt-BR.json",
@@ -49,7 +69,13 @@
       "expo-updates",
       "expo-font",
       "@sentry/react-native/expo",
-      "@sentry/react-native"
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#16a34a"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
