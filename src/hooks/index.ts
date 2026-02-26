@@ -52,3 +52,23 @@ export { useSessions, useRevokeSession } from "./useSessions";
 export { useOfflineQueue } from "./useOfflineQueue";
 
 export { useRefreshOnFocus } from "./useRefreshOnFocus";
+
+export {
+  useDashboardStats,
+  useDashboardTransacoes,
+  useDashboardTopClientes,
+  useDashboardChart,
+  useClientes,
+  useClienteDetail,
+  useClienteSearchDebounced,
+  useCampanhasList,
+  useCreateCampanha,
+  useUpdateCampanha,
+  useDeleteCampanha,
+  useVendas,
+  useContestacoesMerchant,
+  useResolveContestacao,
+  useEmpresaConfig,
+  useUpdateConfig,
+  useRelatorios,
+} from "./useMerchantManagement";
