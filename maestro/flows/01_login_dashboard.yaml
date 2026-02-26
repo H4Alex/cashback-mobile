@@ -1,0 +1,60 @@
+# Maestro E2E — Fluxo 1: Login + Dashboard
+# Testa: abrir app → login → dashboard exibe saldo → pull-to-refresh → logout
+appId: com.h4alex.cashback
+
+---
+- launchApp
+
+# Navegar para login
+- tapOn: "Entrar"
+
+# Preencher credenciais
+- tapOn:
+    id: "input-email"
+- inputText: "consumidor@teste.com"
+
+- tapOn:
+    id: "input-password"
+- inputText: "Senha@123"
+
+# Submeter login
+- tapOn: "Entrar"
+
+# Aguardar dashboard carregar
+- assertVisible:
+    text: "Saldo Total"
+    timeout: 10000
+
+# Verificar saldo exibido
+- assertVisible: "R$"
+
+# Verificar últimas transações
+- assertVisible: "Últimas Transações"
+
+# Pull-to-refresh
+- scroll:
+    direction: DOWN
+    duration: 500
+
+# Aguardar refresh
+- assertVisible:
+    text: "Saldo Total"
+    timeout: 5000
+
+# Navegar para perfil
+- tapOn: "Perfil"
+
+# Fazer logout
+- scrollUntilVisible:
+    element: "Sair"
+    direction: DOWN
+
+- tapOn: "Sair"
+
+# Confirmar logout
+- tapOn: "Sair"
+
+# Verificar retorno para login
+- assertVisible:
+    text: "Entrar"
+    timeout: 5000

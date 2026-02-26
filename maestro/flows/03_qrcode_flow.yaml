@@ -1,0 +1,86 @@
+# Maestro E2E — Fluxo 3: QR Code (Consumer gera + Merchant escaneia)
+# Testa: login consumidor → gerar QR → verificar countdown → (switch lojista) → scan → validar
+appId: com.h4alex.cashback
+
+---
+# PARTE 1: Consumidor gera QR Code
+- launchApp
+
+# Login como consumidor
+- tapOn: "Entrar"
+
+- tapOn:
+    id: "input-email"
+- inputText: "consumidor@teste.com"
+
+- tapOn:
+    id: "input-password"
+- inputText: "Senha@123"
+
+- tapOn: "Entrar"
+
+# Aguardar dashboard
+- assertVisible:
+    text: "Saldo Total"
+    timeout: 10000
+
+# Navegar para aba QR Code
+- tapOn: "QR Code"
+
+# Selecionar empresa (se necessário)
+- assertVisible:
+    text: "Gerar QR"
+    timeout: 5000
+
+# Digitar valor
+- tapOn:
+    id: "input-valor"
+- inputText: "50.00"
+
+# Gerar QR Code
+- tapOn: "Gerar QR"
+
+# Verificar QR gerado com countdown
+- assertVisible:
+    text: "Expira em"
+    timeout: 5000
+
+# Verificar que countdown está rodando (não expirado)
+- assertNotVisible: "Expirado"
+
+# Fazer logout
+- tapOn: "Perfil"
+- scrollUntilVisible:
+    element: "Sair"
+    direction: DOWN
+- tapOn: "Sair"
+- tapOn: "Sair"
+
+# PARTE 2: Lojista escaneia e valida
+# Login como lojista
+- tapOn: "Entrar"
+- tapOn: "Lojista"
+
+- tapOn:
+    id: "input-email"
+- inputText: "lojista@teste.com"
+
+- tapOn:
+    id: "input-password"
+- inputText: "Senha@123"
+
+- tapOn: "Entrar"
+
+# Aguardar dashboard lojista
+- assertVisible:
+    text: "Dashboard"
+    timeout: 10000
+
+# Navegar para Cashback → Escanear QR
+- tapOn: "Cashback"
+- tapOn: "Escanear QR"
+
+# Verificar tela de câmera (permissão)
+- assertVisible:
+    text: "câmera"
+    timeout: 5000

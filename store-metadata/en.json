@@ -1,0 +1,8 @@
+{
+  "title": "H4 Cashback - Loyalty Program",
+  "short_description": "Earn cashback on purchases at partner stores.",
+  "full_description": "H4 Cashback is the complete app for consumers and merchants to manage cashback programs.\n\nFor Consumers:\n- View your cashback balance in real time\n- Track detailed transaction history\n- Generate QR Codes for in-store redemption\n- Receive notifications for credited cashback\n- Manage notification preferences\n- Secure login with biometrics (FaceID/TouchID)\n\nFor Merchants:\n- Dashboard with generated, credited and redeemed cashback metrics\n- Manage customers and cashback campaigns\n- Generate and redeem cashback via CPF or QR Code\n- Track sales and disputes\n- Performance reports by period\n- Multi-store support\n\nSecurity:\n- Biometric authentication\n- Tokens stored in Secure Store\n- Automatic session timeout\n- LGPD compliance (data deletion)\n\nDownload now and start saving with cashback!",
+  "keywords": "cashback, loyalty, discount, savings, stores, shopping, QR code",
+  "category": "Finance",
+  "privacy_policy_url": "https://h4cashback.com.br/privacy-policy"
+}
