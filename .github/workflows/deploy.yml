@@ -37,25 +37,40 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      - name: Verificar EXPO_TOKEN
+        id: check-token
+        run: |
+          if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
+            echo "has_token=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::EXPO_TOKEN nao configurado — pulando deploy OTA"
+          else
+            echo "has_token=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout do repositorio
+        if: steps.check-token.outputs.has_token == 'true'
         uses: actions/checkout@v4
 
       - name: Setup Node.js
+        if: steps.check-token.outputs.has_token == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
       - name: Setup Expo CLI
+        if: steps.check-token.outputs.has_token == 'true'
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Instalar dependencias
+        if: steps.check-token.outputs.has_token == 'true'
         run: npm ci
 
       - name: Verificar configuracao EAS
+        if: steps.check-token.outputs.has_token == 'true'
         run: |
           node -e "
             const c = require('./app.json');
@@ -82,6 +97,7 @@ jobs:
           "
 
       - name: Publicar update via EAS
+        if: steps.check-token.outputs.has_token == 'true'
         run: eas update --branch production --message "Deploy ${{ github.sha }}" --non-interactive
 
   build:

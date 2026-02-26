@@ -2,12 +2,6 @@ name: E2E Tests (Maestro)
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "maestro/**"
-      - "app/**"
-      - "src/**"
 
 concurrency:
   group: e2e-${{ github.ref }}
@@ -19,8 +13,8 @@ permissions:
 jobs:
   e2e-android:
     name: E2E Android
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+    runs-on: macos-latest
+    timeout-minutes: 45
 
     steps:
       - name: Checkout do repositorio
@@ -46,16 +40,14 @@ jobs:
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Start Android Emulator
+      - name: Run E2E tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 33
           arch: x86_64
           profile: pixel_6
           script: |
-            # Build and install the app
-            npx expo run:android --no-install
-            # Run Maestro E2E flows
+            npx expo run:android
             maestro test maestro/flows/01_login_dashboard.yaml
             maestro test maestro/flows/02_gerar_cashback.yaml
             maestro test maestro/flows/03_qrcode_flow.yaml
