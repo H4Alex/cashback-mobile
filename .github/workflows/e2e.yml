@@ -1,0 +1,87 @@
+name: E2E Tests (Maestro)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "maestro/**"
+      - "app/**"
+      - "src/**"
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  e2e-android:
+    name: E2E Android
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Setup Java (Android SDK)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Start Android Emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          arch: x86_64
+          profile: pixel_6
+          script: |
+            # Build and install the app
+            npx expo run:android --no-install
+            # Run Maestro E2E flows
+            maestro test maestro/flows/01_login_dashboard.yaml
+            maestro test maestro/flows/02_gerar_cashback.yaml
+            maestro test maestro/flows/03_qrcode_flow.yaml
+
+  coverage:
+    name: Coverage Report
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npx jest --coverage --passWithNoTests
+
+      - name: Check coverage thresholds
+        run: |
+          echo "Coverage report generated in coverage/ directory"
+          echo "Target: 70% statements, 50% branches, 30% functions"

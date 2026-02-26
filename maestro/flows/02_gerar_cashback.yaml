@@ -1,0 +1,71 @@
+# Maestro E2E — Fluxo 2: Gerar Cashback (Lojista)
+# Testa: login lojista → Cashback tab → CPF → valor → campanha → confirmar → sucesso
+appId: com.h4alex.cashback
+
+---
+- launchApp
+
+# Navegar para login
+- tapOn: "Entrar"
+
+# Toggle para lojista
+- tapOn: "Lojista"
+
+# Preencher credenciais lojista
+- tapOn:
+    id: "input-email"
+- inputText: "lojista@teste.com"
+
+- tapOn:
+    id: "input-password"
+- inputText: "Senha@123"
+
+# Submeter login
+- tapOn: "Entrar"
+
+# Aguardar dashboard lojista
+- assertVisible:
+    text: "Dashboard"
+    timeout: 10000
+
+# Navegar para aba Cashback
+- tapOn: "Cashback"
+
+# Selecionar "Gerar Cashback"
+- tapOn: "Gerar Cashback"
+
+# Buscar CPF do cliente
+- tapOn:
+    id: "input-cpf"
+- inputText: "12345678901"
+
+# Aguardar resultado da busca
+- assertVisible:
+    text: "Cliente encontrado"
+    timeout: 5000
+
+# Digitar valor da compra
+- tapOn:
+    id: "input-valor"
+- inputText: "150.00"
+
+# Avançar para confirmação
+- tapOn: "Continuar"
+
+# Verificar resumo na confirmação
+- assertVisible: "Confirmar"
+- assertVisible: "R$"
+
+# Confirmar operação
+- tapOn: "Confirmar"
+
+# Verificar sucesso
+- assertVisible:
+    text: "sucesso"
+    timeout: 5000
+
+# Voltar ao menu
+- tapOn: "Voltar"
+
+# Verificar retorno ao menu cashback
+- assertVisible: "Gerar Cashback"

@@ -72,3 +72,7 @@ export {
   useUpdateConfig,
   useRelatorios,
 } from "./useMerchantManagement";
+
+export { useStartupPerformance } from "./useStartupPerformance";
+
+export { useAppUpdate } from "./useAppUpdate";

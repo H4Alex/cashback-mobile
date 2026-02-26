@@ -12,18 +12,31 @@
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#16a34a"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.h4alex.cashback"
+      "bundleIdentifier": "com.h4alex.cashback",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Necessário para escanear QR Codes de cashback.",
+        "NSFaceIDUsageDescription": "Usar biometria para login seguro.",
+        "CFBundleAllowMixedLocalizations": true
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#16a34a"
       },
-      "package": "com.h4alex.cashback"
+      "package": "com.h4alex.cashback",
+      "permissions": ["CAMERA", "VIBRATE", "RECEIVE_BOOT_COMPLETED"]
+    },
+    "locales": {
+      "pt": "./store-metadata/pt-BR.json",
+      "en": "./store-metadata/en.json"
     },
     "web": {
       "bundler": "metro",

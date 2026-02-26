@@ -1,0 +1,74 @@
+{
+  "apple_privacy": {
+    "data_collected": [
+      {
+        "type": "Contact Info",
+        "details": ["Name", "Email Address", "Phone Number"],
+        "purpose": ["App Functionality"],
+        "linked_to_user": true
+      },
+      {
+        "type": "Identifiers",
+        "details": ["User ID", "Device ID"],
+        "purpose": ["App Functionality", "Analytics"],
+        "linked_to_user": true
+      },
+      {
+        "type": "Financial Info",
+        "details": ["Other Financial Info"],
+        "purpose": ["App Functionality"],
+        "linked_to_user": true
+      },
+      {
+        "type": "Usage Data",
+        "details": ["Product Interaction"],
+        "purpose": ["Analytics", "Product Personalization"],
+        "linked_to_user": false
+      },
+      {
+        "type": "Diagnostics",
+        "details": ["Crash Data", "Performance Data"],
+        "purpose": ["App Functionality"],
+        "linked_to_user": false
+      }
+    ],
+    "data_not_collected": [
+      "Location",
+      "Health & Fitness",
+      "Browsing History",
+      "Search History",
+      "Contacts",
+      "Photos or Videos",
+      "Audio Data",
+      "Sensitive Info"
+    ]
+  },
+  "google_data_safety": {
+    "data_shared": [],
+    "data_collected": [
+      {
+        "type": "Personal info",
+        "subtypes": ["Name", "Email address", "Phone number", "User IDs"],
+        "purpose": "App functionality",
+        "optional": false
+      },
+      {
+        "type": "Financial info",
+        "subtypes": ["Other financial info"],
+        "purpose": "App functionality",
+        "optional": false
+      },
+      {
+        "type": "App activity",
+        "subtypes": ["App interactions"],
+        "purpose": "Analytics",
+        "optional": true
+      }
+    ],
+    "security_practices": {
+      "data_encrypted_in_transit": true,
+      "data_deletion_available": true,
+      "independent_security_review": false
+    }
+  }
+}
