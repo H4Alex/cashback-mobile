@@ -8,9 +8,9 @@ import {
   type ViewToken,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { createMMKV } from "react-native-mmkv";
+import { MMKV } from "react-native-mmkv";
 
-const storage = createMMKV();
+const storage = new MMKV();
 const ONBOARDING_KEY = "onboarding_completed";
 
 export function hasCompletedOnboarding(): boolean {

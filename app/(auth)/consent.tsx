@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, Switch } from "react-native";
 import { useRouter } from "expo-router";
-import { createMMKV } from "react-native-mmkv";
+import { MMKV } from "react-native-mmkv";
 
-const storage = createMMKV();
+const storage = new MMKV();
 const CONSENT_KEY = "lgpd_consent_given";
 
 export function hasGivenConsent(): boolean {
