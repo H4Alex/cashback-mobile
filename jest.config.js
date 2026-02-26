@@ -6,4 +6,15 @@ module.exports = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
+  collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.d.ts", "!src/**/index.ts", "!src/types/**"],
+  coverageThreshold: {
+    global: {
+      branches: 10,
+      functions: 40,
+      lines: 50,
+      statements: 50,
+    },
+  },
+  setupFiles: ["<rootDir>/jest.setup.js"],
+  testPathIgnorePatterns: ["/node_modules/", "__tests__/a11y/a11y-helpers.ts"],
 };

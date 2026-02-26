@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { mmkvStorage } from "@/src/lib/mmkv";
 
 type ThemeMode = "light" | "dark" | "system";
 
@@ -7,11 +9,15 @@ interface ThemeStoreState {
   setMode: (mode: ThemeMode) => void;
 }
 
-/**
- * Persistent theme store.
- * In production, persist mode to MMKV so it survives app restart.
- */
-export const useThemeStore = create<ThemeStoreState>((set) => ({
-  mode: "system",
-  setMode: (mode) => set({ mode }),
-}));
+export const useThemeStore = create<ThemeStoreState>()(
+  persist(
+    (set) => ({
+      mode: "system",
+      setMode: (mode) => set({ mode }),
+    }),
+    {
+      name: "theme-store",
+      storage: createJSONStorage(() => mmkvStorage),
+    },
+  ),
+);

@@ -23,3 +23,22 @@ export { OfflineIndicator } from "./OfflineIndicator";
 export { StatsCard } from "./StatsCard";
 export { SearchBar } from "./SearchBar";
 export { MetricCard } from "./MetricCard";
+
+// Design System base components
+export { Button } from "./ui/Button";
+export { Input } from "./ui/Input";
+export { Card, CardHeader, CardContent } from "./ui/Card";
+export { Toast } from "./ui/Toast";
+export { Loading } from "./ui/Loading";
+export { Badge } from "./ui/Badge";
+
+// Error handling
+export { ErrorBoundary } from "./ErrorBoundary";
+export { ErrorScreen, getErrorType } from "./ErrorScreen";
+
+// Charts
+export { DashboardChart, SparklineChart } from "./DashboardChart";
+
+// Animations
+export { AnimatedCounter } from "./AnimatedCounter";
+export { AnimatedCardEntry } from "./AnimatedCardEntry";

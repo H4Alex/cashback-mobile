@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { mmkvStorage } from "@/src/lib/mmkv";
 import type { NotificationPreferences } from "@/src/types";
 
 interface NotificationState {
@@ -9,13 +11,21 @@ interface NotificationState {
   reset: () => void;
 }
 
-export const useNotificationStore = create<NotificationState>((set) => ({
-  unreadCount: 0,
-  preferences: null,
+export const useNotificationStore = create<NotificationState>()(
+  persist(
+    (set) => ({
+      unreadCount: 0,
+      preferences: null,
 
-  setUnreadCount: (count) => set({ unreadCount: count }),
+      setUnreadCount: (count) => set({ unreadCount: count }),
 
-  updatePreferences: (prefs) => set({ preferences: prefs }),
+      updatePreferences: (prefs) => set({ preferences: prefs }),
 
-  reset: () => set({ unreadCount: 0, preferences: null }),
-}));
+      reset: () => set({ unreadCount: 0, preferences: null }),
+    }),
+    {
+      name: "notification-store",
+      storage: createJSONStorage(() => mmkvStorage),
+    },
+  ),
+);

@@ -5,9 +5,10 @@ import {
   useDashboardStats,
   useDashboardTransacoes,
   useDashboardTopClientes,
+  useDashboardChart,
 } from "@/src/hooks/useMerchantManagement";
 import { StatsCard } from "@/src/components/StatsCard";
-import { EmptyState, Skeleton } from "@/src/components";
+import { EmptyState, Skeleton, DashboardChart, AnimatedCardEntry } from "@/src/components";
 import { formatCurrency } from "@/src/utils/formatters";
 
 const TIPO_COLORS: Record<string, string> = {
@@ -29,6 +30,7 @@ export default function MerchantDashboardScreen() {
   const { data: stats, isLoading: loadingStats } = useDashboardStats();
   const { data: transacoes, isLoading: loadingTx } = useDashboardTransacoes();
   const { data: topClientes, isLoading: loadingTop } = useDashboardTopClientes();
+  const { data: chartData, isLoading: loadingChart } = useDashboardChart("7d");
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -70,23 +72,17 @@ export default function MerchantDashboardScreen() {
         ) : null}
       </ScrollView>
 
-      {/* Chart placeholder */}
-      <View className="mx-4 mt-4 bg-white rounded-xl p-4" style={{ height: 180 }}>
-        <Text className="text-sm font-semibold text-gray-700 mb-2">Evolução 7 dias</Text>
-        <View className="flex-1 items-center justify-center">
-          <Text className="text-gray-400 text-sm">Gráfico disponível com react-native-svg</Text>
-          <View className="flex-row mt-2 gap-4">
-            <View className="flex-row items-center">
-              <View className="w-3 h-0.5 bg-green-500 mr-1" />
-              <Text className="text-xs text-gray-500">Gerado</Text>
-            </View>
-            <View className="flex-row items-center">
-              <View className="w-3 h-0.5 bg-purple-500 mr-1" />
-              <Text className="text-xs text-gray-500">Utilizado</Text>
-            </View>
-          </View>
-        </View>
-      </View>
+      {/* Chart */}
+      <AnimatedCardEntry index={1} className="mx-4 mt-4">
+        <DashboardChart
+          data={(chartData ?? []).map((d) => ({
+            label: d.data,
+            gerado: d.gerado,
+            utilizado: d.utilizado,
+          }))}
+          isLoading={loadingChart}
+        />
+      </AnimatedCardEntry>
 
       {/* Últimas transações */}
       <View className="mx-4 mt-4">

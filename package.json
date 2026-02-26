@@ -16,12 +16,14 @@
     "test:run": "jest",
     "test:changed": "jest --onlyChanged --passWithNoTests",
     "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --passWithNoTests",
     "format": "prettier --write \"**/*.{ts,tsx,json}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,json}\""
   },
   "dependencies": {
     "@expo/vector-icons": "~14.0.4",
     "@hookform/resolvers": "^3.3.0",
+    "@react-native-community/netinfo": "11.4.1",
     "@react-navigation/native": "^7.0.0",
     "@tanstack/react-query": "^5.14.0",
     "axios": "^1.7.0",
@@ -29,6 +31,7 @@
     "expo-asset": "~11.0.5",
     "expo-constants": "~17.0.0",
     "expo-font": "~13.0.4",
+    "expo-haptics": "~14.0.1",
     "expo-image": "~2.0.0",
     "expo-linking": "~7.0.0",
     "expo-router": "~4.0.0",

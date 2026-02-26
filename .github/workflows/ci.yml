@@ -314,11 +314,8 @@ jobs:
         with:
           node-version: 20
 
-      - name: Restaurar node_modules
-        uses: actions/cache/restore@v4
-        with:
-          path: node_modules
-          key: nm-${{ github.sha }}
+      - name: Instalar dependencias
+        run: npm ci
 
       - name: Verificar configuracao Expo
         run: npx expo-doctor

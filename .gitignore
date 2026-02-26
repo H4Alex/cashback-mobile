@@ -15,6 +15,9 @@ ios/
 # macOS
 .DS_Store
 
+# test coverage
+coverage/
+
 # env files
 .env
 .env.local
