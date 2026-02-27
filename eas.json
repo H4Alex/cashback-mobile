@@ -25,6 +25,9 @@
     "production": {
       "autoIncrement": true,
       "channel": "production",
+      "cache": {
+        "key": "prod-no-nitro-v1"
+      },
       "env": {
         "APP_ENV": "production",
         "SENTRY_ENVIRONMENT": "production",
