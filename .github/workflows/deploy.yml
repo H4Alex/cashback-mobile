@@ -20,6 +20,7 @@ on:
       - "app.config.*"
       - "babel.config.*"
       - "metro.config.*"
+      - "eas.json"
       - ".github/workflows/deploy.yml"
 
 # Impede deploys simultaneos — um de cada vez, sem cancelar o que esta rodando
