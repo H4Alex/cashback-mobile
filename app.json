@@ -68,9 +68,12 @@
       "expo-secure-store",
       "expo-updates",
       "expo-font",
-      ["@sentry/react-native/expo", {
-        "uploadSourceMaps": false
-      }],
+      [
+        "@sentry/react-native/expo",
+        {
+          "uploadSourceMaps": false
+        }
+      ],
       [
         "expo-notifications",
         {
