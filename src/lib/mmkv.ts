@@ -1,7 +1,7 @@
-import { createMMKV } from "react-native-mmkv";
+import { MMKV } from "react-native-mmkv";
 import type { StateStorage } from "zustand/middleware";
 
-export const storage = createMMKV();
+export const storage = new MMKV();
 
 /**
  * Zustand-compatible StateStorage backed by MMKV.
@@ -16,6 +16,6 @@ export const mmkvStorage: StateStorage = {
     storage.set(name, value);
   },
   removeItem: (name: string) => {
-    storage.remove(name);
+    storage.delete(name);
   },
 };
