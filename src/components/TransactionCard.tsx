@@ -3,11 +3,12 @@ import type { CashbackEntry } from "@/src/types";
 import { formatCurrency, formatDateTime } from "@/src/utils/formatters";
 
 const STATUS_CONFIG: Record<string, { bg: string; text: string; label: string }> = {
-  creditado: { bg: "bg-green-100", text: "text-green-700", label: "Creditado" },
   pendente: { bg: "bg-yellow-100", text: "text-yellow-700", label: "Pendente" },
-  resgatado: { bg: "bg-blue-100", text: "text-blue-700", label: "Resgatado" },
+  confirmado: { bg: "bg-green-100", text: "text-green-700", label: "Confirmado" },
+  utilizado: { bg: "bg-blue-100", text: "text-blue-700", label: "Utilizado" },
+  rejeitado: { bg: "bg-red-100", text: "text-red-700", label: "Rejeitado" },
   expirado: { bg: "bg-gray-100", text: "text-gray-500", label: "Expirado" },
-  processando: { bg: "bg-orange-100", text: "text-orange-700", label: "Processando" },
+  congelado: { bg: "bg-orange-100", text: "text-orange-700", label: "Congelado" },
 };
 
 interface TransactionCardProps {
@@ -21,7 +22,7 @@ export function TransactionCard({ entry, onPress }: TransactionCardProps) {
     text: "text-gray-500",
     label: entry.status,
   };
-  const isNegative = entry.status === "expirado" || entry.status === "resgatado";
+  const isNegative = entry.status === "expirado" || entry.status === "utilizado" || entry.status === "rejeitado";
 
   return (
     <TouchableOpacity

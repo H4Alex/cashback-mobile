@@ -1,5 +1,5 @@
 import { apiClient } from "@/src/lib/api-client";
-import type { CashbackStatus, CashbackSaldo, ExtratoResponse, EmpresaSaldo } from "@/src/types";
+import type { CashbackStatus, CashbackSaldo, ExtratoEntry, EmpresaSaldo, CursorPaginatedResponse } from "@/src/types";
 import type { HistoricoUsoResponse } from "@/src/types/historico";
 
 const PREFIX = "/api/mobile/v1";
@@ -19,8 +19,8 @@ export const mobileCashbackService = {
     return res.data;
   },
 
-  async getExtrato(params?: ExtratoParams): Promise<ExtratoResponse> {
-    const res = await apiClient.get<ExtratoResponse>(`${PREFIX}/extrato`, {
+  async getExtrato(params?: ExtratoParams): Promise<CursorPaginatedResponse<ExtratoEntry>> {
+    const res = await apiClient.get<CursorPaginatedResponse<ExtratoEntry>>(`${PREFIX}/extrato`, {
       params,
     });
     return res.data;

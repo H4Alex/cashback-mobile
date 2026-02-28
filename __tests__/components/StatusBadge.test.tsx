@@ -7,11 +7,6 @@ describe("StatusBadge", () => {
     expect(screen.getByText("Pendente")).toBeTruthy();
   });
 
-  it("renders Em análise label", () => {
-    render(<StatusBadge status="em_analise" />);
-    expect(screen.getByText("Em análise")).toBeTruthy();
-  });
-
   it("renders Aprovada label", () => {
     render(<StatusBadge status="aprovada" />);
     expect(screen.getByText("Aprovada")).toBeTruthy();

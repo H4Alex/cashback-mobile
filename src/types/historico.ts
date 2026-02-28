@@ -1,7 +1,7 @@
 export interface HistoricoUso {
-  id: string;
+  id: number;
   empresa_nome: string;
-  empresa_id: string;
+  empresa_id: number;
   valor_original: number;
   cashback_usado: number;
   created_at: string;

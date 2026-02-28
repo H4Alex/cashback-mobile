@@ -1,13 +1,13 @@
-export type ContestacaoStatus = "pendente" | "em_analise" | "aprovada" | "rejeitada";
+export type ContestacaoStatus = "pendente" | "aprovada" | "rejeitada";
 
 export type ContestacaoTipo =
+  | "cashback_nao_gerado"
   | "valor_incorreto"
-  | "cashback_nao_creditado"
-  | "empresa_errada"
-  | "outro";
+  | "expiracao_indevida"
+  | "venda_cancelada";
 
 export interface Contestacao {
-  id: string;
+  id: number;
   tipo: ContestacaoTipo;
   descricao: string;
   status: ContestacaoStatus;
@@ -20,11 +20,18 @@ export interface Contestacao {
 }
 
 export interface ContestacaoListResponse {
-  contestacoes: Contestacao[];
-  meta: {
-    next_cursor: string | null;
-    has_more: boolean;
+  status: true;
+  data: {
+    data: Contestacao[];
+    meta: {
+      next_cursor: string | null;
+      prev_cursor: string | null;
+      per_page: number;
+      has_more_pages: boolean;
+    };
   };
+  error: null;
+  message: string;
 }
 
 export interface CreateContestacaoRequest {

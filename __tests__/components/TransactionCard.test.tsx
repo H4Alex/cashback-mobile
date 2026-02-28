@@ -3,11 +3,11 @@ import { TransactionCard } from "@/src/components/TransactionCard";
 import type { CashbackEntry } from "@/src/types";
 
 const makeEntry = (overrides: Partial<CashbackEntry> = {}): CashbackEntry => ({
-  id: "1",
+  id: 1,
   empresa_nome: "Loja Teste",
-  empresa_id: "e1",
+  empresa_id: 1,
   valor: 45.9,
-  status: "creditado",
+  status: "confirmado",
   descricao: "Compra cartão",
   created_at: "2025-01-15T10:30:00Z",
   ...overrides,
@@ -20,9 +20,9 @@ describe("TransactionCard", () => {
     expect(screen.getByText(/45,90/)).toBeTruthy();
   });
 
-  it("shows Creditado badge for creditado status", () => {
-    render(<TransactionCard entry={makeEntry({ status: "creditado" })} />);
-    expect(screen.getByText("Creditado")).toBeTruthy();
+  it("shows Confirmado badge for confirmado status", () => {
+    render(<TransactionCard entry={makeEntry({ status: "confirmado" })} />);
+    expect(screen.getByText("Confirmado")).toBeTruthy();
   });
 
   it("shows Pendente badge for pendente status", () => {

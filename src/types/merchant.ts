@@ -10,8 +10,8 @@ export interface Campanha {
   id: number;
   nome: string;
   percentual: number;
-  status: "ativa" | "inativa" | "expirada";
-  validade_dias: number;
+  status: "ativa" | "inativa" | "encerrada";
+  validade_padrao: number;
 }
 
 export interface ClienteSearchResult {

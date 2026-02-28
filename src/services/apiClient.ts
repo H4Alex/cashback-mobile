@@ -64,22 +64,24 @@ function createApiClient(): AxiosInstance {
         isRefreshing = true;
 
         try {
-          const refreshToken = await secureStorage.getRefreshToken();
-          if (!refreshToken) {
-            throw new Error("No refresh token");
+          const currentToken = await secureStorage.getToken();
+          if (!currentToken) {
+            throw new Error("No token available for refresh");
           }
 
-          const { data } = await axios.post(`${env.API_BASE_URL}/auth/refresh`, { refreshToken });
+          const { data } = await axios.post(
+            `${env.API_BASE_URL}/auth/refresh`,
+            {},
+            { headers: { Authorization: `Bearer ${currentToken}` } },
+          );
 
-          await secureStorage.setToken(data.accessToken);
-          if (data.refreshToken) {
-            await secureStorage.setRefreshToken(data.refreshToken);
-          }
+          const newToken = data.data.token;
+          await secureStorage.setToken(newToken);
 
-          processQueue(null, data.accessToken);
+          processQueue(null, newToken);
 
           if (originalRequest.headers) {
-            originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
           }
           return client(originalRequest);
         } catch (refreshError) {
