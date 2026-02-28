@@ -1,43 +1,186 @@
 name: CI — Cashback Mobile
 
 on:
+  # Push: apenas branches sem PR (claude/*)
+  # main/develop são validados pelo trigger pull_request antes do merge
   push:
-    branches: [main, develop, 'claude/**']
+    branches: ['claude/**']
+    paths:
+      - "src/**"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "services/**"
+      - "utils/**"
+      - "constants/**"
+      - "*.json"
+      - "*.ts"
+      - "*.tsx"
+      - "*.js"
+      - "*.mjs"
+      - "app.config.*"
+      - "babel.config.*"
+      - "metro.config.*"
+      - "tsconfig*.json"
+      - "jest.config.*"
+      - "jest.setup.*"
+      - ".github/workflows/ci.yml"
+  # PR: gatekeeper antes do merge em main/develop
   pull_request:
     branches: [main, develop]
+    paths:
+      - "src/**"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "services/**"
+      - "utils/**"
+      - "constants/**"
+      - "*.json"
+      - "*.ts"
+      - "*.tsx"
+      - "*.js"
+      - "*.mjs"
+      - "app.config.*"
+      - "babel.config.*"
+      - "metro.config.*"
+      - "tsconfig*.json"
+      - "jest.config.*"
+      - "jest.setup.*"
+      - ".github/workflows/ci.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
-  lint-and-typecheck:
-    name: Lint & Type Check
+  # Evita CI duplicado: se push + PR aberta, o trigger pull_request ja cuida
+  check-pr:
+    name: Check for open PR
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    timeout-minutes: 1
+    outputs:
+      skip: ${{ steps.check.outputs.skip }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR=$(gh pr list --repo "${{ github.repository }}" \
+            --head "${{ github.ref_name }}" --state open --json number -q '.[0].number')
+          if [ -n "$PR" ]; then
+            echo "PR #$PR aberta — pulando push CI (pull_request trigger cuida)"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Nenhuma PR aberta — executando push CI"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  setup:
+    name: Install Dependencies
+    needs: [check-pr]
+    if: |
+      always() &&
+      (github.event_name == 'pull_request' || needs.check-pr.outputs.skip != 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+
       - run: npm ci
+
+      - uses: actions/cache/save@v4
+        with:
+          path: node_modules
+          key: nm-${{ hashFiles('package-lock.json') }}
+
+  lint:
+    name: Lint
+    needs: setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: nm-${{ hashFiles('package-lock.json') }}
+
       - run: npm run lint
+
+  type-check:
+    name: Type Check
+    needs: setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: nm-${{ hashFiles('package-lock.json') }}
+
       - run: npm run type-check
 
-  unit-tests:
-    name: Unit Tests
+  test:
+    name: Tests
+    needs: setup
     runs-on: ubuntu-latest
-    needs: lint-and-typecheck
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-      - run: npm ci
-      - run: npx jest --ci --coverage --passWithNoTests
-      - uses: actions/upload-artifact@v4
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: nm-${{ hashFiles('package-lock.json') }}
+
+      - name: Affected Tests (fast fail)
+        run: npx jest --onlyChanged --passWithNoTests
+
+      - name: Full Test Suite
+        run: npx jest --ci --coverage --passWithNoTests
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: coverage-report
           path: coverage/
+          retention-days: 14
+
+      - name: Coverage summary
+        if: always()
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            echo "## Coverage Summary" >> $GITHUB_STEP_SUMMARY
+            echo '```json' >> $GITHUB_STEP_SUMMARY
+            node -e "const c = require('./coverage/coverage-summary.json'); console.log(JSON.stringify(c.total, null, 2))" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi

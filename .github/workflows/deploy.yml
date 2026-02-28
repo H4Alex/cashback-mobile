@@ -70,6 +70,13 @@ jobs:
         if: steps.check-token.outputs.has_token == 'true'
         run: npm ci
 
+      - name: Salvar cache node_modules
+        if: steps.check-token.outputs.has_token == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: node_modules
+          key: nm-deploy-${{ hashFiles('package-lock.json') }}
+
       - name: Verificar configuracao EAS
         if: steps.check-token.outputs.has_token == 'true'
         run: |
@@ -116,16 +123,24 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+
+      - name: Restaurar cache node_modules
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: nm-deploy-${{ hashFiles('package-lock.json') }}
+
+      - name: Instalar dependencias (fallback)
+        run: |
+          if [ ! -d "node_modules" ]; then
+            npm ci
+          fi
 
       - name: Setup Expo CLI
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
-
-      - name: Instalar dependencias
-        run: npm ci
 
       - name: Verificar configuracao EAS
         run: |
@@ -156,16 +171,24 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+
+      - name: Restaurar cache node_modules
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: nm-deploy-${{ hashFiles('package-lock.json') }}
+
+      - name: Instalar dependencias (fallback)
+        run: |
+          if [ ! -d "node_modules" ]; then
+            npm ci
+          fi
 
       - name: Setup Expo CLI
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
-
-      - name: Instalar dependencias
-        run: npm ci
 
       - name: Submit Android (Google Play - internal)
         run: eas submit --platform android --latest --non-interactive
