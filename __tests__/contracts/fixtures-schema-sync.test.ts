@@ -29,6 +29,7 @@ import {
   contestacaoSchema,
   notificationSchema,
 } from '@/src/schemas/api-responses';
+import { z } from 'zod';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -289,7 +290,7 @@ describe('Fixture -> Zod Schema Contract Sync', () => {
       const response = buildApiResponse({ foo: 'bar' });
       const schema = apiResponseSchema(
         // Accept any object for this generic test
-        require('zod').z.object({ foo: require('zod').z.string() }),
+        z.object({ foo: z.string() }),
       );
       expectValid(schema, response);
     });

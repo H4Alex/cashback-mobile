@@ -1,26 +1,27 @@
 import { View, Text } from "react-native";
-import type { CashbackEntry } from "@/src/types";
+import type { ExtratoEntry } from "@/src/types";
 import { formatCurrency, formatDate } from "@/src/utils/formatters";
 
 const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
-  creditado: { color: "bg-green-500", label: "Creditado" },
+  confirmado: { color: "bg-green-500", label: "Confirmado" },
   pendente: { color: "bg-yellow-500", label: "Pendente" },
-  resgatado: { color: "bg-blue-500", label: "Resgatado" },
+  utilizado: { color: "bg-blue-500", label: "Utilizado" },
   expirado: { color: "bg-gray-400", label: "Expirado" },
-  processando: { color: "bg-orange-500", label: "Processando" },
+  rejeitado: { color: "bg-red-500", label: "Rejeitado" },
+  congelado: { color: "bg-orange-500", label: "Congelado" },
 };
 
 interface CashbackTimelineProps {
-  entries: CashbackEntry[];
+  entries: ExtratoEntry[];
 }
 
 export function CashbackTimeline({ entries }: CashbackTimelineProps) {
   return (
     <View>
       {entries.map((entry, index) => {
-        const config = STATUS_CONFIG[entry.status] ?? {
+        const config = STATUS_CONFIG[entry.status_cashback] ?? {
           color: "bg-gray-400",
-          label: entry.status,
+          label: entry.status_cashback,
         };
         const isLast = index === entries.length - 1;
 
@@ -36,15 +37,15 @@ export function CashbackTimeline({ entries }: CashbackTimelineProps) {
             <View className="flex-1 pb-4">
               <View className="flex-row justify-between items-start">
                 <View className="flex-1 mr-2">
-                  <Text className="text-base font-medium">{entry.empresa_nome}</Text>
-                  {entry.descricao && (
-                    <Text className="text-gray-500 text-xs mt-0.5">{entry.descricao}</Text>
+                  <Text className="text-base font-medium">{entry.empresa?.nome_fantasia ?? ""}</Text>
+                  {entry.campanha?.nome && (
+                    <Text className="text-gray-500 text-xs mt-0.5">{entry.campanha.nome}</Text>
                   )}
                 </View>
                 <Text
-                  className={`font-semibold ${entry.status === "expirado" ? "text-gray-400" : "text-green-600"}`}
+                  className={`font-semibold ${entry.status_cashback === "expirado" ? "text-gray-400" : "text-green-600"}`}
                 >
-                  {formatCurrency(entry.valor)}
+                  {formatCurrency(entry.valor_cashback)}
                 </Text>
               </View>
               <View className="flex-row items-center mt-1">
@@ -72,6 +73,7 @@ function getTextColor(bgClass: string): string {
     "bg-yellow-500": "#ca8a04",
     "bg-blue-500": "#2563eb",
     "bg-gray-400": "#9ca3af",
+    "bg-red-500": "#ef4444",
     "bg-orange-500": "#ea580c",
   };
   return map[bgClass] ?? "#6b7280";

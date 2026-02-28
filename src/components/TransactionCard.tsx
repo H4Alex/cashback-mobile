@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import type { CashbackEntry } from "@/src/types";
+import type { ExtratoEntry } from "@/src/types";
 import { formatCurrency, formatDateTime } from "@/src/utils/formatters";
 
 const STATUS_CONFIG: Record<string, { bg: string; text: string; label: string }> = {
@@ -12,17 +12,19 @@ const STATUS_CONFIG: Record<string, { bg: string; text: string; label: string }>
 };
 
 interface TransactionCardProps {
-  entry: CashbackEntry;
+  entry: ExtratoEntry;
   onPress?: () => void;
 }
 
 export function TransactionCard({ entry, onPress }: TransactionCardProps) {
-  const config = STATUS_CONFIG[entry.status] ?? {
+  const statusKey = entry.status_cashback;
+  const config = STATUS_CONFIG[statusKey] ?? {
     bg: "bg-gray-100",
     text: "text-gray-500",
-    label: entry.status,
+    label: statusKey,
   };
-  const isNegative = entry.status === "expirado" || entry.status === "utilizado" || entry.status === "rejeitado";
+  const isNegative = statusKey === "expirado" || statusKey === "utilizado" || statusKey === "rejeitado";
+  const empresaNome = entry.empresa?.nome_fantasia ?? "";
 
   return (
     <TouchableOpacity
@@ -37,22 +39,22 @@ export function TransactionCard({ entry, onPress }: TransactionCardProps) {
           <View className="flex-row items-center">
             <View className="w-8 h-8 bg-blue-100 rounded-full items-center justify-center mr-2">
               <Text className="text-sm font-bold text-blue-600">
-                {entry.empresa_nome.charAt(0).toUpperCase()}
+                {empresaNome.charAt(0).toUpperCase() || "?"}
               </Text>
             </View>
             <Text className="text-base font-semibold flex-shrink" numberOfLines={1}>
-              {entry.empresa_nome}
+              {empresaNome}
             </Text>
           </View>
-          {entry.descricao && (
+          {entry.campanha?.nome && (
             <Text className="text-gray-500 text-xs mt-1 ml-10" numberOfLines={2}>
-              {entry.descricao}
+              {entry.campanha.nome}
             </Text>
           )}
         </View>
         <Text className={`text-base font-bold ${isNegative ? "text-gray-400" : "text-green-600"}`}>
           {isNegative ? "-" : "+"}
-          {formatCurrency(entry.valor)}
+          {formatCurrency(entry.valor_cashback)}
         </Text>
       </View>
 

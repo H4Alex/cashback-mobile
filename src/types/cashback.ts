@@ -13,12 +13,12 @@ export interface CashbackEntry {
 
 export interface CashbackSaldo {
   saldo_total: number;
-  por_empresa: Array<{
+  por_empresa: {
     empresa_id: number;
     nome_fantasia: string | null;
     logo_url: string | null;
     saldo: string;
-  }>;
+  }[];
   proximo_a_expirar: {
     valor: number;
     quantidade: number;

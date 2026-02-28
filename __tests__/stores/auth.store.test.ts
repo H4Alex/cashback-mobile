@@ -33,7 +33,6 @@ describe("useAuthStore", () => {
         email: "test@example.com",
         cpf: "12345678901",
         telefone: null,
-        avatar_url: null,
         created_at: "",
         updated_at: "",
       });

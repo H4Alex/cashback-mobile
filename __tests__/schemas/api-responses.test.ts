@@ -5,7 +5,6 @@ import {
   loginResponseDataSchema,
   loginResponseSchema,
   saldoDataSchema,
-  saldoResponseSchema,
   extratoEntrySchema,
   contestacaoSchema,
   notificationSchema,

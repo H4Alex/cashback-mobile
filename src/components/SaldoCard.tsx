@@ -16,18 +16,18 @@ export function SaldoCard({ saldo, onPress }: SaldoCardProps) {
       disabled={!onPress}
     >
       <Text className="text-blue-200 text-sm mb-1">Saldo disponível</Text>
-      <Text className="text-white text-3xl font-bold mb-4">{formatCurrency(saldo.disponivel)}</Text>
+      <Text className="text-white text-3xl font-bold mb-4">{formatCurrency(saldo.saldo_total)}</Text>
 
-      <View className="flex-row justify-between">
-        <View>
-          <Text className="text-blue-200 text-xs">Pendente</Text>
-          <Text className="text-white font-semibold">{formatCurrency(saldo.pendente)}</Text>
+      {saldo.por_empresa.length > 0 && (
+        <View className="flex-row flex-wrap gap-2 mb-2">
+          {saldo.por_empresa.slice(0, 3).map((e) => (
+            <View key={e.empresa_id} className="bg-blue-500/30 rounded-lg px-2 py-1">
+              <Text className="text-blue-100 text-xs">{e.nome_fantasia ?? "Loja"}</Text>
+              <Text className="text-white text-xs font-semibold">{formatCurrency(Number(e.saldo))}</Text>
+            </View>
+          ))}
         </View>
-        <View className="items-end">
-          <Text className="text-blue-200 text-xs">Total acumulado</Text>
-          <Text className="text-white font-semibold">{formatCurrency(saldo.total)}</Text>
-        </View>
-      </View>
+      )}
 
       {saldo.proximo_a_expirar && saldo.proximo_a_expirar.valor > 0 && (
         <View className="bg-yellow-500/20 rounded-lg px-3 py-2 mt-4 flex-row items-center">

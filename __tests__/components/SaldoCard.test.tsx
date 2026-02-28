@@ -1,28 +1,21 @@
 import { render, screen, fireEvent } from "@testing-library/react-native";
 import { SaldoCard } from "@/src/components/SaldoCard";
+import type { CashbackSaldo } from "@/src/types";
 
-const baseSaldo = {
-  disponivel: 150.5,
-  pendente: 30.0,
-  total: 500.75,
-  empresas: [],
-  proximo_a_expirar: undefined as { valor: number; quantidade: number } | undefined,
+const baseSaldo: CashbackSaldo = {
+  saldo_total: 150.5,
+  por_empresa: [],
+  proximo_a_expirar: { valor: 0, quantidade: 0 },
 };
 
 describe("SaldoCard", () => {
-  it("renders saldo disponivel formatted", () => {
+  it("renders saldo_total formatted", () => {
     render(<SaldoCard saldo={baseSaldo} />);
     expect(screen.getByText(/150,50/)).toBeTruthy();
   });
 
-  it("renders pendente and total values", () => {
-    render(<SaldoCard saldo={baseSaldo} />);
-    expect(screen.getByText(/30,00/)).toBeTruthy();
-    expect(screen.getByText(/500,75/)).toBeTruthy();
-  });
-
   it("shows expiry warning when proximo_a_expirar has value", () => {
-    const saldo = {
+    const saldo: CashbackSaldo = {
       ...baseSaldo,
       proximo_a_expirar: { valor: 25.0, quantidade: 2 },
     };
@@ -32,12 +25,21 @@ describe("SaldoCard", () => {
   });
 
   it("hides expiry warning when valor is 0", () => {
-    const saldo = {
+    render(<SaldoCard saldo={baseSaldo} />);
+    expect(screen.queryByText(/expirando/)).toBeNull();
+  });
+
+  it("renders per-company breakdown", () => {
+    const saldo: CashbackSaldo = {
       ...baseSaldo,
-      proximo_a_expirar: { valor: 0, quantidade: 0 },
+      por_empresa: [
+        { empresa_id: 1, nome_fantasia: "Loja A", logo_url: null, saldo: "80.50" },
+        { empresa_id: 2, nome_fantasia: "Loja B", logo_url: null, saldo: "70.00" },
+      ],
     };
     render(<SaldoCard saldo={saldo} />);
-    expect(screen.queryByText(/expirando/)).toBeNull();
+    expect(screen.getByText("Loja A")).toBeTruthy();
+    expect(screen.getByText("Loja B")).toBeTruthy();
   });
 
   it("calls onPress when pressed", () => {
