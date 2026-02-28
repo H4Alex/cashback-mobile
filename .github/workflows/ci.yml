@@ -61,6 +61,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -75,7 +77,10 @@ jobs:
       - name: Type Check
         run: npm run type-check
 
-      - name: Unit Tests
+      - name: Affected Tests (fast fail)
+        run: npx jest --onlyChanged --passWithNoTests
+
+      - name: Full Test Suite
         run: npx jest --ci --coverage --passWithNoTests
 
       - name: Upload coverage
