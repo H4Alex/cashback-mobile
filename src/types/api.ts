@@ -47,6 +47,9 @@ export interface CursorPaginatedResponse<T> {
   message: string;
 }
 
+/** Inner data from a cursor-paginated API response (without the envelope). */
+export type CursorPaginatedData<T> = CursorPaginatedResponse<T>['data'];
+
 export interface ApiError {
   message: string;
   statusCode: number;

@@ -23,7 +23,7 @@ describe("merchantCashbackService", () => {
   describe("searchCliente", () => {
     it("searches by CPF", async () => {
       const clientes = [{ id: 1, nome: "João", cpf: "12345678901" }];
-      mockGet.mockResolvedValue({ data: { data: clientes } });
+      mockGet.mockResolvedValue({ data: { status: true, data: clientes, error: null, message: 'Sucesso' } });
 
       const result = await merchantCashbackService.searchCliente("12345678901");
 
@@ -38,7 +38,7 @@ describe("merchantCashbackService", () => {
   describe("getClienteSaldo", () => {
     it("fetches client balance", async () => {
       const saldo = { cliente: { id: 1 }, saldo: 250, max_utilizacao_percentual: 100 };
-      mockGet.mockResolvedValue({ data: saldo });
+      mockGet.mockResolvedValue({ data: { status: true, data: saldo, error: null, message: 'Sucesso' } });
 
       const result = await merchantCashbackService.getClienteSaldo(1);
 
@@ -49,7 +49,7 @@ describe("merchantCashbackService", () => {
 
   describe("getCampanhas", () => {
     it("fetches active campaigns", async () => {
-      mockGet.mockResolvedValue({ data: { data: [{ id: 1, nome: "Promo" }] } });
+      mockGet.mockResolvedValue({ data: { status: true, data: [{ id: 1, nome: "Promo" }], error: null, message: 'Sucesso' } });
 
       const result = await merchantCashbackService.getCampanhas();
 
@@ -63,7 +63,7 @@ describe("merchantCashbackService", () => {
   describe("gerarCashback", () => {
     it("sends request with idempotency key", async () => {
       const response = { id: "cb-1", valor_compra: 100, cashback_gerado: 5 };
-      mockPost.mockResolvedValue({ data: response });
+      mockPost.mockResolvedValue({ data: { status: true, data: response, error: null, message: 'Sucesso' } });
 
       const result = await merchantCashbackService.gerarCashback(
         { cliente_id: 1, valor: 100 },
@@ -82,7 +82,7 @@ describe("merchantCashbackService", () => {
   describe("utilizarCashback", () => {
     it("sends utilization request with idempotency key", async () => {
       const response = { id: "ut-1", cashback_usado: 50, novo_saldo: 200 };
-      mockPost.mockResolvedValue({ data: response });
+      mockPost.mockResolvedValue({ data: { status: true, data: response, error: null, message: 'Sucesso' } });
 
       const result = await merchantCashbackService.utilizarCashback(
         { cliente_id: 1, valor: 50 },

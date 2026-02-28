@@ -12,6 +12,6 @@ export interface HistoricoUsoResponse {
   historico: HistoricoUso[];
   meta: {
     next_cursor: string | null;
-    has_more: boolean;
+    has_more_pages: boolean;
   };
 }

@@ -18,13 +18,13 @@ export interface MobileNotification {
   created_at: string;
 }
 
-/** Notification list response */
+/** Notification list response (inner data from API envelope) */
 export interface NotificationListResponse {
   notifications: MobileNotification[];
   meta: {
     total_unread: number;
     next_cursor: string | null;
-    has_more: boolean;
+    has_more_pages: boolean;
   };
 }
 

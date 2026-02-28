@@ -35,9 +35,9 @@ describe("mobileNotificationService", () => {
             created_at: "2026-02-25T10:00:00Z",
           },
         ],
-        meta: { total_unread: 1, next_cursor: null, has_more: false },
+        meta: { total_unread: 1, next_cursor: null, has_more_pages: false },
       };
-      mockGet.mockResolvedValue({ data: mockResponse });
+      mockGet.mockResolvedValue({ data: { status: true, data: mockResponse, error: null, message: 'Sucesso' } });
 
       const result = await mobileNotificationService.getNotifications({
         limit: 20,
@@ -52,10 +52,10 @@ describe("mobileNotificationService", () => {
 
     it("fetches unread-only notifications", async () => {
       mockGet.mockResolvedValue({
-        data: {
+        data: { status: true, data: {
           notifications: [],
-          meta: { total_unread: 0, next_cursor: null, has_more: false },
-        },
+          meta: { total_unread: 0, next_cursor: null, has_more_pages: false },
+        }, error: null, message: 'Sucesso' },
       });
 
       await mobileNotificationService.getNotifications({ unread_only: true });
@@ -68,7 +68,7 @@ describe("mobileNotificationService", () => {
 
   describe("markAsRead", () => {
     it("marks a notification as read", async () => {
-      mockPatch.mockResolvedValue({ data: { lida: true } });
+      mockPatch.mockResolvedValue({ data: { status: true, data: { lida: true }, error: null, message: 'Sucesso' } });
 
       await mobileNotificationService.markAsRead(42);
 
@@ -78,7 +78,7 @@ describe("mobileNotificationService", () => {
 
   describe("markAllAsRead", () => {
     it("marks all notifications as read", async () => {
-      mockPost.mockResolvedValue({ data: { updated: 5 } });
+      mockPost.mockResolvedValue({ data: { status: true, data: { updated: 5 }, error: null, message: 'Sucesso' } });
 
       const result = await mobileNotificationService.markAllAsRead();
 
@@ -90,11 +90,11 @@ describe("mobileNotificationService", () => {
   describe("getPreferences", () => {
     it("fetches notification preferences", async () => {
       mockGet.mockResolvedValue({
-        data: {
+        data: { status: true, data: {
           push_enabled: true,
           email_enabled: false,
           marketing_enabled: true,
-        },
+        }, error: null, message: 'Sucesso' },
       });
 
       const result = await mobileNotificationService.getPreferences();
@@ -107,7 +107,7 @@ describe("mobileNotificationService", () => {
 
   describe("updatePreferences", () => {
     it("updates notification preferences", async () => {
-      mockPatch.mockResolvedValue({ data: { atualizado: true } });
+      mockPatch.mockResolvedValue({ data: { status: true, data: { atualizado: true }, error: null, message: 'Sucesso' } });
 
       await mobileNotificationService.updatePreferences({
         push_enabled: false,
