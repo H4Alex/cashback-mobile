@@ -1,8 +1,10 @@
 name: CI — Cashback Mobile
 
 on:
+  # Push: apenas branches sem PR (claude/*)
+  # main/develop são validados pelo trigger pull_request antes do merge
   push:
-    branches: [main, develop, 'claude/**']
+    branches: ['claude/**']
     paths:
       - "src/**"
       - "app/**"
@@ -23,6 +25,7 @@ on:
       - "jest.config.*"
       - "jest.setup.*"
       - ".github/workflows/ci.yml"
+  # PR: gatekeeper antes do merge em main/develop
   pull_request:
     branches: [main, develop]
     paths:
