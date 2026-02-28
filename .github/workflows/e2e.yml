@@ -1,8 +1,6 @@
 name: E2E Tests (Maestro)
 
 on:
-  pull_request:
-    branches: [main, develop]
   workflow_dispatch:
 
 concurrency:
@@ -15,7 +13,6 @@ permissions:
 jobs:
   e2e-android:
     name: E2E Android
-    if: github.event_name == 'workflow_dispatch'
     runs-on: macos-latest
     timeout-minutes: 45
 
@@ -63,42 +60,3 @@ jobs:
             ~/.maestro/tests/**/*.png
             ~/.maestro/tests/**/report.xml
           retention-days: 7
-
-  coverage:
-    name: Coverage Report
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout do repositorio
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Instalar dependencias
-        run: npm ci
-
-      - name: Run tests with coverage
-        run: npm run test:ci
-
-      - name: Upload coverage report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage/
-          retention-days: 14
-
-      - name: Coverage summary
-        if: always()
-        run: |
-          if [ -f coverage/coverage-summary.json ]; then
-            echo "## Coverage Summary" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            cat coverage/coverage-summary.json | head -20 >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-          fi

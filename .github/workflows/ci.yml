@@ -3,41 +3,92 @@ name: CI — Cashback Mobile
 on:
   push:
     branches: [main, develop, 'claude/**']
+    paths:
+      - "src/**"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "services/**"
+      - "utils/**"
+      - "constants/**"
+      - "*.json"
+      - "*.ts"
+      - "*.tsx"
+      - "*.js"
+      - "*.mjs"
+      - "app.config.*"
+      - "babel.config.*"
+      - "metro.config.*"
+      - "tsconfig*.json"
+      - "jest.config.*"
+      - "jest.setup.*"
+      - ".github/workflows/ci.yml"
   pull_request:
     branches: [main, develop]
+    paths:
+      - "src/**"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "services/**"
+      - "utils/**"
+      - "constants/**"
+      - "*.json"
+      - "*.ts"
+      - "*.tsx"
+      - "*.js"
+      - "*.mjs"
+      - "app.config.*"
+      - "babel.config.*"
+      - "metro.config.*"
+      - "tsconfig*.json"
+      - "jest.config.*"
+      - "jest.setup.*"
+      - ".github/workflows/ci.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  lint-and-typecheck:
-    name: Lint & Type Check
+  ci:
+    name: Lint, Type Check & Tests
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run type-check
+    timeout-minutes: 10
 
-  unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    needs: lint-and-typecheck
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+
       - run: npm ci
-      - run: npx jest --ci --coverage --passWithNoTests
-      - uses: actions/upload-artifact@v4
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type Check
+        run: npm run type-check
+
+      - name: Unit Tests
+        run: npx jest --ci --coverage --passWithNoTests
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: coverage-report
           path: coverage/
+          retention-days: 14
+
+      - name: Coverage summary
+        if: always()
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            echo "## Coverage Summary" >> $GITHUB_STEP_SUMMARY
+            echo '```json' >> $GITHUB_STEP_SUMMARY
+            node -e "const c = require('./coverage/coverage-summary.json'); console.log(JSON.stringify(c.total, null, 2))" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
