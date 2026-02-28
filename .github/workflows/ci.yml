@@ -53,9 +53,40 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
+  # Evita CI duplicado: se push + PR aberta, o trigger pull_request ja cuida
+  check-pr:
+    name: Check for open PR
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    outputs:
+      skip: ${{ steps.check.outputs.skip }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR=$(gh pr list --repo "${{ github.repository }}" \
+            --head "${{ github.ref_name }}" --state open --json number -q '.[0].number')
+          if [ -n "$PR" ]; then
+            echo "PR #$PR aberta — pulando push CI (pull_request trigger cuida)"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Nenhuma PR aberta — executando push CI"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
   setup:
     name: Install Dependencies
+    needs: [check-pr]
+    if: |
+      always() &&
+      (github.event_name == 'pull_request' || needs.check-pr.outputs.skip != 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
