@@ -26,7 +26,7 @@ describe("mobileQRCodeService", () => {
         valor: 50.0,
         expira_em: "2026-02-25T14:30:00Z",
       };
-      mockPost.mockResolvedValue({ data: mockToken });
+      mockPost.mockResolvedValue({ data: { status: true, data: mockToken, error: null, message: 'Sucesso' } });
 
       const result = await mobileQRCodeService.gerarQRCode({
         empresa_id: 5,
@@ -50,7 +50,7 @@ describe("mobileQRCodeService", () => {
         saldo: 100.0,
         expira_em: "2026-02-25T14:30:00Z",
       };
-      mockPost.mockResolvedValue({ data: mockResponse });
+      mockPost.mockResolvedValue({ data: { status: true, data: mockResponse, error: null, message: 'Sucesso' } });
 
       const result = await mobileQRCodeService.validarQRCode({
         qr_token: "uuid-token-123",

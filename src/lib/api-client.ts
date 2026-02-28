@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import * as SecureStore from "expo-secure-store";
-import type { ApiError, TokenPair } from "@/src/types";
+import type { ApiError, ApiResponse, TokenPair } from "@/src/types";
 import { env } from "@/src/config/env";
 import { sslPinningInterceptor } from "./ssl-pinning";
 
@@ -78,17 +78,18 @@ function createApiClient(): AxiosInstance {
             throw new Error("No refresh token");
           }
 
-          const { data } = await axios.post<TokenPair>(
+          const { data } = await axios.post<ApiResponse<TokenPair>>(
             `${env.API_BASE_URL}/api/mobile/v1/auth/refresh`,
             {},
             { headers: { Authorization: `Bearer ${refreshToken}` } },
           );
 
-          await saveTokens(data.token, refreshToken);
-          processQueue(null, data.token);
+          const newToken = data.data.token;
+          await saveTokens(newToken, refreshToken);
+          processQueue(null, newToken);
 
           if (originalRequest.headers) {
-            originalRequest.headers.Authorization = `Bearer ${data.token}`;
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
           }
           return client(originalRequest);
         } catch (refreshError) {

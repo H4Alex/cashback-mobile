@@ -5,10 +5,10 @@ import { createContestacaoSchema, type CreateContestacaoFormData } from "@/src/s
 import type { ContestacaoTipo } from "@/src/types/contestacao";
 
 const TIPO_OPTIONS: { value: ContestacaoTipo; label: string }[] = [
+  { value: "cashback_nao_gerado", label: "Cashback não gerado" },
   { value: "valor_incorreto", label: "Valor incorreto" },
-  { value: "cashback_nao_creditado", label: "Cashback não creditado" },
-  { value: "empresa_errada", label: "Empresa errada" },
-  { value: "outro", label: "Outro" },
+  { value: "expiracao_indevida", label: "Expiração indevida" },
+  { value: "venda_cancelada", label: "Venda cancelada" },
 ];
 
 interface ContestacaoFormProps {

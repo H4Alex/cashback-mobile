@@ -23,7 +23,7 @@ describe("merchantEmpresaService", () => {
   describe("getEmpresas", () => {
     it("fetches empresa list", async () => {
       const empresas = [{ id: 1, nome_fantasia: "Loja A" }];
-      mockGet.mockResolvedValue({ data: { data: empresas } });
+      mockGet.mockResolvedValue({ data: { status: true, data: empresas, error: null, message: 'Sucesso' } });
 
       const result = await merchantEmpresaService.getEmpresas();
 
@@ -40,7 +40,7 @@ describe("merchantEmpresaService", () => {
         expires_in: 3600,
         empresa: { id: 2, nome_fantasia: "Loja B" },
       };
-      mockPost.mockResolvedValue({ data: response });
+      mockPost.mockResolvedValue({ data: { status: true, data: response, error: null, message: 'Sucesso' } });
 
       const result = await merchantEmpresaService.switchEmpresa(2);
 

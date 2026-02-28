@@ -1,5 +1,6 @@
 import { apiClient, saveTokens, clearTokens } from "@/src/lib/api-client";
 import type {
+  ApiResponse,
   LoginRequest,
   LoginResponse,
   RegisterRequest,
@@ -19,15 +20,15 @@ const PREFIX = "/api/mobile/v1/auth";
 
 export const mobileAuthService = {
   async register(data: RegisterRequest): Promise<LoginResponse> {
-    const res = await apiClient.post<LoginResponse>(`${PREFIX}/register`, data);
-    await saveTokens(res.data.token);
-    return res.data;
+    const res = await apiClient.post<ApiResponse<LoginResponse>>(`${PREFIX}/register`, data);
+    await saveTokens(res.data.data.token);
+    return res.data.data;
   },
 
   async login(data: LoginRequest): Promise<LoginResponse> {
-    const res = await apiClient.post<LoginResponse>(`${PREFIX}/login`, data);
-    await saveTokens(res.data.token);
-    return res.data;
+    const res = await apiClient.post<ApiResponse<LoginResponse>>(`${PREFIX}/login`, data);
+    await saveTokens(res.data.data.token);
+    return res.data.data;
   },
 
   async logout(): Promise<void> {
@@ -41,21 +42,21 @@ export const mobileAuthService = {
   },
 
   async refresh(): Promise<TokenPair> {
-    const res = await apiClient.post<TokenPair>(`${PREFIX}/refresh`);
-    await saveTokens(res.data.token);
-    return res.data;
+    const res = await apiClient.post<ApiResponse<TokenPair>>(`${PREFIX}/refresh`);
+    await saveTokens(res.data.data.token);
+    return res.data.data;
   },
 
   async me(): Promise<ClienteResource> {
-    const res = await apiClient.get<{ cliente: ClienteResource }>(`${PREFIX}/me`);
-    return res.data.cliente;
+    const res = await apiClient.get<ApiResponse<{ cliente: ClienteResource }>>(`${PREFIX}/me`);
+    return res.data.data.cliente;
   },
 
   /** OAuth social login (Google / Apple) */
   async oauth(data: OAuthRequest): Promise<OAuthResponse> {
-    const res = await apiClient.post<OAuthResponse>(`${PREFIX}/oauth`, data);
-    await saveTokens(res.data.token);
-    return res.data;
+    const res = await apiClient.post<ApiResponse<OAuthResponse>>(`${PREFIX}/oauth`, data);
+    await saveTokens(res.data.data.token);
+    return res.data.data;
   },
 
   /** Request password reset email */
@@ -70,8 +71,8 @@ export const mobileAuthService = {
 
   /** Update consumer profile */
   async updateProfile(data: UpdateProfileRequest): Promise<ClienteResource> {
-    const res = await apiClient.patch<{ cliente: ClienteResource }>(`${PREFIX}/profile`, data);
-    return res.data.cliente;
+    const res = await apiClient.patch<ApiResponse<{ cliente: ClienteResource }>>(`${PREFIX}/profile`, data);
+    return res.data.data.cliente;
   },
 
   /** Change password (requires current password) */
@@ -87,14 +88,14 @@ export const mobileAuthService = {
 
   /** Enroll biometric authentication */
   async enrollBiometric(data: BiometricEnrollRequest): Promise<{ enrolled: boolean }> {
-    const res = await apiClient.post<{ enrolled: boolean }>(`${PREFIX}/biometric/enroll`, data);
-    return res.data;
+    const res = await apiClient.post<ApiResponse<{ enrolled: boolean }>>(`${PREFIX}/biometric/enroll`, data);
+    return res.data.data;
   },
 
   /** Verify biometric and get token */
   async verifyBiometric(data: BiometricEnrollRequest): Promise<TokenPair> {
-    const res = await apiClient.post<TokenPair>(`${PREFIX}/biometric/verify`, data);
-    await saveTokens(res.data.token);
-    return res.data;
+    const res = await apiClient.post<ApiResponse<TokenPair>>(`${PREFIX}/biometric/verify`, data);
+    await saveTokens(res.data.data.token);
+    return res.data.data;
   },
 };

@@ -64,7 +64,7 @@ export default function CampanhasScreen() {
     setForm({
       nome: c.nome,
       percentual: c.percentual,
-      validade_dias: c.validade_dias,
+      validade_dias: c.validade_padrao,
       data_inicio: c.data_inicio,
       data_fim: c.data_fim,
     });
@@ -121,7 +121,7 @@ export default function CampanhasScreen() {
         </View>
         <View className="flex-row justify-between mb-1">
           <Text className="text-sm text-gray-500">Validade</Text>
-          <Text className="text-sm font-medium">{item.validade_dias} dias</Text>
+          <Text className="text-sm font-medium">{item.validade_padrao} dias</Text>
         </View>
         <View className="flex-row justify-between mb-1">
           <Text className="text-sm text-gray-500">Período</Text>

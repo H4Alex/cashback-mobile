@@ -16,7 +16,7 @@ export function useContestacoes() {
       }),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>
-      lastPage.meta.has_more ? lastPage.meta.next_cursor : undefined,
+      lastPage.meta.has_more_pages ? lastPage.meta.next_cursor : undefined,
   });
 }
 

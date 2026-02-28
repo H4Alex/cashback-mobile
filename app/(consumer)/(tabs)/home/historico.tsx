@@ -90,7 +90,7 @@ export default function HistoricoScreen() {
     <FlatList
       className="flex-1 bg-gray-50"
       data={allItems}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => String(item.id)}
       renderItem={({ item }) => <HistoricoRow item={item} />}
       ListHeaderComponent={ListHeader}
       onEndReached={() => {

@@ -1,4 +1,4 @@
-export type { ApiResponse, PaginatedResponse, CursorPaginatedResponse, ApiError } from "./api";
+export type { ApiResponse, ApiErrorResponse, PaginatedResponse, CursorPaginatedResponse, CursorPaginatedData, ApiError } from "./api";
 
 export type {
   OAuthProvider,
@@ -26,7 +26,7 @@ export type {
   GerarQRCodeRequest,
   ValidarQRCodeRequest,
   ValidarQRCodeResponse,
-  ExtratoResponse,
+  ExtratoEntry,
 } from "./cashback";
 
 export type {

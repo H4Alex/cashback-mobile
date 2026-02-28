@@ -1,5 +1,6 @@
 import { apiClient } from "@/src/lib/api-client";
 import type {
+  ApiResponse,
   QRCodeToken,
   GerarQRCodeRequest,
   ValidarQRCodeRequest,
@@ -17,8 +18,8 @@ export const mobileQRCodeService = {
    * Returns the token data including `expira_em` (ISO 8601).
    */
   async gerarQRCode(data: GerarQRCodeRequest): Promise<QRCodeToken> {
-    const res = await apiClient.post<QRCodeToken>("/api/mobile/v1/utilizacao/qrcode", data);
-    return res.data;
+    const res = await apiClient.post<ApiResponse<QRCodeToken>>("/api/mobile/v1/utilizacao/qrcode", data);
+    return res.data.data;
   },
 
   /**
@@ -26,7 +27,7 @@ export const mobileQRCodeService = {
    * Checks Redis for token existence and TTL validity.
    */
   async validarQRCode(data: ValidarQRCodeRequest): Promise<ValidarQRCodeResponse> {
-    const res = await apiClient.post<ValidarQRCodeResponse>("/api/v1/qrcode/validate", data);
-    return res.data;
+    const res = await apiClient.post<ApiResponse<ValidarQRCodeResponse>>("/api/v1/qrcode/validate", data);
+    return res.data.data;
   },
 };

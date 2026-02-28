@@ -24,12 +24,12 @@ describe("mobileAuthService", () => {
   describe("login", () => {
     it("calls login endpoint and saves token", async () => {
       const mockResponse = {
-        data: {
+        data: { status: true, data: {
           token: "jwt-token",
           token_type: "bearer",
           expires_in: 3600,
           cliente: { id: 1, nome: "Test" },
-        },
+        }, error: null, message: 'Sucesso' },
       };
       mockPost.mockResolvedValue(mockResponse);
 
@@ -50,12 +50,12 @@ describe("mobileAuthService", () => {
   describe("oauth", () => {
     it("calls oauth endpoint with Google provider", async () => {
       const mockResponse = {
-        data: {
+        data: { status: true, data: {
           token: "oauth-token",
           token_type: "bearer",
           expires_in: 3600,
           cliente: { id: 1, nome: "Test" },
-        },
+        }, error: null, message: 'Sucesso' },
       };
       mockPost.mockResolvedValue(mockResponse);
 
@@ -74,12 +74,12 @@ describe("mobileAuthService", () => {
 
     it("calls oauth endpoint with Apple provider and nonce", async () => {
       const mockResponse = {
-        data: {
+        data: { status: true, data: {
           token: "apple-token",
           token_type: "bearer",
           expires_in: 3600,
           cliente: { id: 1, nome: "Test" },
-        },
+        }, error: null, message: 'Sucesso' },
       };
       mockPost.mockResolvedValue(mockResponse);
 
@@ -99,7 +99,7 @@ describe("mobileAuthService", () => {
 
   describe("forgotPassword", () => {
     it("calls forgot-password endpoint", async () => {
-      mockPost.mockResolvedValue({ data: { success: true } });
+      mockPost.mockResolvedValue({ data: { status: true, data: { success: true }, error: null, message: 'Sucesso' } });
 
       await mobileAuthService.forgotPassword({ email: "test@example.com" });
 
@@ -111,7 +111,7 @@ describe("mobileAuthService", () => {
 
   describe("resetPassword", () => {
     it("calls reset-password endpoint", async () => {
-      mockPost.mockResolvedValue({ data: { success: true } });
+      mockPost.mockResolvedValue({ data: { status: true, data: { success: true }, error: null, message: 'Sucesso' } });
 
       await mobileAuthService.resetPassword({
         email: "test@example.com",
@@ -130,7 +130,7 @@ describe("mobileAuthService", () => {
   describe("updateProfile", () => {
     it("calls profile patch endpoint", async () => {
       mockPatch.mockResolvedValue({
-        data: { cliente: { id: 1, nome: "Updated Name" } },
+        data: { status: true, data: { cliente: { id: 1, nome: "Updated Name" } }, error: null, message: 'Sucesso' },
       });
 
       const result = await mobileAuthService.updateProfile({
@@ -146,7 +146,7 @@ describe("mobileAuthService", () => {
 
   describe("changePassword", () => {
     it("calls password patch endpoint", async () => {
-      mockPatch.mockResolvedValue({ data: { success: true } });
+      mockPatch.mockResolvedValue({ data: { status: true, data: { success: true }, error: null, message: 'Sucesso' } });
 
       await mobileAuthService.changePassword({
         senha_atual: "oldpass",
@@ -162,7 +162,7 @@ describe("mobileAuthService", () => {
 
   describe("deleteAccount", () => {
     it("calls delete-account endpoint and clears tokens", async () => {
-      mockPost.mockResolvedValue({ data: { success: true } });
+      mockPost.mockResolvedValue({ data: { status: true, data: { success: true }, error: null, message: 'Sucesso' } });
 
       await mobileAuthService.deleteAccount({
         senha: "mypassword",
@@ -177,7 +177,7 @@ describe("mobileAuthService", () => {
     });
 
     it("clears tokens even with password only", async () => {
-      mockPost.mockResolvedValue({ data: { success: true } });
+      mockPost.mockResolvedValue({ data: { status: true, data: { success: true }, error: null, message: 'Sucesso' } });
 
       await mobileAuthService.deleteAccount({ senha: "mypassword" });
 
@@ -187,7 +187,7 @@ describe("mobileAuthService", () => {
 
   describe("logout", () => {
     it("calls logout endpoint and clears tokens", async () => {
-      mockPost.mockResolvedValue({ data: {} });
+      mockPost.mockResolvedValue({ data: { status: true, data: {}, error: null, message: 'Sucesso' } });
 
       await mobileAuthService.logout();
 
@@ -207,7 +207,7 @@ describe("mobileAuthService", () => {
   describe("me", () => {
     it("returns client data", async () => {
       mockGet.mockResolvedValue({
-        data: { cliente: { id: 1, nome: "Test", email: "test@example.com" } },
+        data: { status: true, data: { cliente: { id: 1, nome: "Test", email: "test@example.com" } }, error: null, message: 'Sucesso' },
       });
 
       const result = await mobileAuthService.me();

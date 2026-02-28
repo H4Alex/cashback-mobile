@@ -10,10 +10,10 @@ import type { Contestacao } from "@/src/types/contestacao";
 
 function ContestacaoRow({ item }: { item: Contestacao }) {
   const tipoLabels: Record<string, string> = {
+    cashback_nao_gerado: "Cashback não gerado",
     valor_incorreto: "Valor incorreto",
-    cashback_nao_creditado: "Cashback não creditado",
-    empresa_errada: "Empresa errada",
-    outro: "Outro",
+    expiracao_indevida: "Expiração indevida",
+    venda_cancelada: "Venda cancelada",
   };
 
   return (
@@ -54,7 +54,7 @@ export default function ContestacaoListScreen() {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
     useContestacoes();
 
-  const allItems = data?.pages.flatMap((p) => p.contestacoes) ?? [];
+  const allItems = data?.pages.flatMap((p) => p.data) ?? [];
 
   const handleRefresh = useCallback(() => {
     refetch();
@@ -104,7 +104,7 @@ export default function ContestacaoListScreen() {
     <FlatList
       className="flex-1 bg-gray-50"
       data={allItems}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => String(item.id)}
       renderItem={({ item }) => <ContestacaoRow item={item} />}
       ListHeaderComponent={ListHeader}
       onEndReached={() => {

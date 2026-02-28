@@ -1,40 +1,54 @@
-export type CashbackStatus = "creditado" | "pendente" | "resgatado" | "expirado" | "processando";
+export type CashbackStatus = "pendente" | "confirmado" | "utilizado" | "rejeitado" | "expirado" | "congelado";
 
 export interface CashbackEntry {
-  id: string;
+  id: number;
   valor: number;
   status: CashbackStatus;
   empresa_nome: string;
-  empresa_id: string;
+  empresa_id: number;
   created_at: string;
   expires_at?: string;
   descricao?: string;
 }
 
 export interface CashbackSaldo {
-  total: number;
-  disponivel: number;
-  pendente: number;
-  empresas: EmpresaSaldo[];
-  proximo_a_expirar?: {
+  saldo_total: number;
+  por_empresa: {
+    empresa_id: number;
+    nome_fantasia: string | null;
+    logo_url: string | null;
+    saldo: string;
+  }[];
+  proximo_a_expirar: {
     valor: number;
     quantidade: number;
   };
 }
 
-export interface ExtratoResponse {
-  extrato: CashbackEntry[];
-  meta: {
-    next_cursor: string | null;
-    has_more: boolean;
+export interface ExtratoEntry {
+  id: number;
+  tipo: string;
+  valor_compra: number;
+  valor_cashback: number;
+  status_cashback: string;
+  data_expiracao: string | null;
+  created_at: string;
+  empresa?: {
+    id: number;
+    nome_fantasia: string;
+    logo_url: string | null;
+  };
+  campanha?: {
+    id: number;
+    nome: string;
   };
 }
 
 export interface EmpresaSaldo {
-  empresa_id: string;
-  empresa_nome: string;
-  saldo: number;
-  logo_url?: string;
+  empresa_id: number;
+  nome_fantasia: string | null;
+  logo_url: string | null;
+  saldo: string;
 }
 
 export interface QRCodeToken {

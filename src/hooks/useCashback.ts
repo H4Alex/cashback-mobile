@@ -36,7 +36,7 @@ export function useExtrato(params?: { empresa_id?: string }) {
       }),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>
-      lastPage.meta.has_more ? lastPage.meta.next_cursor : undefined,
+      lastPage.meta.has_more_pages ? lastPage.meta.next_cursor : undefined,
   });
 }
 
@@ -52,6 +52,6 @@ export function useExtratoInfinite(filters: ExtratoFilters) {
       }),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>
-      lastPage.meta.has_more ? lastPage.meta.next_cursor : undefined,
+      lastPage.meta.has_more_pages ? lastPage.meta.next_cursor : undefined,
   });
 }

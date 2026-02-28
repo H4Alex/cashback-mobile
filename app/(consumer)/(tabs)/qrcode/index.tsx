@@ -26,7 +26,7 @@ export default function QRCodeScreen() {
   const [qrData, setQrData] = useState<QRCodeToken | null>(null);
 
   const valorNum = parseFloat(valor) || 0;
-  const maxValor = selectedLoja?.saldo ?? 0;
+  const maxValor = selectedLoja ? Number(selectedLoja.saldo) : 0;
   const canGenerate = selectedLoja && valorNum > 0 && valorNum <= maxValor;
 
   const handleGerar = () => {
@@ -62,7 +62,7 @@ export default function QRCodeScreen() {
         <QRCodeDisplay
           token={qrData.qr_token}
           valor={qrData.valor}
-          empresaNome={selectedLoja.empresa_nome}
+          empresaNome={selectedLoja.nome_fantasia ?? ""}
           expiresAt={qrData.expira_em}
           onExpire={handleExpire}
         />
@@ -106,13 +106,13 @@ export default function QRCodeScreen() {
                 >
                   <View className="w-10 h-10 bg-blue-100 rounded-full items-center justify-center mr-3">
                     <Text className="text-blue-700 font-bold">
-                      {loja.empresa_nome.charAt(0).toUpperCase()}
+                      {(loja.nome_fantasia ?? "L").charAt(0).toUpperCase()}
                     </Text>
                   </View>
                   <View className="flex-1">
-                    <Text className="text-base font-medium">{loja.empresa_nome}</Text>
+                    <Text className="text-base font-medium">{loja.nome_fantasia ?? "Loja"}</Text>
                     <Text className="text-green-600 text-sm font-semibold">
-                      Saldo: {formatCurrency(loja.saldo)}
+                      Saldo: {formatCurrency(Number(loja.saldo))}
                     </Text>
                   </View>
                   {isSelected && <Text className="text-blue-500 text-lg">✓</Text>}
@@ -137,7 +137,7 @@ export default function QRCodeScreen() {
                 />
               </View>
               <Text className="text-gray-400 text-xs mt-1">
-                Máx: {formatCurrency(selectedLoja.saldo)}
+                Máx: {formatCurrency(Number(selectedLoja.saldo))}
               </Text>
               {valorNum > maxValor && (
                 <Text className="text-red-500 text-xs mt-1">Valor excede o saldo disponível</Text>

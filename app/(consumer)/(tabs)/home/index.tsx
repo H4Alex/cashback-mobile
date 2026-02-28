@@ -20,7 +20,7 @@ export default function DashboardScreen() {
   const { data: extratoData, isLoading: extratoLoading, refetch: refetchExtrato } = useExtrato();
 
   const isRefreshing = false;
-  const recentEntries = extratoData?.pages.flatMap((p) => p.extrato).slice(0, 5) ?? [];
+  const recentEntries = extratoData?.pages.flatMap((p) => p.data).slice(0, 5) ?? [];
 
   const handleRefresh = useCallback(() => {
     refetchSaldo();

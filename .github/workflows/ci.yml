@@ -1,321 +1,43 @@
-name: CI
+name: CI — Cashback Mobile
 
 on:
+  push:
+    branches: [main, develop, 'claude/**']
   pull_request:
-    branches: [main]
-    paths:
-      - "src/**"
-      - "app/**"
-      - "components/**"
-      - "hooks/**"
-      - "services/**"
-      - "utils/**"
-      - "constants/**"
-      - "assets/**"
-      - "package.json"
-      - "package-lock.json"
-      - "tsconfig*.json"
-      - "app.json"
-      - "app.config.*"
-      - "babel.config.*"
-      - "metro.config.*"
-      - ".eslintrc*"
-      - "eslint.config.*"
-      - ".prettierrc*"
-      - ".github/workflows/ci.yml"
-      - "__tests__/**"
+    branches: [main, develop]
 
 concurrency:
-  group: ci-${{ github.event.pull_request.number }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
-
 jobs:
-  install:
-    name: Instalar Dependencias
+  lint-and-typecheck:
+    name: Lint & Type Check
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
     steps:
-      - name: Checkout do repositorio
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run type-check
 
-      - name: Instalar dependencias
-        run: npm ci
-
-      - name: Salvar node_modules
-        uses: actions/cache/save@v4
-        with:
-          path: node_modules
-          key: nm-${{ github.sha }}
-
-  detect-changes:
-    name: Detectar Alteracoes
+  unit-tests:
+    name: Unit Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 3
-    outputs:
-      changed_files: ${{ steps.changes.outputs.changed_files }}
-      changed_source: ${{ steps.changes.outputs.changed_source }}
-      changed_tests: ${{ steps.changes.outputs.changed_tests }}
-      changed_ts_files: ${{ steps.changes.outputs.changed_ts_files }}
-      config_changed: ${{ steps.changes.outputs.config_changed }}
-      has_source_changes: ${{ steps.changes.outputs.has_source_changes }}
-      has_ts_changes: ${{ steps.changes.outputs.has_ts_changes }}
-
+    needs: lint-and-typecheck
     steps:
-      - name: Checkout do repositorio
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Detectar arquivos alterados
-        id: changes
-        run: |
-          BASE_SHA=${{ github.event.pull_request.base.sha }}
-          HEAD_SHA=${{ github.event.pull_request.head.sha }}
-
-          # Todos os arquivos alterados
-          CHANGED=$(git diff --name-only --diff-filter=ACMR "$BASE_SHA"..."$HEAD_SHA" || true)
-          echo "Arquivos alterados:"
-          echo "$CHANGED"
-
-          # Arquivos de configuracao que afetam todo o projeto
-          CONFIG_PATTERNS="package.json|package-lock.json|tsconfig|jest.config|babel.config|metro.config|app.json|app.config|eslint.config|\.eslintrc|\.prettierrc"
-          CONFIG_CHANGED=$(echo "$CHANGED" | grep -E "$CONFIG_PATTERNS" || true)
-
-          if [ -n "$CONFIG_CHANGED" ]; then
-            echo "config_changed=true" >> "$GITHUB_OUTPUT"
-            echo "Configs alterados: $CONFIG_CHANGED"
-          else
-            echo "config_changed=false" >> "$GITHUB_OUTPUT"
-          fi
-
-          # Arquivos fonte (nao testes, nao configs)
-          SOURCE_FILES=$(echo "$CHANGED" | grep -E '\.(ts|tsx|js|jsx)$' | grep -v '__tests__' | grep -v '\.test\.' | grep -v '\.spec\.' || true)
-          echo "changed_source<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$SOURCE_FILES" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-
-          # Arquivos de teste
-          TEST_FILES=$(echo "$CHANGED" | grep -E '(__tests__/.*|\.test\.(ts|tsx|js|jsx)$|\.spec\.(ts|tsx|js|jsx)$)' || true)
-          echo "changed_tests<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$TEST_FILES" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-
-          # Todos os .ts/.tsx alterados (para lint e format)
-          TS_FILES=$(echo "$CHANGED" | grep -E '\.(ts|tsx)$' || true)
-          echo "changed_ts_files<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$TS_FILES" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-
-          # Flags de existencia
-          if [ -n "$SOURCE_FILES" ] || [ -n "$TEST_FILES" ]; then
-            echo "has_source_changes=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_source_changes=false" >> "$GITHUB_OUTPUT"
-          fi
-
-          if [ -n "$TS_FILES" ]; then
-            echo "has_ts_changes=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_ts_changes=false" >> "$GITHUB_OUTPUT"
-          fi
-
-          # Lista completa
-          echo "changed_files<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$CHANGED" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-
-  lint:
-    name: Lint
-    needs: [install, detect-changes]
-    if: needs.detect-changes.outputs.has_ts_changes == 'true' || needs.detect-changes.outputs.config_changed == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - name: Checkout do repositorio
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      - name: Restaurar node_modules
-        uses: actions/cache/restore@v4
+          cache: npm
+      - run: npm ci
+      - run: npx jest --ci --coverage --passWithNoTests
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          path: node_modules
-          key: nm-${{ github.sha }}
-
-      - name: Lint (todos os arquivos)
-        if: needs.detect-changes.outputs.config_changed == 'true'
-        run: npm run lint
-
-      - name: Lint (apenas arquivos alterados)
-        if: needs.detect-changes.outputs.config_changed == 'false'
-        run: |
-          FILES=$(echo '${{ needs.detect-changes.outputs.changed_ts_files }}' | tr '\n' ' ' | xargs)
-          if [ -n "$FILES" ]; then
-            echo "Executando lint em: $FILES"
-            npx eslint $FILES --max-warnings 0
-          else
-            echo "Nenhum arquivo TS/TSX alterado para lint"
-          fi
-
-  type-check:
-    name: TypeScript
-    needs: [install, detect-changes]
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - name: Checkout do repositorio
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Restaurar node_modules
-        uses: actions/cache/restore@v4
-        with:
-          path: node_modules
-          key: nm-${{ github.sha }}
-
-      - name: Verificar tipos TypeScript
-        run: npm run type-check
-
-  test:
-    name: Testes
-    needs: [install, detect-changes]
-    if: needs.detect-changes.outputs.has_source_changes == 'true' || needs.detect-changes.outputs.config_changed == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout do repositorio
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Restaurar node_modules
-        uses: actions/cache/restore@v4
-        with:
-          path: node_modules
-          key: nm-${{ github.sha }}
-
-      - name: Executar todos os testes (config alterada)
-        if: needs.detect-changes.outputs.config_changed == 'true'
-        run: npm run test:run
-
-      - name: Executar testes relacionados (apenas alteracoes)
-        if: needs.detect-changes.outputs.config_changed == 'false'
-        run: |
-          # Combinar arquivos fonte e teste alterados
-          SOURCE='${{ needs.detect-changes.outputs.changed_source }}'
-          TESTS='${{ needs.detect-changes.outputs.changed_tests }}'
-
-          ALL_FILES=""
-          if [ -n "$SOURCE" ]; then
-            ALL_FILES="$SOURCE"
-          fi
-          if [ -n "$TESTS" ]; then
-            if [ -n "$ALL_FILES" ]; then
-              ALL_FILES="$ALL_FILES
-          $TESTS"
-            else
-              ALL_FILES="$TESTS"
-            fi
-          fi
-
-          # Filtrar apenas arquivos existentes
-          EXISTING_FILES=""
-          while IFS= read -r file; do
-            [ -z "$file" ] && continue
-            if [ -f "$file" ]; then
-              EXISTING_FILES="$EXISTING_FILES $file"
-            fi
-          done <<< "$ALL_FILES"
-
-          EXISTING_FILES=$(echo "$EXISTING_FILES" | xargs)
-
-          if [ -n "$EXISTING_FILES" ]; then
-            echo "Executando testes relacionados a: $EXISTING_FILES"
-            npx jest --findRelatedTests $EXISTING_FILES --passWithNoTests
-          else
-            echo "Nenhum arquivo fonte alterado - pulando testes"
-          fi
-
-  format:
-    name: Formatacao
-    needs: [install, detect-changes]
-    if: needs.detect-changes.outputs.has_ts_changes == 'true' || needs.detect-changes.outputs.config_changed == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - name: Checkout do repositorio
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Restaurar node_modules
-        uses: actions/cache/restore@v4
-        with:
-          path: node_modules
-          key: nm-${{ github.sha }}
-
-      - name: Verificar formatacao (todos os arquivos)
-        if: needs.detect-changes.outputs.config_changed == 'true'
-        run: npm run format:check
-
-      - name: Verificar formatacao (apenas arquivos alterados)
-        if: needs.detect-changes.outputs.config_changed == 'false'
-        run: |
-          FILES=$(echo '${{ needs.detect-changes.outputs.changed_ts_files }}' | tr '\n' ' ' | xargs)
-          if [ -n "$FILES" ]; then
-            echo "Verificando formatacao de: $FILES"
-            npx prettier --check $FILES
-          else
-            echo "Nenhum arquivo alterado para verificar"
-          fi
-
-  expo-doctor:
-    name: Expo Doctor
-    needs: [install, detect-changes]
-    if: needs.detect-changes.outputs.config_changed == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - name: Checkout do repositorio
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Instalar dependencias
-        run: npm ci
-
-      - name: Verificar configuracao Expo
-        run: npx expo-doctor
+          name: coverage-report
+          path: coverage/

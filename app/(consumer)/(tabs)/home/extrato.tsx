@@ -7,14 +7,15 @@ import { useRefreshOnFocus } from "@/src/hooks";
 import { EmptyState, SkeletonTransaction } from "@/src/components";
 import { TransactionCard } from "@/src/components/TransactionCard";
 import { FilterChips } from "@/src/components/FilterChips";
-import type { CashbackStatus, CashbackEntry } from "@/src/types";
+import type { CashbackStatus, ExtratoEntry } from "@/src/types";
 
 const STATUS_OPTIONS: { value: CashbackStatus; label: string }[] = [
-  { value: "creditado", label: "Creditado" },
   { value: "pendente", label: "Pendente" },
-  { value: "resgatado", label: "Resgatado" },
+  { value: "confirmado", label: "Confirmado" },
+  { value: "utilizado", label: "Utilizado" },
+  { value: "rejeitado", label: "Rejeitado" },
   { value: "expirado", label: "Expirado" },
-  { value: "processando", label: "Processando" },
+  { value: "congelado", label: "Congelado" },
 ];
 
 export default function ExtratoScreen() {
@@ -24,7 +25,7 @@ export default function ExtratoScreen() {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
     useExtratoInfinite(filters);
 
-  const allEntries = data?.pages.flatMap((p) => p.extrato) ?? [];
+  const allEntries = data?.pages.flatMap((p) => p.data) ?? [];
 
   const handleRefresh = useCallback(() => {
     refetch();
@@ -32,10 +33,10 @@ export default function ExtratoScreen() {
 
   useRefreshOnFocus(handleRefresh);
 
-  const handleEntryPress = (entry: CashbackEntry) => {
+  const handleEntryPress = (entry: ExtratoEntry) => {
     router.push({
       pathname: "/(consumer)/contestacao/create",
-      params: { cashback_entry_id: entry.id, empresa_nome: entry.empresa_nome },
+      params: { cashback_entry_id: String(entry.id), empresa_nome: entry.empresa?.nome_fantasia ?? "" },
     });
   };
 
@@ -86,7 +87,7 @@ export default function ExtratoScreen() {
     <FlatList
       className="flex-1 bg-gray-50"
       data={allEntries}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => String(item.id)}
       renderItem={({ item }) => (
         <TransactionCard entry={item} onPress={() => handleEntryPress(item)} />
       )}

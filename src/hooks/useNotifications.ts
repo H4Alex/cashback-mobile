@@ -20,7 +20,7 @@ export function useNotifications(params?: { unread_only?: boolean }) {
       }),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>
-      lastPage.meta.has_more ? lastPage.meta.next_cursor : undefined,
+      lastPage.meta.has_more_pages ? lastPage.meta.next_cursor : undefined,
     select: (data) => {
       const firstPage = data.pages[0];
       if (firstPage) {

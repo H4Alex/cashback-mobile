@@ -26,7 +26,7 @@ describe("merchantManagementService", () => {
   describe("Dashboard", () => {
     it("getStats returns dashboard stats", async () => {
       const stats = { total_cashback: 1000, total_creditado: 800, total_resgatado: 200 };
-      mockGet.mockResolvedValue({ data: stats });
+      mockGet.mockResolvedValue({ data: { status: true, data: stats, error: null, message: 'Sucesso' } });
 
       const result = await merchantManagementService.getStats();
 
@@ -36,7 +36,7 @@ describe("merchantManagementService", () => {
 
     it("getTransacoes returns transaction list", async () => {
       const transacoes = [{ id: "1", cliente_nome: "João", valor: 100, tipo: "gerado" }];
-      mockGet.mockResolvedValue({ data: { data: transacoes } });
+      mockGet.mockResolvedValue({ data: { status: true, data: transacoes, error: null, message: 'Sucesso' } });
 
       const result = await merchantManagementService.getTransacoes();
 
@@ -46,7 +46,7 @@ describe("merchantManagementService", () => {
 
     it("getTopClientes returns top clients", async () => {
       const clientes = [{ id: 1, nome: "Maria", saldo_total: 500 }];
-      mockGet.mockResolvedValue({ data: { data: clientes } });
+      mockGet.mockResolvedValue({ data: { status: true, data: clientes, error: null, message: 'Sucesso' } });
 
       const result = await merchantManagementService.getTopClientes();
 
@@ -54,7 +54,7 @@ describe("merchantManagementService", () => {
     });
 
     it("getChart passes periodo param", async () => {
-      mockGet.mockResolvedValue({ data: { data: [] } });
+      mockGet.mockResolvedValue({ data: { status: true, data: [], error: null, message: 'Sucesso' } });
 
       await merchantManagementService.getChart("30d");
 
@@ -66,7 +66,7 @@ describe("merchantManagementService", () => {
 
   describe("Clientes", () => {
     it("getClientes passes search and pagination params", async () => {
-      mockGet.mockResolvedValue({ data: { data: [], total: 0, total_pages: 0 } });
+      mockGet.mockResolvedValue({ data: { status: true, data: { data: [], total: 0, total_pages: 0 }, error: null, message: 'Sucesso' } });
 
       await merchantManagementService.getClientes({ search: "João", page: 2, limit: 10 });
 
@@ -77,7 +77,7 @@ describe("merchantManagementService", () => {
 
     it("getCliente fetches by id", async () => {
       const cliente = { id: 5, nome: "Maria", cpf: "12345678901" };
-      mockGet.mockResolvedValue({ data: cliente });
+      mockGet.mockResolvedValue({ data: { status: true, data: cliente, error: null, message: 'Sucesso' } });
 
       const result = await merchantManagementService.getCliente(5);
 
@@ -88,7 +88,7 @@ describe("merchantManagementService", () => {
 
   describe("Campanhas", () => {
     it("getCampanhas with status filter", async () => {
-      mockGet.mockResolvedValue({ data: { data: [] } });
+      mockGet.mockResolvedValue({ data: { status: true, data: [], error: null, message: 'Sucesso' } });
 
       await merchantManagementService.getCampanhas("ativa");
 
@@ -98,7 +98,7 @@ describe("merchantManagementService", () => {
     });
 
     it("getCampanhas without filter", async () => {
-      mockGet.mockResolvedValue({ data: { data: [] } });
+      mockGet.mockResolvedValue({ data: { status: true, data: [], error: null, message: 'Sucesso' } });
 
       await merchantManagementService.getCampanhas();
 
@@ -115,7 +115,7 @@ describe("merchantManagementService", () => {
         data_inicio: "2026-01-01",
         data_fim: "2026-01-31",
       };
-      mockPost.mockResolvedValue({ data: { id: 1, ...data } });
+      mockPost.mockResolvedValue({ data: { status: true, data: { id: 1, ...data }, error: null, message: 'Sucesso' } });
 
       const result = await merchantManagementService.createCampanha(data);
 
@@ -124,7 +124,7 @@ describe("merchantManagementService", () => {
     });
 
     it("updateCampanha patches data", async () => {
-      mockPatch.mockResolvedValue({ data: { id: 1, nome: "Updated" } });
+      mockPatch.mockResolvedValue({ data: { status: true, data: { id: 1, nome: "Updated" }, error: null, message: 'Sucesso' } });
 
       await merchantManagementService.updateCampanha(1, { nome: "Updated" });
 
@@ -142,7 +142,7 @@ describe("merchantManagementService", () => {
 
   describe("Vendas", () => {
     it("getVendas passes filter params", async () => {
-      mockGet.mockResolvedValue({ data: { data: [], total: 0, total_pages: 0 } });
+      mockGet.mockResolvedValue({ data: { status: true, data: { data: [], total: 0, total_pages: 0 }, error: null, message: 'Sucesso' } });
 
       await merchantManagementService.getVendas({ page: 1, status: "confirmado" });
 
@@ -154,7 +154,7 @@ describe("merchantManagementService", () => {
 
   describe("Contestações", () => {
     it("getContestacoes with status filter", async () => {
-      mockGet.mockResolvedValue({ data: { data: [] } });
+      mockGet.mockResolvedValue({ data: { status: true, data: [], error: null, message: 'Sucesso' } });
 
       await merchantManagementService.getContestacoes("pendente");
 
@@ -181,7 +181,7 @@ describe("merchantManagementService", () => {
   describe("Config", () => {
     it("getConfig returns empresa config", async () => {
       const config = { nome_fantasia: "Loja X", cnpj: "12345678000101" };
-      mockGet.mockResolvedValue({ data: config });
+      mockGet.mockResolvedValue({ data: { status: true, data: config, error: null, message: 'Sucesso' } });
 
       const result = await merchantManagementService.getConfig();
 
@@ -190,7 +190,7 @@ describe("merchantManagementService", () => {
     });
 
     it("updateConfig patches config", async () => {
-      mockPatch.mockResolvedValue({ data: { percentual_cashback: 5 } });
+      mockPatch.mockResolvedValue({ data: { status: true, data: { percentual_cashback: 5 }, error: null, message: 'Sucesso' } });
 
       await merchantManagementService.updateConfig({ percentual_cashback: 5 });
 
@@ -199,7 +199,7 @@ describe("merchantManagementService", () => {
 
     it("uploadLogo posts FormData with correct headers", async () => {
       const formData = new FormData();
-      mockPost.mockResolvedValue({ data: { logo_url: "https://cdn.example.com/logo.png" } });
+      mockPost.mockResolvedValue({ data: { status: true, data: { logo_url: "https://cdn.example.com/logo.png" }, error: null, message: 'Sucesso' } });
 
       const result = await merchantManagementService.uploadLogo(formData);
 
@@ -214,7 +214,7 @@ describe("merchantManagementService", () => {
   describe("Relatórios", () => {
     it("getRelatorios passes periodo param", async () => {
       const relatorio = { cashback_gerado: 5000, clientes_ativos: 100 };
-      mockGet.mockResolvedValue({ data: relatorio });
+      mockGet.mockResolvedValue({ data: { status: true, data: relatorio, error: null, message: 'Sucesso' } });
 
       const result = await merchantManagementService.getRelatorios("30d");
 
