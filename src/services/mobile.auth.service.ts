@@ -15,18 +15,22 @@ import type {
   BiometricEnrollRequest,
   TokenPair,
 } from "@/src/types";
+import { validateResponse } from "@/src/schemas/validateResponse";
+import { loginResponseSchema, clienteResourceSchema } from "@/src/schemas/api-responses";
 
 const PREFIX = "/api/mobile/v1/auth";
 
 export const mobileAuthService = {
   async register(data: RegisterRequest): Promise<LoginResponse> {
     const res = await apiClient.post<ApiResponse<LoginResponse>>(`${PREFIX}/register`, data);
+    validateResponse(loginResponseSchema, res.data, "POST /auth/register");
     await saveTokens(res.data.data.token);
     return res.data.data;
   },
 
   async login(data: LoginRequest): Promise<LoginResponse> {
     const res = await apiClient.post<ApiResponse<LoginResponse>>(`${PREFIX}/login`, data);
+    validateResponse(loginResponseSchema, res.data, "POST /auth/login");
     await saveTokens(res.data.data.token);
     return res.data.data;
   },
@@ -49,12 +53,14 @@ export const mobileAuthService = {
 
   async me(): Promise<ClienteResource> {
     const res = await apiClient.get<ApiResponse<{ cliente: ClienteResource }>>(`${PREFIX}/me`);
+    validateResponse(clienteResourceSchema, res.data.data.cliente, "GET /auth/me");
     return res.data.data.cliente;
   },
 
   /** OAuth social login (Google / Apple) */
   async oauth(data: OAuthRequest): Promise<OAuthResponse> {
     const res = await apiClient.post<ApiResponse<OAuthResponse>>(`${PREFIX}/oauth`, data);
+    validateResponse(loginResponseSchema, res.data, "POST /auth/oauth");
     await saveTokens(res.data.data.token);
     return res.data.data;
   },
@@ -72,6 +78,7 @@ export const mobileAuthService = {
   /** Update consumer profile */
   async updateProfile(data: UpdateProfileRequest): Promise<ClienteResource> {
     const res = await apiClient.patch<ApiResponse<{ cliente: ClienteResource }>>(`${PREFIX}/profile`, data);
+    validateResponse(clienteResourceSchema, res.data.data.cliente, "PATCH /auth/profile");
     return res.data.data.cliente;
   },
 

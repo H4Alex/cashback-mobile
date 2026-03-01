@@ -216,4 +216,149 @@ describe("mobileAuthService", () => {
       expect(result.nome).toBe("Test");
     });
   });
+
+  describe("register", () => {
+    it("calls register endpoint and saves token", async () => {
+      const mockResponse = {
+        data: { status: true, data: {
+          token: "register-token",
+          token_type: "bearer",
+          expires_in: 3600,
+          cliente: { id: 2, nome: "Novo Usuário" },
+        }, error: null, message: 'Sucesso' },
+      };
+      mockPost.mockResolvedValue(mockResponse);
+
+      const result = await mobileAuthService.register({
+        nome: "Novo Usuário",
+        email: "novo@example.com",
+        cpf: "12345678901",
+        senha: "123456",
+        senha_confirmation: "123456",
+      });
+
+      expect(mockPost).toHaveBeenCalledWith("/api/mobile/v1/auth/register", {
+        nome: "Novo Usuário",
+        email: "novo@example.com",
+        cpf: "12345678901",
+        senha: "123456",
+        senha_confirmation: "123456",
+      });
+      expect(saveTokens).toHaveBeenCalledWith("register-token");
+      expect(result.token).toBe("register-token");
+    });
+
+    it("propagates 422 validation error", async () => {
+      const error = Object.assign(new Error("Unprocessable Entity"), {
+        response: { status: 422, data: { errors: { email: ["E-mail já cadastrado"] } } },
+      });
+      mockPost.mockRejectedValue(error);
+
+      await expect(
+        mobileAuthService.register({
+          nome: "Test",
+          email: "existing@example.com",
+          cpf: "12345678901",
+          senha: "123456",
+          senha_confirmation: "123456",
+        }),
+      ).rejects.toThrow("Unprocessable Entity");
+    });
+  });
+
+  describe("refresh", () => {
+    it("refreshes token and saves new token", async () => {
+      const mockResponse = {
+        data: { status: true, data: {
+          token: "refreshed-token",
+          token_type: "bearer",
+          expires_in: 3600,
+        }, error: null, message: 'Sucesso' },
+      };
+      mockPost.mockResolvedValue(mockResponse);
+
+      const result = await mobileAuthService.refresh();
+
+      expect(mockPost).toHaveBeenCalledWith("/api/mobile/v1/auth/refresh");
+      expect(saveTokens).toHaveBeenCalledWith("refreshed-token");
+      expect(result.token).toBe("refreshed-token");
+    });
+
+    it("propagates 401 error when refresh token is expired", async () => {
+      const error = Object.assign(new Error("Unauthorized"), {
+        response: { status: 401 },
+      });
+      mockPost.mockRejectedValue(error);
+
+      await expect(mobileAuthService.refresh()).rejects.toThrow("Unauthorized");
+    });
+  });
+
+  describe("enrollBiometric", () => {
+    it("enrolls biometric authentication", async () => {
+      mockPost.mockResolvedValue({
+        data: { status: true, data: { enrolled: true }, error: null, message: 'Sucesso' },
+      });
+
+      const result = await mobileAuthService.enrollBiometric({
+        biometric_token: "bio-token",
+        device_id: "device-123",
+      });
+
+      expect(mockPost).toHaveBeenCalledWith("/api/mobile/v1/auth/biometric/enroll", {
+        biometric_token: "bio-token",
+        device_id: "device-123",
+      });
+      expect(result.enrolled).toBe(true);
+    });
+
+    it("propagates errors", async () => {
+      mockPost.mockRejectedValue(new Error("Server Error"));
+
+      await expect(
+        mobileAuthService.enrollBiometric({
+          biometric_token: "bio-token",
+          device_id: "device-123",
+        }),
+      ).rejects.toThrow("Server Error");
+    });
+  });
+
+  describe("verifyBiometric", () => {
+    it("verifies biometric and saves token", async () => {
+      mockPost.mockResolvedValue({
+        data: { status: true, data: {
+          token: "biometric-jwt",
+          token_type: "bearer",
+          expires_in: 3600,
+        }, error: null, message: 'Sucesso' },
+      });
+
+      const result = await mobileAuthService.verifyBiometric({
+        biometric_token: "bio-token",
+        device_id: "device-123",
+      });
+
+      expect(mockPost).toHaveBeenCalledWith("/api/mobile/v1/auth/biometric/verify", {
+        biometric_token: "bio-token",
+        device_id: "device-123",
+      });
+      expect(saveTokens).toHaveBeenCalledWith("biometric-jwt");
+      expect(result.token).toBe("biometric-jwt");
+    });
+
+    it("propagates 401 error when biometric token is invalid", async () => {
+      const error = Object.assign(new Error("Unauthorized"), {
+        response: { status: 401 },
+      });
+      mockPost.mockRejectedValue(error);
+
+      await expect(
+        mobileAuthService.verifyBiometric({
+          biometric_token: "invalid-token",
+          device_id: "device-123",
+        }),
+      ).rejects.toThrow("Unauthorized");
+    });
+  });
 });

@@ -5,11 +5,24 @@ import {
   loginResponseDataSchema,
   loginResponseSchema,
   saldoDataSchema,
+  saldoResponseSchema,
   extratoEntrySchema,
+  extratoResponseSchema,
   contestacaoSchema,
+  contestacaoListResponseSchema,
   notificationSchema,
 } from "@/src/schemas/api-responses";
 import { z } from "zod";
+import {
+  buildCliente,
+  buildCashbackSaldo,
+  buildExtratoEntry,
+  buildContestacao,
+  buildNotification,
+  buildApiResponse,
+  buildCursorPaginated,
+  resetFixtureSequence,
+} from "../fixtures";
 
 describe("API Response Schemas", () => {
   describe("apiResponseSchema", () => {
@@ -295,6 +308,91 @@ describe("API Response Schemas", () => {
         created_at: "2025-01-15T10:30:00.000Z",
       });
       expect(result.success).toBe(true);
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // Fixture-based contract tests — verifies fixture builders match schemas
+  // ---------------------------------------------------------------------------
+
+  describe("Fixture contract validation", () => {
+    beforeEach(() => {
+      resetFixtureSequence();
+    });
+
+    it("buildCliente fixture validates against clienteResourceSchema", () => {
+      const cliente = buildCliente();
+      expect(clienteResourceSchema.safeParse(cliente).success).toBe(true);
+    });
+
+    it("buildCliente with overrides validates against clienteResourceSchema", () => {
+      const cliente = buildCliente({ nome: "Maria", cpf: null, telefone: null });
+      expect(clienteResourceSchema.safeParse(cliente).success).toBe(true);
+    });
+
+    it("buildCashbackSaldo fixture validates against saldoDataSchema", () => {
+      const saldo = buildCashbackSaldo();
+      expect(saldoDataSchema.safeParse(saldo).success).toBe(true);
+    });
+
+    it("buildApiResponse(buildCashbackSaldo()) validates against saldoResponseSchema", () => {
+      const envelope = buildApiResponse(buildCashbackSaldo());
+      expect(saldoResponseSchema.safeParse(envelope).success).toBe(true);
+    });
+
+    it("buildExtratoEntry fixture validates against extratoEntrySchema", () => {
+      const entry = buildExtratoEntry();
+      expect(extratoEntrySchema.safeParse(entry).success).toBe(true);
+    });
+
+    it("buildExtratoEntry without optional fields validates against extratoEntrySchema", () => {
+      const entry = buildExtratoEntry({ empresa: undefined, campanha: undefined, data_expiracao: null });
+      expect(extratoEntrySchema.safeParse(entry).success).toBe(true);
+    });
+
+    it("buildCursorPaginated(extratoEntries) validates against extratoResponseSchema", () => {
+      const entries = [buildExtratoEntry(), buildExtratoEntry()];
+      const paginated = buildCursorPaginated(entries);
+      expect(extratoResponseSchema.safeParse(paginated).success).toBe(true);
+    });
+
+    it("buildContestacao fixture validates against contestacaoSchema", () => {
+      const contestacao = buildContestacao();
+      expect(contestacaoSchema.safeParse(contestacao).success).toBe(true);
+    });
+
+    it("buildContestacao with all tipo values validates against contestacaoSchema", () => {
+      const tipos = [
+        "cashback_nao_gerado",
+        "valor_incorreto",
+        "expiracao_indevida",
+        "venda_cancelada",
+      ] as const;
+
+      for (const tipo of tipos) {
+        const contestacao = buildContestacao({ tipo });
+        expect(contestacaoSchema.safeParse(contestacao).success).toBe(true);
+      }
+    });
+
+    it("buildCursorPaginated(contestacoes) validates against contestacaoListResponseSchema", () => {
+      const contestacoes = [buildContestacao(), buildContestacao()];
+      const paginated = buildCursorPaginated(contestacoes);
+      expect(contestacaoListResponseSchema.safeParse(paginated).success).toBe(true);
+    });
+
+    it("buildNotification fixture validates against notificationSchema", () => {
+      const notification = buildNotification();
+      expect(notificationSchema.safeParse(notification).success).toBe(true);
+    });
+
+    it("buildNotification with dados_extras validates against notificationSchema", () => {
+      const notification = buildNotification({
+        dados_extras: { campanha_id: 42 },
+        tipo: "campanha_nova",
+        lida: true,
+      });
+      expect(notificationSchema.safeParse(notification).success).toBe(true);
     });
   });
 });
