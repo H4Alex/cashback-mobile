@@ -23,6 +23,11 @@ jest.mock("@/src/schemas/validateResponse", () => ({
   validateResponse: jest.fn(),
 }));
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { validateResponse } = require("@/src/schemas/validateResponse") as {
+  validateResponse: jest.Mock;
+};
+
 const mockGet = apiClient.get as jest.Mock;
 
 describe("mobileCashbackService", () => {
@@ -45,7 +50,6 @@ describe("mobileCashbackService", () => {
     });
 
     it("calls validateResponse with saldoResponseSchema", async () => {
-      const { validateResponse } = require("@/src/schemas/validateResponse");
       const saldo = buildCashbackSaldo();
       const envelope = buildApiResponse(saldo);
       mockGet.mockResolvedValue({ data: envelope });
@@ -130,7 +134,6 @@ describe("mobileCashbackService", () => {
     });
 
     it("calls validateResponse with extratoResponseSchema", async () => {
-      const { validateResponse } = require("@/src/schemas/validateResponse");
       const paginated = buildCursorPaginated([buildExtratoEntry()]);
       mockGet.mockResolvedValue({ data: paginated });
 

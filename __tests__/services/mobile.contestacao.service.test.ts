@@ -21,6 +21,11 @@ jest.mock("@/src/schemas/validateResponse", () => ({
   validateResponse: jest.fn(),
 }));
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { validateResponse } = require("@/src/schemas/validateResponse") as {
+  validateResponse: jest.Mock;
+};
+
 const mockGet = apiClient.get as jest.Mock;
 const mockPost = apiClient.post as jest.Mock;
 
@@ -64,7 +69,6 @@ describe("mobileContestacaoService", () => {
     });
 
     it("calls validateResponse with contestacaoListResponseSchema", async () => {
-      const { validateResponse } = require("@/src/schemas/validateResponse");
       const paginated = buildCursorPaginated([buildContestacao()]);
       mockGet.mockResolvedValue({ data: paginated });
 
@@ -134,7 +138,6 @@ describe("mobileContestacaoService", () => {
     });
 
     it("calls validateResponse with contestacaoSchema on response data", async () => {
-      const { validateResponse } = require("@/src/schemas/validateResponse");
       const contestacao = buildContestacao();
       mockPost.mockResolvedValue({
         data: buildApiResponse(contestacao),
