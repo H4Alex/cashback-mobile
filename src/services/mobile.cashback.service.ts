@@ -1,6 +1,8 @@
 import { apiClient } from "@/src/lib/api-client";
 import type { ApiResponse, CashbackStatus, CashbackSaldo, ExtratoEntry, EmpresaSaldo, CursorPaginatedResponse, CursorPaginatedData } from "@/src/types";
 import type { HistoricoUsoResponse } from "@/src/types/historico";
+import { validateResponse } from "@/src/schemas/validateResponse";
+import { saldoResponseSchema, extratoResponseSchema } from "@/src/schemas/api-responses";
 
 const PREFIX = "/api/mobile/v1";
 
@@ -16,6 +18,7 @@ export interface ExtratoParams {
 export const mobileCashbackService = {
   async getSaldo(): Promise<CashbackSaldo> {
     const res = await apiClient.get<ApiResponse<CashbackSaldo>>(`${PREFIX}/saldo`);
+    validateResponse(saldoResponseSchema, res.data, "GET /saldo");
     return res.data.data;
   },
 
@@ -23,6 +26,7 @@ export const mobileCashbackService = {
     const res = await apiClient.get<CursorPaginatedResponse<ExtratoEntry>>(`${PREFIX}/extrato`, {
       params,
     });
+    validateResponse(extratoResponseSchema, res.data, "GET /extrato");
     return res.data.data;
   },
 
