@@ -1,4 +1,5 @@
 import { apiClient } from "@/src/lib/api-client";
+import type { ApiResponse } from "@/src/types";
 
 export type BiometricType = "fingerprint" | "facial" | "iris";
 
@@ -50,11 +51,11 @@ export const biometricService = {
    * Called after first successful biometric auth.
    */
   async enroll(biometricToken: string, deviceId: string): Promise<BiometricEnrollResponse> {
-    const res = await apiClient.post<BiometricEnrollResponse>(`${PREFIX}/auth/biometric/enroll`, {
+    const res = await apiClient.post<ApiResponse<BiometricEnrollResponse>>(`${PREFIX}/auth/biometric/enroll`, {
       biometric_token: biometricToken,
       device_id: deviceId,
     });
-    return res.data;
+    return res.data.data;
   },
 
   /**
@@ -65,13 +66,13 @@ export const biometricService = {
     biometricToken: string,
     deviceId: string,
   ): Promise<{ token: string; expires_in: number }> {
-    const res = await apiClient.post<{ token: string; expires_in: number }>(
+    const res = await apiClient.post<ApiResponse<{ token: string; expires_in: number }>>(
       `${PREFIX}/auth/biometric/verify`,
       {
         biometric_token: biometricToken,
         device_id: deviceId,
       },
     );
-    return res.data;
+    return res.data.data;
   },
 };

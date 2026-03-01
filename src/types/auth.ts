@@ -38,7 +38,7 @@ export interface TokenPair {
 
 export interface OAuthRequest {
   provider: OAuthProvider;
-  id_token: string;
+  token: string;
   nonce?: string;
 }
 

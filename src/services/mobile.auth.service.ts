@@ -52,9 +52,9 @@ export const mobileAuthService = {
   },
 
   async me(): Promise<ClienteResource> {
-    const res = await apiClient.get<ApiResponse<{ cliente: ClienteResource }>>(`${PREFIX}/me`);
-    validateResponse(clienteResourceSchema, res.data.data.cliente, "GET /auth/me");
-    return res.data.data.cliente;
+    const res = await apiClient.get<ApiResponse<ClienteResource>>(`${PREFIX}/me`);
+    validateResponse(clienteResourceSchema, res.data.data, "GET /auth/me");
+    return res.data.data;
   },
 
   /** OAuth social login (Google / Apple) */
@@ -77,9 +77,9 @@ export const mobileAuthService = {
 
   /** Update consumer profile */
   async updateProfile(data: UpdateProfileRequest): Promise<ClienteResource> {
-    const res = await apiClient.patch<ApiResponse<{ cliente: ClienteResource }>>(`${PREFIX}/profile`, data);
-    validateResponse(clienteResourceSchema, res.data.data.cliente, "PATCH /auth/profile");
-    return res.data.data.cliente;
+    const res = await apiClient.patch<ApiResponse<ClienteResource>>(`${PREFIX}/profile`, data);
+    validateResponse(clienteResourceSchema, res.data.data, "PATCH /auth/profile");
+    return res.data.data;
   },
 
   /** Change password (requires current password) */

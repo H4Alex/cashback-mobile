@@ -46,7 +46,7 @@ export const deleteAccountSchema = z.object({
 
 export const oauthSchema = z.object({
   provider: z.enum(["google", "apple"]),
-  id_token: z.string().min(1, "Token é obrigatório"),
+  token: z.string().min(1, "Token é obrigatório"),
   nonce: z.string().optional(),
 });
 
