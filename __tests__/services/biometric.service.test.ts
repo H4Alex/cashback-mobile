@@ -41,7 +41,7 @@ describe("biometricService", () => {
   describe("enroll", () => {
     it("enrolls biometric token on the backend", async () => {
       mockPost.mockResolvedValue({
-        data: { success: true },
+        data: { status: true, data: { success: true }, error: null, message: 'Sucesso' },
       });
 
       const result = await biometricService.enroll(
@@ -93,7 +93,7 @@ describe("biometricService", () => {
   describe("verify", () => {
     it("verifies biometric token and returns JWT", async () => {
       mockPost.mockResolvedValue({
-        data: { token: "jwt-token-xyz", expires_in: 3600 },
+        data: { status: true, data: { token: "jwt-token-xyz", expires_in: 3600 }, error: null, message: 'Sucesso' },
       });
 
       const result = await biometricService.verify(

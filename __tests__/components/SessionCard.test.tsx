@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react-native";
 import { SessionCard } from "@/src/components/SessionCard";
 
 const baseSession = {
-  id: "sess-1",
+  id: 1,
   device_name: "iPhone 15",
   platform: "iOS 17.0",
   ip_address: "192.168.1.1",
@@ -48,6 +48,6 @@ describe("SessionCard", () => {
     const onRevoke = jest.fn();
     render(<SessionCard session={baseSession} onRevoke={onRevoke} isRevoking={false} />);
     fireEvent.press(screen.getByText("Revogar"));
-    expect(onRevoke).toHaveBeenCalledWith("sess-1");
+    expect(onRevoke).toHaveBeenCalledWith(1);
   });
 });

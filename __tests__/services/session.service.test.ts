@@ -23,7 +23,7 @@ describe("sessionService", () => {
     it("fetches active sessions list", async () => {
       const sessions = [
         {
-          id: "sess_1",
+          id: 1,
           device_name: "iPhone 15",
           platform: "ios",
           ip_address: "192.168.1.1",
@@ -31,15 +31,15 @@ describe("sessionService", () => {
           is_current: true,
         },
         {
-          id: "sess_2",
+          id: 2,
           device_name: "Chrome Desktop",
           platform: "web",
           ip_address: "10.0.0.1",
-          last_active_at: "2025-06-19T08:00:00Z",
+          last_active_at: null,
           is_current: false,
         },
       ];
-      mockGet.mockResolvedValue({ data: { data: sessions } });
+      mockGet.mockResolvedValue({ data: { data: { sessions } } });
 
       const result = await sessionService.getSessions();
 
@@ -47,10 +47,11 @@ describe("sessionService", () => {
       expect(result).toHaveLength(2);
       expect(result[0].is_current).toBe(true);
       expect(result[1].device_name).toBe("Chrome Desktop");
+      expect(result[1].last_active_at).toBeNull();
     });
 
     it("returns empty array when no sessions", async () => {
-      mockGet.mockResolvedValue({ data: { data: [] } });
+      mockGet.mockResolvedValue({ data: { data: { sessions: [] } } });
 
       const result = await sessionService.getSessions();
 
@@ -81,17 +82,17 @@ describe("sessionService", () => {
     it("revokes a session by ID", async () => {
       mockDelete.mockResolvedValue({ data: { status: true } });
 
-      await sessionService.revokeSession("sess_2");
+      await sessionService.revokeSession(2);
 
       expect(mockDelete).toHaveBeenCalledWith(
-        "/api/mobile/v1/auth/sessions/sess_2",
+        "/api/mobile/v1/auth/sessions/2",
       );
     });
 
     it("propagates errors when revoking session", async () => {
       mockDelete.mockRejectedValue(new Error("Not Found"));
 
-      await expect(sessionService.revokeSession("invalid_id")).rejects.toThrow(
+      await expect(sessionService.revokeSession(999)).rejects.toThrow(
         "Not Found",
       );
     });
@@ -102,7 +103,7 @@ describe("sessionService", () => {
       });
       mockDelete.mockRejectedValue(error);
 
-      await expect(sessionService.revokeSession("sess_1")).rejects.toThrow(
+      await expect(sessionService.revokeSession(1)).rejects.toThrow(
         "Internal Server Error",
       );
     });

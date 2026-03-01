@@ -47,7 +47,7 @@ describe("mobileQRCodeService", () => {
       const mockResponse = {
         cliente: { id: 1, nome: "João" },
         valor: 50.0,
-        saldo: 100.0,
+        saldo_cliente: 100.0,
         expira_em: "2026-02-25T14:30:00Z",
       };
       mockPost.mockResolvedValue({ data: { status: true, data: mockResponse, error: null, message: 'Sucesso' } });
@@ -61,6 +61,7 @@ describe("mobileQRCodeService", () => {
       });
       expect(result.cliente.nome).toBe("João");
       expect(result.valor).toBe(50.0);
+      expect(result.saldo_cliente).toBe(100.0);
     });
   });
 });

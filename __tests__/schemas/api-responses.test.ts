@@ -20,6 +20,7 @@ import {
   buildContestacao,
   buildNotification,
   buildApiResponse,
+  buildPaginated,
   buildCursorPaginated,
   resetFixtureSequence,
 } from "../fixtures";
@@ -235,17 +236,36 @@ describe("API Response Schemas", () => {
   });
 
   describe("contestacaoSchema", () => {
-    it("accepts valid contestacao with correct enums", () => {
+    it("accepts valid contestacao with correct enums and fields", () => {
       const result = contestacaoSchema.safeParse({
         id: 1,
+        empresa_id: 1,
+        transacao_id: 10,
+        cliente_id: null,
         tipo: "cashback_nao_gerado",
         descricao: "Cashback não foi creditado",
         status: "pendente",
-        cashback_entry_id: "123",
-        empresa_nome: "Loja Teste",
-        valor: 50.0,
+        resposta: null,
+        respondido_por: null,
         created_at: "2025-01-01T00:00:00.000Z",
         updated_at: "2025-01-01T00:00:00.000Z",
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it("accepts contestacao with resposta and respondido_por", () => {
+      const result = contestacaoSchema.safeParse({
+        id: 1,
+        empresa_id: 1,
+        transacao_id: 10,
+        cliente_id: 5,
+        tipo: "valor_incorreto",
+        descricao: "Valor incorreto",
+        status: "aprovada",
+        resposta: "Resolvido conforme solicitado",
+        respondido_por: 2,
+        created_at: "2025-01-01T00:00:00.000Z",
+        updated_at: "2025-01-02T00:00:00.000Z",
       });
       expect(result.success).toBe(true);
     });
@@ -254,12 +274,14 @@ describe("API Response Schemas", () => {
       expect(
         contestacaoSchema.safeParse({
           id: 1,
+          empresa_id: 1,
+          transacao_id: 10,
+          cliente_id: null,
           tipo: "cashback_nao_creditado",
           descricao: "test",
           status: "pendente",
-          cashback_entry_id: "123",
-          empresa_nome: "Test",
-          valor: 10,
+          resposta: null,
+          respondido_por: null,
           created_at: "2025-01-01T00:00:00.000Z",
           updated_at: "2025-01-01T00:00:00.000Z",
         }).success,
@@ -270,16 +292,33 @@ describe("API Response Schemas", () => {
       expect(
         contestacaoSchema.safeParse({
           id: 1,
+          empresa_id: 1,
+          transacao_id: 10,
+          cliente_id: null,
           tipo: "valor_incorreto",
           descricao: "test",
           status: "em_analise",
-          cashback_entry_id: "123",
-          empresa_nome: "Test",
-          valor: 10,
+          resposta: null,
+          respondido_por: null,
           created_at: "2025-01-01T00:00:00.000Z",
           updated_at: "2025-01-01T00:00:00.000Z",
         }).success,
       ).toBe(false);
+    });
+
+    it("rejects old field names (cashback_entry_id, empresa_nome)", () => {
+      const result = contestacaoSchema.safeParse({
+        id: 1,
+        cashback_entry_id: "123",
+        empresa_nome: "Loja Teste",
+        tipo: "valor_incorreto",
+        descricao: "test",
+        status: "pendente",
+        valor: 50.0,
+        created_at: "2025-01-01T00:00:00.000Z",
+        updated_at: "2025-01-01T00:00:00.000Z",
+      });
+      expect(result.success).toBe(false);
     });
   });
 
@@ -375,9 +414,9 @@ describe("API Response Schemas", () => {
       }
     });
 
-    it("buildCursorPaginated(contestacoes) validates against contestacaoListResponseSchema", () => {
+    it("buildPaginated(contestacoes) validates against contestacaoListResponseSchema", () => {
       const contestacoes = [buildContestacao(), buildContestacao()];
-      const paginated = buildCursorPaginated(contestacoes);
+      const paginated = buildPaginated(contestacoes);
       expect(contestacaoListResponseSchema.safeParse(paginated).success).toBe(true);
     });
 

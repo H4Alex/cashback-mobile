@@ -2,7 +2,7 @@ import { mobileContestacaoService } from "@/src/services/mobile.contestacao.serv
 import { apiClient } from "@/src/lib/api-client";
 import {
   buildContestacao,
-  buildCursorPaginated,
+  buildPaginated,
   buildApiResponse,
   resetFixtureSequence,
 } from "../fixtures";
@@ -38,7 +38,7 @@ describe("mobileContestacaoService", () => {
   describe("list", () => {
     it("fetches contestacoes without params", async () => {
       const contestacoes = [buildContestacao(), buildContestacao()];
-      const paginated = buildCursorPaginated(contestacoes);
+      const paginated = buildPaginated(contestacoes);
       mockGet.mockResolvedValue({ data: paginated });
 
       const result = await mobileContestacaoService.list();
@@ -47,29 +47,30 @@ describe("mobileContestacaoService", () => {
         params: undefined,
       });
       expect(result.data).toHaveLength(2);
-      expect(result.meta.has_more_pages).toBe(false);
+      expect(result.pagination.total).toBe(2);
     });
 
-    it("fetches contestacoes with cursor and limit", async () => {
+    it("fetches contestacoes with page and per_page", async () => {
       const contestacoes = [buildContestacao()];
-      const paginated = buildCursorPaginated(contestacoes, {
-        next_cursor: "next_abc",
-        has_more_pages: true,
+      const paginated = buildPaginated(contestacoes, {
+        current_page: 2,
+        last_page: 3,
+        next_page_url: "/api/mobile/v1/contestacoes?page=3",
       });
       mockGet.mockResolvedValue({ data: paginated });
 
-      const params = { cursor: "prev_cursor", limit: 5 };
+      const params = { page: 2, per_page: 5 };
       const result = await mobileContestacaoService.list(params);
 
       expect(mockGet).toHaveBeenCalledWith("/api/mobile/v1/contestacoes", {
         params,
       });
       expect(result.data).toHaveLength(1);
-      expect(result.meta.next_cursor).toBe("next_abc");
+      expect(result.pagination.current_page).toBe(2);
     });
 
     it("calls validateResponse with contestacaoListResponseSchema", async () => {
-      const paginated = buildCursorPaginated([buildContestacao()]);
+      const paginated = buildPaginated([buildContestacao()]);
       mockGet.mockResolvedValue({ data: paginated });
 
       await mobileContestacaoService.list();
@@ -123,13 +124,13 @@ describe("mobileContestacaoService", () => {
       });
 
       const result = await mobileContestacaoService.create({
-        cashback_entry_id: "cb_1",
+        transacao_id: 1,
         tipo: "valor_incorreto",
         descricao: "Valor está incorreto",
       });
 
       expect(mockPost).toHaveBeenCalledWith("/api/mobile/v1/contestacoes", {
-        cashback_entry_id: "cb_1",
+        transacao_id: 1,
         tipo: "valor_incorreto",
         descricao: "Valor está incorreto",
       });
@@ -144,7 +145,7 @@ describe("mobileContestacaoService", () => {
       });
 
       await mobileContestacaoService.create({
-        cashback_entry_id: "cb_1",
+        transacao_id: 1,
         tipo: "cashback_nao_gerado",
         descricao: "Cashback não foi gerado",
       });
@@ -161,9 +162,9 @@ describe("mobileContestacaoService", () => {
 
       await expect(
         mobileContestacaoService.create({
-          cashback_entry_id: "cb_1",
+          transacao_id: 1,
           tipo: "valor_incorreto",
-          descricao: "Teste",
+          descricao: "Teste descricao",
         }),
       ).rejects.toThrow("Network Error");
     });
@@ -176,9 +177,9 @@ describe("mobileContestacaoService", () => {
 
       await expect(
         mobileContestacaoService.create({
-          cashback_entry_id: "cb_1",
+          transacao_id: 1,
           tipo: "valor_incorreto",
-          descricao: "Teste",
+          descricao: "Teste descricao",
         }),
       ).rejects.toThrow("Unprocessable Entity");
     });
@@ -191,9 +192,9 @@ describe("mobileContestacaoService", () => {
 
       await expect(
         mobileContestacaoService.create({
-          cashback_entry_id: "cb_1",
+          transacao_id: 1,
           tipo: "valor_incorreto",
-          descricao: "Teste",
+          descricao: "Teste descricao",
         }),
       ).rejects.toThrow("Internal Server Error");
     });

@@ -61,12 +61,12 @@ describe("mobileAuthService", () => {
 
       const result = await mobileAuthService.oauth({
         provider: "google",
-        id_token: "google-id-token",
+        token: "google-id-token",
       });
 
       expect(mockPost).toHaveBeenCalledWith("/api/mobile/v1/auth/oauth", {
         provider: "google",
-        id_token: "google-id-token",
+        token: "google-id-token",
       });
       expect(saveTokens).toHaveBeenCalledWith("oauth-token");
       expect(result.token).toBe("oauth-token");
@@ -85,13 +85,13 @@ describe("mobileAuthService", () => {
 
       await mobileAuthService.oauth({
         provider: "apple",
-        id_token: "apple-id-token",
+        token: "apple-id-token",
         nonce: "random-nonce",
       });
 
       expect(mockPost).toHaveBeenCalledWith("/api/mobile/v1/auth/oauth", {
         provider: "apple",
-        id_token: "apple-id-token",
+        token: "apple-id-token",
         nonce: "random-nonce",
       });
     });
@@ -130,7 +130,7 @@ describe("mobileAuthService", () => {
   describe("updateProfile", () => {
     it("calls profile patch endpoint", async () => {
       mockPatch.mockResolvedValue({
-        data: { status: true, data: { cliente: { id: 1, nome: "Updated Name" } }, error: null, message: 'Sucesso' },
+        data: { status: true, data: { id: 1, nome: "Updated Name", email: "test@example.com", created_at: "2025-01-01T00:00:00Z" }, error: null, message: 'Sucesso' },
       });
 
       const result = await mobileAuthService.updateProfile({
@@ -205,9 +205,9 @@ describe("mobileAuthService", () => {
   });
 
   describe("me", () => {
-    it("returns client data", async () => {
+    it("returns client data from res.data.data (not nested under cliente)", async () => {
       mockGet.mockResolvedValue({
-        data: { status: true, data: { cliente: { id: 1, nome: "Test", email: "test@example.com" } }, error: null, message: 'Sucesso' },
+        data: { status: true, data: { id: 1, nome: "Test", email: "test@example.com", created_at: "2025-01-01T00:00:00Z" }, error: null, message: 'Sucesso' },
       });
 
       const result = await mobileAuthService.me();

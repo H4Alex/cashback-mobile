@@ -3,7 +3,7 @@ import { createContestacaoSchema } from "@/src/schemas/contestacao";
 describe("createContestacaoSchema", () => {
   it("validates correct contestacao data", () => {
     const result = createContestacaoSchema.safeParse({
-      cashback_entry_id: "cb_123",
+      transacao_id: 123,
       tipo: "valor_incorreto",
       descricao: "O valor do cashback está incorreto na minha conta",
     });
@@ -20,7 +20,7 @@ describe("createContestacaoSchema", () => {
 
     for (const tipo of tipos) {
       const result = createContestacaoSchema.safeParse({
-        cashback_entry_id: "cb_1",
+        transacao_id: 1,
         tipo,
         descricao: "Descrição com pelo menos 10 caracteres",
       });
@@ -28,9 +28,8 @@ describe("createContestacaoSchema", () => {
     }
   });
 
-  it("rejects empty cashback_entry_id", () => {
+  it("rejects missing transacao_id", () => {
     const result = createContestacaoSchema.safeParse({
-      cashback_entry_id: "",
       tipo: "valor_incorreto",
       descricao: "Descrição com pelo menos 10 caracteres",
     });
@@ -39,7 +38,7 @@ describe("createContestacaoSchema", () => {
 
   it("rejects invalid tipo value", () => {
     const result = createContestacaoSchema.safeParse({
-      cashback_entry_id: "cb_1",
+      transacao_id: 1,
       tipo: "outro_motivo",
       descricao: "Descrição com pelo menos 10 caracteres",
     });
@@ -48,7 +47,7 @@ describe("createContestacaoSchema", () => {
 
   it("rejects description shorter than 10 characters", () => {
     const result = createContestacaoSchema.safeParse({
-      cashback_entry_id: "cb_1",
+      transacao_id: 1,
       tipo: "valor_incorreto",
       descricao: "Curto",
     });
@@ -57,7 +56,7 @@ describe("createContestacaoSchema", () => {
 
   it("rejects description longer than 500 characters", () => {
     const result = createContestacaoSchema.safeParse({
-      cashback_entry_id: "cb_1",
+      transacao_id: 1,
       tipo: "valor_incorreto",
       descricao: "A".repeat(501),
     });
@@ -66,7 +65,7 @@ describe("createContestacaoSchema", () => {
 
   it("accepts description at exactly 10 characters", () => {
     const result = createContestacaoSchema.safeParse({
-      cashback_entry_id: "cb_1",
+      transacao_id: 1,
       tipo: "valor_incorreto",
       descricao: "1234567890",
     });
@@ -75,7 +74,7 @@ describe("createContestacaoSchema", () => {
 
   it("accepts description at exactly 500 characters", () => {
     const result = createContestacaoSchema.safeParse({
-      cashback_entry_id: "cb_1",
+      transacao_id: 1,
       tipo: "valor_incorreto",
       descricao: "A".repeat(500),
     });

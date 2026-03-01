@@ -178,7 +178,7 @@ describe("oauthSchema", () => {
   it("validates Google OAuth", () => {
     const result = oauthSchema.safeParse({
       provider: "google",
-      id_token: "google-token-abc",
+      token: "google-token-abc",
     });
     expect(result.success).toBe(true);
   });
@@ -186,7 +186,7 @@ describe("oauthSchema", () => {
   it("validates Apple OAuth with nonce", () => {
     const result = oauthSchema.safeParse({
       provider: "apple",
-      id_token: "apple-token-abc",
+      token: "apple-token-abc",
       nonce: "random-nonce",
     });
     expect(result.success).toBe(true);
@@ -195,7 +195,7 @@ describe("oauthSchema", () => {
   it("rejects invalid provider", () => {
     const result = oauthSchema.safeParse({
       provider: "facebook",
-      id_token: "token",
+      token: "token",
     });
     expect(result.success).toBe(false);
   });
@@ -203,7 +203,15 @@ describe("oauthSchema", () => {
   it("rejects empty token", () => {
     const result = oauthSchema.safeParse({
       provider: "google",
-      id_token: "",
+      token: "",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects old id_token field (must use token)", () => {
+    const result = oauthSchema.safeParse({
+      provider: "google",
+      id_token: "google-token-abc",
     });
     expect(result.success).toBe(false);
   });

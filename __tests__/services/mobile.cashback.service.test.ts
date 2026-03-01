@@ -180,39 +180,28 @@ describe("mobileCashbackService", () => {
   });
 
   describe("getHistorico", () => {
-    it("fetches historico without params", async () => {
-      const historico = {
-        historico: [
-          {
-            id: 1,
-            empresa_nome: "Loja A",
-            empresa_id: 1,
-            valor_original: 200,
-            cashback_usado: 20,
-            created_at: "2025-06-01T10:00:00Z",
-          },
-        ],
-        meta: { next_cursor: null, has_more_pages: false },
-      };
-      mockGet.mockResolvedValue({ data: buildApiResponse(historico) });
+    it("fetches historico from /extrato endpoint (remapped)", async () => {
+      const entries = [buildExtratoEntry()];
+      const paginated = buildCursorPaginated(entries);
+      mockGet.mockResolvedValue({ data: paginated });
 
       const result = await mobileCashbackService.getHistorico();
 
-      expect(mockGet).toHaveBeenCalledWith("/api/mobile/v1/historico", {
+      expect(mockGet).toHaveBeenCalledWith("/api/mobile/v1/extrato", {
         params: undefined,
       });
-      expect(result.historico).toHaveLength(1);
+      expect(result.data).toHaveLength(1);
       expect(result.meta.has_more_pages).toBe(false);
     });
 
-    it("fetches historico with params", async () => {
-      const historico = { historico: [], meta: { next_cursor: null, has_more_pages: false } };
-      mockGet.mockResolvedValue({ data: buildApiResponse(historico) });
+    it("fetches historico with params via /extrato", async () => {
+      const paginated = buildCursorPaginated([]);
+      mockGet.mockResolvedValue({ data: paginated });
 
       const params = { cursor: "abc", limit: 5, data_inicio: "2025-01-01", data_fim: "2025-06-01" };
       await mobileCashbackService.getHistorico(params);
 
-      expect(mockGet).toHaveBeenCalledWith("/api/mobile/v1/historico", {
+      expect(mockGet).toHaveBeenCalledWith("/api/mobile/v1/extrato", {
         params,
       });
     });

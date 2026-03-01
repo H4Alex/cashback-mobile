@@ -16,17 +16,20 @@ import {
   buildContestacao,
   buildNotification,
   buildApiResponse,
+  buildPaginated,
   buildCursorPaginated,
   resetFixtureSequence,
 } from '../fixtures';
 import {
   apiResponseSchema,
+  paginatedResponseSchema,
   cursorPaginatedResponseSchema,
   clienteResourceSchema,
   loginResponseDataSchema,
   saldoDataSchema,
   extratoEntrySchema,
   contestacaoSchema,
+  contestacaoListResponseSchema,
   notificationSchema,
 } from '@/src/schemas/api-responses';
 import { z } from 'zod';
@@ -185,12 +188,12 @@ describe('Fixture -> Zod Schema Contract Sync', () => {
       expectValid(contestacaoSchema, contestacao);
     });
 
-    it('conforms inside cursorPaginatedResponseSchema', () => {
-      const paginated = buildCursorPaginated([
+    it('conforms inside paginatedResponseSchema (offset pagination)', () => {
+      const paginated = buildPaginated([
         buildContestacao({ id: 1 }),
         buildContestacao({ id: 2, status: 'aprovada' }),
       ]);
-      expectValid(cursorPaginatedResponseSchema(contestacaoSchema), paginated);
+      expectValid(contestacaoListResponseSchema, paginated);
     });
   });
 
@@ -333,8 +336,8 @@ describe('Fixture -> Zod Schema Contract Sync', () => {
     });
 
     it('handles empty items array', () => {
-      const paginated = buildCursorPaginated<ReturnType<typeof buildContestacao>>([]);
-      expectValid(cursorPaginatedResponseSchema(contestacaoSchema), paginated);
+      const paginated = buildCursorPaginated<ReturnType<typeof buildNotification>>([]);
+      expectValid(cursorPaginatedResponseSchema(notificationSchema), paginated);
     });
   });
 
