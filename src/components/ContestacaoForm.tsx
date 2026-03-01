@@ -12,12 +12,12 @@ const TIPO_OPTIONS: { value: ContestacaoTipo; label: string }[] = [
 ];
 
 interface ContestacaoFormProps {
-  cashbackEntryId: string;
+  transacaoId: number;
   onSubmit: (data: CreateContestacaoFormData) => void;
   isPending: boolean;
 }
 
-export function ContestacaoForm({ cashbackEntryId, onSubmit, isPending }: ContestacaoFormProps) {
+export function ContestacaoForm({ transacaoId, onSubmit, isPending }: ContestacaoFormProps) {
   const {
     control,
     handleSubmit,
@@ -25,7 +25,7 @@ export function ContestacaoForm({ cashbackEntryId, onSubmit, isPending }: Contes
   } = useForm<CreateContestacaoFormData>({
     resolver: zodResolver(createContestacaoSchema),
     defaultValues: {
-      cashback_entry_id: cashbackEntryId,
+      transacao_id: transacaoId,
       tipo: undefined,
       descricao: "",
     },

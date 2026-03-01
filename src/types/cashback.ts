@@ -44,11 +44,12 @@ export interface ExtratoEntry {
   };
 }
 
-export interface EmpresaSaldo {
-  empresa_id: number;
-  nome_fantasia: string | null;
+export interface EmpresaLoja {
+  id: number;
+  nome_fantasia: string;
   logo_url: string | null;
-  saldo: string;
+  cidade: string | null;
+  estado: string | null;
 }
 
 export interface QRCodeToken {
@@ -72,6 +73,6 @@ export interface ValidarQRCodeResponse {
   valid?: boolean;
   cliente: { id: number; nome: string };
   valor: number;
-  saldo: number;
+  saldo_cliente: number;
   expira_em: string;
 }

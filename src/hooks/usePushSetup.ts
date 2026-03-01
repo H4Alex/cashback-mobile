@@ -76,8 +76,8 @@ export function usePushSetup() {
   const registerToken = useCallback(async (token: string) => {
     try {
       await apiClient.post(DEVICE_ENDPOINT, {
-        push_token: token,
-        platform: Platform.OS,
+        token: token,
+        plataforma: Platform.OS,
         device_name: Device.deviceName ?? "unknown",
       });
     } catch {

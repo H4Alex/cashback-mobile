@@ -1,6 +1,5 @@
 import { apiClient } from "@/src/lib/api-client";
-import type { ApiResponse, CashbackStatus, CashbackSaldo, ExtratoEntry, EmpresaSaldo, CursorPaginatedResponse, CursorPaginatedData } from "@/src/types";
-import type { HistoricoUsoResponse } from "@/src/types/historico";
+import type { ApiResponse, CashbackStatus, CashbackSaldo, ExtratoEntry, EmpresaLoja, CursorPaginatedResponse, CursorPaginatedData } from "@/src/types";
 import { validateResponse } from "@/src/schemas/validateResponse";
 import { saldoResponseSchema, extratoResponseSchema } from "@/src/schemas/api-responses";
 
@@ -30,18 +29,20 @@ export const mobileCashbackService = {
     return res.data.data;
   },
 
-  async getLojasComSaldo(): Promise<EmpresaSaldo[]> {
-    const res = await apiClient.get<ApiResponse<EmpresaSaldo[]>>(`${PREFIX}/utilizacao/lojas`);
+  async getLojasComSaldo(): Promise<EmpresaLoja[]> {
+    const res = await apiClient.get<ApiResponse<EmpresaLoja[]>>(`${PREFIX}/utilizacao/lojas`);
     return res.data.data;
   },
 
+  // TODO: /historico endpoint does not exist on the backend.
+  // Mapped to /extrato which serves a similar purpose.
   async getHistorico(params?: {
     cursor?: string;
     limit?: number;
     data_inicio?: string;
     data_fim?: string;
-  }): Promise<HistoricoUsoResponse> {
-    const res = await apiClient.get<ApiResponse<HistoricoUsoResponse>>(`${PREFIX}/historico`, {
+  }): Promise<CursorPaginatedData<ExtratoEntry>> {
+    const res = await apiClient.get<CursorPaginatedResponse<ExtratoEntry>>(`${PREFIX}/extrato`, {
       params,
     });
     return res.data.data;

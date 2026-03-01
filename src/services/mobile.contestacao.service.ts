@@ -1,5 +1,5 @@
 import { apiClient } from "@/src/lib/api-client";
-import type { ApiResponse, PaginatedResponse } from "@/src/types";
+import type { ApiResponse } from "@/src/types";
 import type {
   Contestacao,
   ContestacaoListResponse,

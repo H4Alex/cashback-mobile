@@ -16,7 +16,7 @@ function formatLastActive(dateStr: string): string {
 
 interface SessionCardProps {
   session: ActiveSession;
-  onRevoke: (id: string) => void;
+  onRevoke: (id: number) => void;
   isRevoking: boolean;
 }
 
@@ -38,7 +38,7 @@ export function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps)
           </View>
           <Text className="text-gray-500 text-sm mt-0.5">{session.platform}</Text>
           <Text className="text-gray-400 text-xs mt-0.5">
-            {formatLastActive(session.last_active_at)}
+            {session.last_active_at ? formatLastActive(session.last_active_at) : "—"}
           </Text>
         </View>
 
