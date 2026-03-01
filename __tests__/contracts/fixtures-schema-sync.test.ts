@@ -22,7 +22,6 @@ import {
 } from '../fixtures';
 import {
   apiResponseSchema,
-  paginatedResponseSchema,
   cursorPaginatedResponseSchema,
   clienteResourceSchema,
   loginResponseDataSchema,

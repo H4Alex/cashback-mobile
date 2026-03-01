@@ -26,7 +26,8 @@
     "update:prod": "eas update --channel production",
     "submit:android": "eas submit --platform android --latest",
     "submit:ios": "eas submit --platform ios --latest",
-    "submit:all": "eas submit --platform all --latest"
+    "submit:all": "eas submit --platform all --latest",
+    "test:pipeline": "bash scripts/run-test-pipeline.sh"
   },
   "dependencies": {
     "@expo/vector-icons": "~14.0.4",
