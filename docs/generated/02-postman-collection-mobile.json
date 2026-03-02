@@ -1,0 +1,2298 @@
+{
+  "info": {
+    "name": "Cashback SaaS - Mobile (cashback-mobile)",
+    "description": "Endpoints consumidos por cashback-mobile.\n\nGerado em: 2026-03-01\nFonte: cashback-backend/routes/api.php\n\nTotal de endpoints: 56\nTotal de tags/pastas: 14",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "{{base_url}}"
+    }
+  ],
+  "item": [
+    {
+      "name": "Mobile Auth",
+      "description": "Autenticação e gerenciamento de conta do consumidor mobile",
+      "item": [
+        {
+          "name": "Registro de consumidor mobile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Cria uma nova conta de consumidor. Se já existir cliente com mesmo CPF sem senha,\natualiza os dados. Retorna JWT do guard `api_mobile`.\n**Rastreabilidade:** `MobileAuthController@register`, `MobileRegisterRequest`\n\n\nEndpoint: POST /mobile/v1/auth/register\nConsumidores: mobile\nAuth: publico",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cpf\": \"\",\n  \"nome\": \"\",\n  \"email\": \"\",\n  \"senha\": \"\",\n  \"telefone\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login de consumidor mobile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Autentica consumidor por email e senha. Proteção contra timing attacks com hash dummy.\n**Rastreabilidade:** `MobileAuthController@login`, `MobileLoginRequest`\n\n\nEndpoint: POST /mobile/v1/auth/login\nConsumidores: mobile\nAuth: publico",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login social (Google/Apple)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/oauth",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "oauth"
+              ]
+            },
+            "description": "Autenticação via OAuth. Providers suportados: google, apple.\n**Rastreabilidade:** `MobileAuthController@oauth`, `MobileOAuthRequest`\n\n\nEndpoint: POST /mobile/v1/auth/oauth\nConsumidores: mobile\nAuth: publico",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Solicitar recuperação de senha (mobile)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/forgot-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "forgot-password"
+              ]
+            },
+            "description": "Envia e-mail de recuperação. Sempre retorna 200 para prevenir enumeração de emails.\n**Rate limit:** throttle:password_reset\n\n\nEndpoint: POST /mobile/v1/auth/forgot-password\nConsumidores: mobile\nAuth: publico",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Redefinir senha com token (mobile)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/reset-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "reset-password"
+              ]
+            },
+            "description": "Redefinir senha com token (mobile)\n\nEndpoint: POST /mobile/v1/auth/reset-password\nConsumidores: mobile\nAuth: publico",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login via biometria",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/biometric/verify",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "biometric",
+                "verify"
+              ]
+            },
+            "description": "Verifica credencial biométrica e retorna JWT. Endpoint público.\n**Rate limit:** 5 tentativas/min por device_id. Limpa rate limit ao sucesso.\n**Rastreabilidade:** `MobileBiometricController@verify`\n\n\nEndpoint: POST /mobile/v1/auth/biometric/verify\nConsumidores: mobile\nAuth: publico",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Renovar token JWT (mobile)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/refresh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Renovar token JWT (mobile)\n\nEndpoint: POST /mobile/v1/auth/refresh\nConsumidores: mobile\nAuth: bearerAuthMobile"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout do consumidor (invalida JWT e sessão)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Logout do consumidor (invalida JWT e sessão)\n\nEndpoint: POST /mobile/v1/auth/logout\nConsumidores: mobile\nAuth: bearerAuthMobile"
+          },
+          "response": []
+        },
+        {
+          "name": "Dados do consumidor autenticado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Dados do consumidor autenticado\n\nEndpoint: GET /mobile/v1/auth/me\nConsumidores: mobile\nAuth: bearerAuthMobile"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar perfil do consumidor",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "profile"
+              ]
+            },
+            "description": "**Rastreabilidade:** `MobileAuthController@updateProfile`, `MobileUpdateProfileRequest`\n\nEndpoint: PATCH /mobile/v1/auth/profile\nConsumidores: mobile\nAuth: bearerAuthMobile",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Alterar senha do consumidor",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "password"
+              ]
+            },
+            "description": "Alterar senha do consumidor\n\nEndpoint: PATCH /mobile/v1/auth/password\nConsumidores: mobile\nAuth: bearerAuthMobile",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Excluir conta (LGPD — anonimização)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/delete-account",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "delete-account"
+              ]
+            },
+            "description": "Anonimiza dados pessoais (nome→'Cliente Removido', email→deleted_{id}@removed.local,\ncpf→zero-padded id). Remove tokens, biometria e sessões. Soft-delete do registro.\n**Rastreabilidade:** `MobileAuthController@deleteAccount`, `MobileDeleteAccountRequest`\n\n\nEndpoint: POST /mobile/v1/auth/delete-account\nConsumidores: mobile\nAuth: bearerAuthMobile",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastrar biometria no dispositivo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/biometric/enroll",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "biometric",
+                "enroll"
+              ]
+            },
+            "description": "Cadastrar biometria no dispositivo\n\nEndpoint: POST /mobile/v1/auth/biometric/enroll\nConsumidores: mobile\nAuth: bearerAuthMobile",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar sessões ativas do consumidor",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/sessions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "sessions"
+              ]
+            },
+            "description": "Listar sessões ativas do consumidor\n\nEndpoint: GET /mobile/v1/auth/sessions\nConsumidores: mobile\nAuth: bearerAuthMobile"
+          },
+          "response": []
+        },
+        {
+          "name": "Revogar sessão específica",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/auth/sessions/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "auth",
+                "sessions",
+                ":id"
+              ]
+            },
+            "description": "Revogar sessão específica\n\nEndpoint: DELETE /mobile/v1/auth/sessions/{id}\nConsumidores: mobile\nAuth: bearerAuthMobile"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mobile Saldo e Extrato",
+      "description": "Consulta de saldo e extrato do consumidor",
+      "item": [
+        {
+          "name": "Consultar saldo de cashback do consumidor",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/saldo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "saldo"
+              ]
+            },
+            "description": "Retorna saldo total, saldo por empresa e cashback próximo a expirar (7 dias).\n**Rastreabilidade:** `MobileSaldoController@index`\n\n\nEndpoint: GET /mobile/v1/saldo\nConsumidores: mobile\nAuth: bearerAuthMobile"
+          },
+          "response": []
+        },
+        {
+          "name": "Extrato de transações do consumidor (paginação cursor)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/extrato",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "extrato"
+              ],
+              "query": [
+                {
+                  "key": "cursor",
+                  "value": "",
+                  "description": "Cursor para próxima página",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "empresa_id",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "status_cashback",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "data_inicio",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "data_fim",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retorna transações do consumidor com paginação baseada em cursor.\nOrdena por `created_at DESC, id DESC`. Eager-loads empresa e campanha.\n**Rastreabilidade:** `MobileExtratoController@index`, `MobileExtratoResource`\n\n\nEndpoint: GET /mobile/v1/extrato\nConsumidores: mobile\nAuth: bearerAuthMobile"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mobile Utilização",
+      "description": "Utilização de cashback via QR Code",
+      "item": [
+        {
+          "name": "Lojas com saldo disponível para utilização",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/utilizacao/lojas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "utilizacao",
+                "lojas"
+              ]
+            },
+            "description": "Lojas com saldo disponível para utilização\n\nEndpoint: GET /mobile/v1/utilizacao/lojas\nConsumidores: mobile\nAuth: bearerAuthMobile"
+          },
+          "response": []
+        },
+        {
+          "name": "Gerar QR Code para utilização de cashback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/utilizacao/qrcode",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "utilizacao",
+                "qrcode"
+              ]
+            },
+            "description": "Gera token de 32 caracteres hex armazenado no Redis com TTL de 5 minutos.\n**Rate limit:** throttle:financial\n**Rastreabilidade:** `MobileUtilizacaoController@qrcode`, `MobileQrCodeRequest`\n\n\nEndpoint: POST /mobile/v1/utilizacao/qrcode\nConsumidores: mobile\nAuth: bearerAuthMobile",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mobile Dispositivos",
+      "description": "Gerenciamento de dispositivos para push notifications",
+      "item": [
+        {
+          "name": "Registrar dispositivo para push notifications",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/devices",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "devices"
+              ]
+            },
+            "description": "Registrar dispositivo para push notifications\n\nEndpoint: POST /mobile/v1/devices\nConsumidores: mobile\nAuth: bearerAuthMobile",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remover dispositivo de push notifications",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/devices",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "devices"
+              ]
+            },
+            "description": "Remover dispositivo de push notifications\n\nEndpoint: DELETE /mobile/v1/devices\nConsumidores: mobile\nAuth: bearerAuthMobile",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mobile Contestações",
+      "description": "Contestações abertas pelo consumidor",
+      "item": [
+        {
+          "name": "Listar contestações do consumidor",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/contestacoes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "contestacoes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Número da página (paginação offset)",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Itens por página",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Listar contestações do consumidor\n\nEndpoint: GET /mobile/v1/contestacoes\nConsumidores: mobile\nAuth: bearerAuthMobile"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar contestação de transação",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/contestacoes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "contestacoes"
+              ]
+            },
+            "description": "Verifica que a transação pertence ao consumidor autenticado.\n**Rastreabilidade:** `MobileContestacaoController@store`, `MobileContestacaoRequest`\n\n\nEndpoint: POST /mobile/v1/contestacoes\nConsumidores: mobile\nAuth: bearerAuthMobile",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mobile Notificações",
+      "description": "Notificações in-app do consumidor",
+      "item": [
+        {
+          "name": "Listar notificações in-app (paginação cursor)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "cursor",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "unread_only",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Paginação baseada em cursor. Default limit=20, max=50.\n**Rastreabilidade:** `MobileNotificationController@index`\n\n\nEndpoint: GET /mobile/v1/notifications\nConsumidores: mobile\nAuth: bearerAuthMobile"
+          },
+          "response": []
+        },
+        {
+          "name": "Marcar notificação como lida",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/notifications/:id/read",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "notifications",
+                ":id",
+                "read"
+              ]
+            },
+            "description": "Marcar notificação como lida\n\nEndpoint: PATCH /mobile/v1/notifications/{id}/read\nConsumidores: mobile\nAuth: bearerAuthMobile"
+          },
+          "response": []
+        },
+        {
+          "name": "Marcar todas as notificações como lidas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/notifications/read-all",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "notifications",
+                "read-all"
+              ]
+            },
+            "description": "Marcar todas as notificações como lidas\n\nEndpoint: POST /mobile/v1/notifications/read-all\nConsumidores: mobile\nAuth: bearerAuthMobile"
+          },
+          "response": []
+        },
+        {
+          "name": "Obter preferências de notificação",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/notifications/preferences",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "notifications",
+                "preferences"
+              ]
+            },
+            "description": "Cria preferências padrão (push=true, email=true, marketing=false) se não existirem.\n\nEndpoint: GET /mobile/v1/notifications/preferences\nConsumidores: mobile\nAuth: bearerAuthMobile"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar preferências de notificação",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mobile/v1/notifications/preferences",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mobile",
+                "v1",
+                "notifications",
+                "preferences"
+              ]
+            },
+            "description": "Atualizar preferências de notificação\n\nEndpoint: PATCH /mobile/v1/notifications/preferences\nConsumidores: mobile\nAuth: bearerAuthMobile",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email_cashback_recebido\": false,\n  \"email_cashback_expirado\": false,\n  \"push_cashback_recebido\": false,\n  \"push_cashback_expirado\": false,\n  \"email_contestacao_resolvida\": false,\n  \"push_contestacao_resolvida\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cashback",
+      "description": "Geração, utilização e gerenciamento de cashback",
+      "item": [
+        {
+          "name": "Listar transações de cashback",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/cashback",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "cashback"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Número da página (paginação offset)",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Itens por página",
+                  "disabled": true
+                },
+                {
+                  "key": "sort_by",
+                  "value": "",
+                  "description": "Campo para ordenação (ex. created_at, nome)",
+                  "disabled": true
+                },
+                {
+                  "key": "order",
+                  "value": "desc",
+                  "description": "Direção da ordenação",
+                  "disabled": true
+                },
+                {
+                  "key": "data_inicio",
+                  "value": "",
+                  "description": "Filtro data início (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "data_fim",
+                  "value": "",
+                  "description": "Filtro data fim (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "status_venda",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "status_cashback",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "cliente_id",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "campanha_id",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Lista paginada (offset) com filtros. Default limit=10, max=100.\n**Perfis:** proprietario, gestor, operador, vendedor\n**Rastreabilidade:** `CashbackController@index`, `ListTransacoesRequest`\n\n\nEndpoint: GET /v1/cashback\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        },
+        {
+          "name": "Gerar cashback para uma venda",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Idempotency-Key",
+                "value": "",
+                "description": "Chave de idempotência (máx 64 caracteres).\nObrigatória em POST/PUT/PATCH.\nMiddleware: RequireIdempotencyKey.\n",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/cashback",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "cashback"
+              ]
+            },
+            "description": "Gera cashback para o cliente identificado por CPF. Cria cliente se não existir.\nRequer header `Idempotency-Key` (max 64 chars).\n**Perfis:** proprietario, gestor, operador, vendedor\n**Rastreabilidade:** `CashbackController@gerar`, `GerarCashbackRequest`\n\n\nEndpoint: POST /v1/cashback\nConsumidores: mobile, web\nAuth: bearerAuth",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cpf\": \"\",\n  \"valor_compra\": 0.0,\n  \"campanha_id\": 0,\n  \"unidade_negocio_id\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Utilizar cashback (algoritmo FEFO)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Idempotency-Key",
+                "value": "",
+                "description": "Chave de idempotência (máx 64 caracteres).\nObrigatória em POST/PUT/PATCH.\nMiddleware: RequireIdempotencyKey.\n",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/cashback/utilizar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "cashback",
+                "utilizar"
+              ]
+            },
+            "description": "Debita cashback usando First-Expire, First-Out. Requer header `Idempotency-Key`.\n**Perfis:** proprietario, gestor, operador, vendedor\n**Rastreabilidade:** `CashbackController@utilizar`, `UtilizarCashbackRequest`\n\n\nEndpoint: POST /v1/cashback/utilizar\nConsumidores: mobile, web\nAuth: bearerAuth",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cpf\": \"\",\n  \"valor_compra\": 0.0,\n  \"unidade_negocio_id\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Detalhes de uma transação de cashback",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/cashback/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "cashback",
+                ":id"
+              ]
+            },
+            "description": "Detalhes de uma transação de cashback\n\nEndpoint: GET /v1/cashback/{id}\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar transação de cashback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/cashback/:id/cancelar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "cashback",
+                ":id",
+                "cancelar"
+              ]
+            },
+            "description": "Cancela venda e cashback associado. Só permitido quando status_venda é pendente ou concluida.\n**Perfis:** proprietario, gestor, operador\n**Rate limit:** throttle:financial\n\n\nEndpoint: POST /v1/cashback/{id}/cancelar\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Clientes",
+      "description": "CRUD de clientes (consumidores finais)",
+      "item": [
+        {
+          "name": "Listar clientes da empresa",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/clientes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "clientes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Número da página (paginação offset)",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Itens por página",
+                  "disabled": true
+                },
+                {
+                  "key": "sort_by",
+                  "value": "",
+                  "description": "Campo para ordenação (ex. created_at, nome)",
+                  "disabled": true
+                },
+                {
+                  "key": "order",
+                  "value": "desc",
+                  "description": "Direção da ordenação",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Busca por nome, CPF ou email",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "**Perfis:** proprietario, gestor, operador. Filtro: search. Default order=asc.\n\nEndpoint: GET /v1/clientes\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastrar novo cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/clientes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "clientes"
+              ]
+            },
+            "description": "**Perfis:** proprietario, gestor. **Rastreabilidade:** `ClienteController@store`, `CriarClienteRequest`\n\nEndpoint: POST /v1/clientes\nConsumidores: mobile, web\nAuth: bearerAuth",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cpf\": \"\",\n  \"nome\": \"\",\n  \"telefone\": \"\",\n  \"email\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Detalhes do cliente com saldo e últimos cashbacks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/clientes/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "clientes",
+                ":id"
+              ]
+            },
+            "description": "Detalhes do cliente com saldo e últimos cashbacks\n\nEndpoint: GET /v1/clientes/{id}\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar dados do cliente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/clientes/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "clientes",
+                ":id"
+              ]
+            },
+            "description": "**Perfis:** proprietario, gestor\n\nEndpoint: PATCH /v1/clientes/{id}\nConsumidores: mobile, web\nAuth: bearerAuth",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Saldo de cashback do cliente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/clientes/:id/saldo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "clientes",
+                ":id",
+                "saldo"
+              ]
+            },
+            "description": "Saldo de cashback do cliente\n\nEndpoint: GET /v1/clientes/{id}/saldo\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        },
+        {
+          "name": "Extrato de transações do cliente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/clientes/:id/extrato",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "clientes",
+                ":id",
+                "extrato"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Número da página (paginação offset)",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Itens por página",
+                  "disabled": true
+                },
+                {
+                  "key": "data_inicio",
+                  "value": "",
+                  "description": "Filtro data início (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "data_fim",
+                  "value": "",
+                  "description": "Filtro data fim (YYYY-MM-DD)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Extrato de transações do cliente\n\nEndpoint: GET /v1/clientes/{id}/extrato\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Campanhas",
+      "description": "CRUD de campanhas de cashback",
+      "item": [
+        {
+          "name": "Listar campanhas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/campanhas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "campanhas"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Número da página (paginação offset)",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Itens por página",
+                  "disabled": true
+                },
+                {
+                  "key": "sort_by",
+                  "value": "",
+                  "description": "Campo para ordenação (ex. created_at, nome)",
+                  "disabled": true
+                },
+                {
+                  "key": "order",
+                  "value": "desc",
+                  "description": "Direção da ordenação",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "data_inicio",
+                  "value": "",
+                  "description": "Filtro data início (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "data_fim",
+                  "value": "",
+                  "description": "Filtro data fim (YYYY-MM-DD)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Listar campanhas\n\nEndpoint: GET /v1/campanhas\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar campanha",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/campanhas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "campanhas"
+              ]
+            },
+            "description": "**Perfis:** proprietario, gestor. **Rastreabilidade:** `CampanhaController@store`, `CriarCampanhaRequest`\n\nEndpoint: POST /v1/campanhas\nConsumidores: mobile, web\nAuth: bearerAuth",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"\",\n  \"data_inicio\": \"\",\n  \"data_fim\": \"\",\n  \"percentual\": 0.0,\n  \"validade_padrao\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Detalhes da campanha",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/campanhas/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "campanhas",
+                ":id"
+              ]
+            },
+            "description": "Detalhes da campanha\n\nEndpoint: GET /v1/campanhas/{id}\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar campanha",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/campanhas/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "campanhas",
+                ":id"
+              ]
+            },
+            "description": "Atualizar campanha\n\nEndpoint: PATCH /v1/campanhas/{id}\nConsumidores: mobile, web\nAuth: bearerAuth",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"\",\n  \"data_inicio\": \"\",\n  \"data_fim\": \"\",\n  \"percentual\": 0.0,\n  \"validade_padrao\": 0,\n  \"status\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Excluir campanha (soft delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/campanhas/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "campanhas",
+                ":id"
+              ]
+            },
+            "description": "Excluir campanha (soft delete)\n\nEndpoint: DELETE /v1/campanhas/{id}\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Configurações",
+      "description": "Configurações do estabelecimento",
+      "item": [
+        {
+          "name": "Obter configurações da empresa",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/config",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "config"
+              ]
+            },
+            "description": "**Perfis:** proprietario, gestor\n\nEndpoint: GET /v1/config\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar configurações da empresa",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/config",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "config"
+              ]
+            },
+            "description": "Atualizar configurações da empresa\n\nEndpoint: PATCH /v1/config\nConsumidores: mobile, web\nAuth: bearerAuth",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome_fantasia\": \"\",\n  \"razao_social\": \"\",\n  \"telefone\": \"\",\n  \"email\": \"\",\n  \"cep\": \"\",\n  \"rua\": \"\",\n  \"numero\": \"\",\n  \"complemento\": \"\",\n  \"bairro\": \"\",\n  \"cidade\": \"\",\n  \"estado\": \"\",\n  \"percentual_cashback\": 0.0,\n  \"validade_cashback\": 0,\n  \"percentual_max_utilizacao\": 0.0,\n  \"carencia_horas\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload do logo da empresa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/config/logo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "config",
+                "logo"
+              ]
+            },
+            "description": "Aceita JPG, JPEG, PNG, WebP. Máximo 2MB.\n\nEndpoint: POST /v1/config/logo\nConsumidores: mobile, web\nAuth: bearerAuth",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Contestações",
+      "description": "Gerenciamento de contestações (lado lojista)",
+      "item": [
+        {
+          "name": "Listar contestações da empresa",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/contestacoes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "contestacoes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Número da página (paginação offset)",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Itens por página",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "tipo",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "data_inicio",
+                  "value": "",
+                  "description": "Filtro data início (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "data_fim",
+                  "value": "",
+                  "description": "Filtro data fim (YYYY-MM-DD)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Listar contestações da empresa\n\nEndpoint: GET /v1/contestacoes\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar contestação",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/contestacoes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "contestacoes"
+              ]
+            },
+            "description": "Criar contestação\n\nEndpoint: POST /v1/contestacoes\nConsumidores: mobile, web\nAuth: bearerAuth",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"transacao_id\": 0,\n  \"tipo\": \"\",\n  \"descricao\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resolver contestação (aprovar/rejeitar)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/contestacoes/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "contestacoes",
+                ":id"
+              ]
+            },
+            "description": "Resolve uma contestação. Se aprovada, executa ação automática conforme tipo.\n**Perfis:** proprietario, gestor\n**Rastreabilidade:** `ContestacaoController@update`, `ResolverContestacaoRequest`\n\n\nEndpoint: PATCH /v1/contestacoes/{id}\nConsumidores: mobile, web\nAuth: bearerAuth",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Relatórios",
+      "description": "Geração de relatórios",
+      "item": [
+        {
+          "name": "Gerar relatório",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/relatorios",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "relatorios"
+              ],
+              "query": [
+                {
+                  "key": "metrica",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "periodo",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "data_inicio",
+                  "value": "",
+                  "description": "Filtro data início (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "data_fim",
+                  "value": "",
+                  "description": "Filtro data fim (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "unidade_negocio_id",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "**Perfis:** proprietario, gestor. **Rate limit:** throttle:relatorio\n\nEndpoint: GET /v1/relatorios\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "description": "Dados do dashboard do estabelecimento",
+      "item": [
+        {
+          "name": "Estatísticas do dashboard da empresa",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/dashboard/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "dashboard",
+                "stats"
+              ]
+            },
+            "description": "Estatísticas do dashboard da empresa\n\nEndpoint: GET /v1/dashboard/stats\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        },
+        {
+          "name": "Transações recentes para o dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/dashboard/transacoes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "dashboard",
+                "transacoes"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Transações recentes para o dashboard\n\nEndpoint: GET /v1/dashboard/transacoes\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        },
+        {
+          "name": "Top clientes por cashback",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/dashboard/top-clientes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "dashboard",
+                "top-clientes"
+              ]
+            },
+            "description": "Top clientes por cashback\n\nEndpoint: GET /v1/dashboard/top-clientes\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        },
+        {
+          "name": "Dados do gráfico de evolução",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/dashboard/chart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "dashboard",
+                "chart"
+              ],
+              "query": [
+                {
+                  "key": "periodo",
+                  "value": "30d",
+                  "description": "Período: 7d, 30d, 90d, 12m",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Dados do gráfico de evolução\n\nEndpoint: GET /v1/dashboard/chart\nConsumidores: mobile, web\nAuth: bearerAuth"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "QR Code",
+      "description": "Validação de QR Code de cashback",
+      "item": [
+        {
+          "name": "Validar QR Code de cashback (lado lojista)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/qrcode/validate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "qrcode",
+                "validate"
+              ]
+            },
+            "description": "Busca token no Redis, retorna dados do cliente e saldo.\nRemove token se cliente não encontrado.\n**Rastreabilidade:** `MobileUtilizacaoController@validateQrCode`\n\n\nEndpoint: POST /v1/qrcode/validate\nConsumidores: mobile, web\nAuth: bearerAuth",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
