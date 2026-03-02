@@ -174,13 +174,13 @@ describe("API Response Schemas", () => {
             empresa_id: 1,
             nome_fantasia: "Loja Teste",
             logo_url: null,
-            saldo: "100.50",
+            saldo: 100.50,
           },
           {
             empresa_id: 2,
             nome_fantasia: null,
             logo_url: "https://cdn.example.com/logo.png",
-            saldo: "50.00",
+            saldo: 50.00,
           },
         ],
         proximo_a_expirar: {

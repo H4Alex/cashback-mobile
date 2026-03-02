@@ -17,7 +17,7 @@ function EmpresaRow({ empresa }: { empresa: EmpresaSaldo }) {
       <View className="flex-1">
         <Text className="text-base font-medium">{displayName}</Text>
       </View>
-      <Text className="text-green-600 font-semibold">{formatCurrency(Number(empresa.saldo))}</Text>
+      <Text className="text-green-600 font-semibold">{formatCurrency(empresa.saldo)}</Text>
     </View>
   );
 }

@@ -63,7 +63,7 @@ export function buildEmpresaSaldo(overrides: Partial<EmpresaSaldoItem> = {}): Em
     empresa_id: overrides.empresa_id ?? nextId(),
     nome_fantasia: 'Loja Teste',
     logo_url: 'https://cdn.example.com/logo.png',
-    saldo: '25.00',
+    saldo: 25.00,
     ...overrides,
   };
 }

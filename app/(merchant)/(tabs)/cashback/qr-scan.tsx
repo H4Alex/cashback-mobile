@@ -40,8 +40,8 @@ export default function QRScanScreen() {
     utilizarMutation.mutate(
       {
         data: {
-          cliente_id: validationResult.cliente.id,
-          valor: validationResult.valor,
+          cpf: validationResult.cliente.cpf,
+          valor_compra: validationResult.valor,
         },
         idempotencyKey,
       },

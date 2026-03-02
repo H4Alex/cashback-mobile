@@ -37,7 +37,7 @@ export default function UtilizarCashbackScreen() {
     const idempotencyKey = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     utilizar(
       {
-        data: { cliente_id: selectedCliente.id, valor: valorNum },
+        data: { cpf: selectedCliente.cpf, valor_compra: valorNum },
         idempotencyKey,
       },
       {

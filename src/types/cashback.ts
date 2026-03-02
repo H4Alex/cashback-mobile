@@ -40,7 +40,7 @@ export interface EmpresaSaldo {
   empresa_id: number;
   nome_fantasia: string | null;
   logo_url: string | null;
-  saldo: string;
+  saldo: number;
 }
 
 export interface QRCodeToken {
@@ -53,7 +53,7 @@ export interface QRCodeToken {
 
 export interface ValidarQRCodeResponse {
   valid?: boolean;
-  cliente: { id: number; nome: string };
+  cliente: { id: number; nome: string; cpf: string };
   valor: number;
   saldo_cliente: number;
   expira_em: string;

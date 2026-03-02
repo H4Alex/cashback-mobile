@@ -66,13 +66,13 @@ describe("merchantCashbackService", () => {
       mockPost.mockResolvedValue({ data: { status: true, data: response, error: null, message: 'Sucesso' } });
 
       const result = await merchantCashbackService.gerarCashback(
-        { cliente_id: 1, valor: 100 },
+        { cpf: "12345678901", valor_compra: 100 },
         "idempotency-key-123",
       );
 
       expect(mockPost).toHaveBeenCalledWith(
         "/api/v1/cashback",
-        { cliente_id: 1, valor: 100 },
+        { cpf: "12345678901", valor_compra: 100 },
         { headers: { "Idempotency-Key": "idempotency-key-123" } },
       );
       expect(result.cashback_gerado).toBe(5);
@@ -85,13 +85,13 @@ describe("merchantCashbackService", () => {
       mockPost.mockResolvedValue({ data: { status: true, data: response, error: null, message: 'Sucesso' } });
 
       const result = await merchantCashbackService.utilizarCashback(
-        { cliente_id: 1, valor: 50 },
+        { cpf: "12345678901", valor_compra: 50 },
         "idempotency-key-456",
       );
 
       expect(mockPost).toHaveBeenCalledWith(
         "/api/v1/cashback/utilizar",
-        { cliente_id: 1, valor: 50 },
+        { cpf: "12345678901", valor_compra: 50 },
         { headers: { "Idempotency-Key": "idempotency-key-456" } },
       );
       expect(result.cashback_usado).toBe(50);

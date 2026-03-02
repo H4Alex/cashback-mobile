@@ -25,13 +25,13 @@ import { formatDate } from "@/src/utils/formatters";
 const STATUS_FILTERS = [
   { value: "ativa" as const, label: "Ativas" },
   { value: "inativa" as const, label: "Inativas" },
-  { value: "expirada" as const, label: "Expiradas" },
+  { value: "encerrada" as const, label: "Encerradas" },
 ];
 
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   ativa: { bg: "bg-green-100", text: "text-green-700" },
   inativa: { bg: "bg-gray-100", text: "text-gray-600" },
-  expirada: { bg: "bg-red-100", text: "text-red-600" },
+  encerrada: { bg: "bg-red-100", text: "text-red-600" },
 };
 
 const EMPTY_FORM: CreateCampanhaRequest = {

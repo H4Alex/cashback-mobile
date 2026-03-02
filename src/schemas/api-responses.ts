@@ -83,7 +83,7 @@ export const saldoDataSchema = z.object({
       empresa_id: z.number(),
       nome_fantasia: z.string().nullable(),
       logo_url: z.string().nullable(),
-      saldo: z.string(),
+      saldo: z.number(),
     }),
   ),
   proximo_a_expirar: z.object({
@@ -100,7 +100,7 @@ export const extratoEntrySchema = z.object({
   tipo: z.string(),
   valor_compra: z.number(),
   valor_cashback: z.number(),
-  status_cashback: z.string(),
+  status_cashback: z.enum(["pendente", "confirmado", "utilizado", "rejeitado", "expirado", "congelado"]),
   data_expiracao: z.string().nullable(),
   created_at: z.string(),
   empresa: z

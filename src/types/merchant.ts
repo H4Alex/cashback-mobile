@@ -28,9 +28,10 @@ export interface ClienteSaldo {
 }
 
 export interface GerarCashbackRequest {
-  cliente_id: number;
-  valor: number;
+  cpf: string;
+  valor_compra: number;
   campanha_id?: number;
+  unidade_negocio_id?: number;
 }
 
 export interface GerarCashbackResponse {
@@ -43,8 +44,9 @@ export interface GerarCashbackResponse {
 }
 
 export interface UtilizarCashbackRequest {
-  cliente_id: number;
-  valor: number;
+  cpf: string;
+  valor_compra: number;
+  unidade_negocio_id?: number;
 }
 
 export interface UtilizarCashbackResponse {
@@ -123,7 +125,7 @@ export interface VendaResource {
   cliente_nome: string;
   valor_compra: number;
   valor_cashback: number;
-  status: "confirmado" | "pendente" | "cancelado";
+  status: "pendente" | "concluida" | "cancelada";
   created_at: string;
 }
 

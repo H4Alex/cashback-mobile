@@ -33,8 +33,8 @@ describe("SaldoCard", () => {
     const saldo: CashbackSaldo = {
       ...baseSaldo,
       por_empresa: [
-        { empresa_id: 1, nome_fantasia: "Loja A", logo_url: null, saldo: "80.50" },
-        { empresa_id: 2, nome_fantasia: "Loja B", logo_url: null, saldo: "70.00" },
+        { empresa_id: 1, nome_fantasia: "Loja A", logo_url: null, saldo: 80.50 },
+        { empresa_id: 2, nome_fantasia: "Loja B", logo_url: null, saldo: 70.00 },
       ],
     };
     render(<SaldoCard saldo={saldo} />);

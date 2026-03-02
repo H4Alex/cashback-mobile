@@ -158,8 +158,8 @@ describe("mobileCashbackService", () => {
   describe("getLojasComSaldo", () => {
     it("fetches lojas with saldo", async () => {
       const lojas = [
-        buildEmpresaSaldo({ empresa_id: 1, nome_fantasia: "Loja A", saldo: "100.00" }),
-        buildEmpresaSaldo({ empresa_id: 2, nome_fantasia: "Loja B", saldo: "50.00" }),
+        buildEmpresaSaldo({ empresa_id: 1, nome_fantasia: "Loja A", saldo: 100.00 }),
+        buildEmpresaSaldo({ empresa_id: 2, nome_fantasia: "Loja B", saldo: 50.00 }),
       ];
       mockGet.mockResolvedValue({ data: buildApiResponse(lojas) });
 

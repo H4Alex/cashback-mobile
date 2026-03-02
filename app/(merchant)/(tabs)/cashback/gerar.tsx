@@ -39,8 +39,8 @@ export default function GerarCashbackScreen() {
     gerar(
       {
         data: {
-          cliente_id: selectedCliente.id,
-          valor: valorNum,
+          cpf: selectedCliente.cpf,
+          valor_compra: valorNum,
           campanha_id: selectedCampanha?.id,
         },
         idempotencyKey,
