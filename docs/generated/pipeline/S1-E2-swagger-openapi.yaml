@@ -1,0 +1,4285 @@
+openapi: 3.0.3
+info:
+  title: Cashback API
+  description: >
+    API RESTful do sistema de cashback multi-tenant.
+    Autenticação via JWT Bearer token.
+    Paginação offset-based (LengthAwarePaginator).
+  version: 1.0.0
+  contact:
+    name: Cashback API Team
+
+servers:
+  - url: http://localhost:8000
+    description: Ambiente local
+
+tags:
+  - name: Infraestrutura
+    description: Health checks, métricas e versão
+  - name: Auth
+    description: Autenticação web/admin (JWT)
+  - name: Auth Mobile
+    description: Autenticação mobile (JWT via api_mobile)
+  - name: Mobile Consumer
+    description: Endpoints exclusivos do consumidor mobile
+  - name: Empresas
+    description: Listagem de empresas do usuário
+  - name: Webhook
+    description: Webhooks de integrações externas
+  - name: Admin
+    description: Painel administrativo (perfil admin)
+  - name: Cashback
+    description: Geração, utilização e listagem de transações de cashback
+  - name: Clientes
+    description: CRUD de clientes da empresa
+  - name: Campanhas
+    description: CRUD de campanhas de cashback
+  - name: Configurações
+    description: Configurações da empresa
+  - name: Unidades
+    description: Unidades de negócio
+  - name: Usuários
+    description: Usuários internos da empresa
+  - name: Notificações
+    description: Configuração de notificações da empresa
+  - name: Faturas
+    description: Faturas de assinatura
+  - name: Assinaturas
+    description: Planos e assinatura da empresa
+  - name: Contestações
+    description: Contestações de transações
+  - name: Auditoria
+    description: Log de auditoria
+  - name: Relatórios
+    description: Relatórios consolidados
+  - name: Dashboard
+    description: Dados do dashboard do lojista
+  - name: LGPD
+    description: Endpoints de conformidade LGPD
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "JWT via auth:api (web/admin) ou auth:api_mobile (mobile)"
+
+  responses:
+    Unauthenticated:
+      description: Não autenticado — token ausente ou inválido
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthenticated.
+    Forbidden:
+      description: Acesso negado — perfil sem permissão
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Acesso negado.
+    NotFound:
+      description: Recurso não encontrado
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Recurso não encontrado.
+    ValidationError:
+      description: Erro de validação (422)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Os dados fornecidos são inválidos.
+              errors:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+
+  schemas:
+    # ──────────────────────────────────────────
+    # PAGINATION
+    # ──────────────────────────────────────────
+    PaginationMeta:
+      type: object
+      properties:
+        current_page:
+          type: integer
+        last_page:
+          type: integer
+        per_page:
+          type: integer
+        total:
+          type: integer
+        from:
+          type: integer
+        to:
+          type: integer
+
+    PaginationLinks:
+      type: object
+      properties:
+        first:
+          type: string
+          format: uri
+        last:
+          type: string
+          format: uri
+        prev:
+          type: string
+          format: uri
+          nullable: true
+        next:
+          type: string
+          format: uri
+          nullable: true
+
+    # ──────────────────────────────────────────
+    # RESPONSE SCHEMAS (from resources)
+    # ──────────────────────────────────────────
+    EmpresaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome_fantasia:
+          type: string
+        razao_social:
+          type: string
+        cnpj:
+          type: string
+        telefone:
+          type: string
+        email:
+          type: string
+        cep:
+          type: string
+        rua:
+          type: string
+        numero:
+          type: string
+        complemento:
+          type: string
+        bairro:
+          type: string
+        cidade:
+          type: string
+        estado:
+          type: string
+        logo_url:
+          type: string
+        carencia_horas:
+          type: integer
+        modo_saldo:
+          type: string
+        percentual_cashback:
+          type: number
+          format: float
+        validade_cashback:
+          type: integer
+        percentual_max_utilizacao:
+          type: number
+          format: float
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        assinatura_ativa:
+          $ref: '#/components/schemas/AssinaturaResponse'
+
+    TransacaoResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        empresa_id:
+          type: integer
+        unidade_negocio_id:
+          type: integer
+        cliente_id:
+          type: integer
+        campanha_id:
+          type: integer
+        operador_id:
+          type: integer
+        valor_compra:
+          type: string
+          description: Valor com 2 casas decimais (bcadd)
+        percentual_cashback:
+          type: string
+          description: Percentual com 2 casas decimais (bcadd)
+        valor_cashback:
+          type: string
+          description: Valor cashback com 2 casas decimais (bcadd)
+        status_venda:
+          type: string
+          enum: [concluida, cancelada]
+        status_cashback:
+          type: string
+          enum: [pendente, confirmado, utilizado, rejeitado, expirado, congelado]
+        data_expiracao:
+          type: string
+          format: date-time
+        data_confirmacao:
+          type: string
+          format: date-time
+        transacao_origem_id:
+          type: integer
+          nullable: true
+        dias_restantes_congelamento:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        cliente:
+          $ref: '#/components/schemas/ClienteResponse'
+        campanha:
+          $ref: '#/components/schemas/CampanhaResponse'
+        operador:
+          $ref: '#/components/schemas/UserResponse'
+        unidade_negocio:
+          $ref: '#/components/schemas/UnidadeNegocioResponse'
+        contestacoes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContestacaoResponse'
+
+    PlanoResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        slug:
+          type: string
+        preco_mensal:
+          type: number
+          format: float
+        preco_anual:
+          type: number
+          format: float
+        max_clientes:
+          type: integer
+          nullable: true
+        max_campanhas:
+          type: integer
+          nullable: true
+        max_usuarios:
+          type: integer
+          nullable: true
+        tem_unidades_negocio:
+          type: boolean
+        nivel_relatorio:
+          type: string
+          enum: [simples, completos, avancados]
+        nivel_suporte:
+          type: string
+          enum: [email, prioritario, 24_7_gerente]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    FaturaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        empresa_id:
+          type: integer
+        assinatura_id:
+          type: integer
+        valor:
+          type: number
+          format: float
+        status:
+          type: string
+          enum: [gerada, enviada, paga, vencida]
+        starkbank_invoice_id:
+          type: string
+          nullable: true
+        link_pagamento:
+          type: string
+          nullable: true
+        nfe_url:
+          type: string
+          nullable: true
+        data_vencimento:
+          type: string
+          format: date
+        data_pagamento:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        assinatura:
+          $ref: '#/components/schemas/AssinaturaResponse'
+
+    AuditoriaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        empresa_id:
+          type: integer
+        usuario_id:
+          type: integer
+        acao:
+          type: string
+        entidade:
+          type: string
+        entidade_id:
+          type: integer
+        dados_anteriores:
+          type: object
+          nullable: true
+        dados_novos:
+          type: object
+          nullable: true
+        ip_address:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        usuario:
+          $ref: '#/components/schemas/UserResponse'
+
+    NotificacaoConfigResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        empresa_id:
+          type: integer
+        canal:
+          type: string
+        ativo:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    MobileExtratoResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        tipo:
+          type: string
+          description: "Recebido se pendente/confirmado/congelado, Usado se utilizado, senão status_cashback literal"
+        valor_compra:
+          type: number
+          format: float
+        valor_cashback:
+          type: number
+          format: float
+        status_cashback:
+          type: string
+          enum: [pendente, confirmado, utilizado, rejeitado, expirado, congelado]
+        data_expiracao:
+          type: string
+          format: date
+        created_at:
+          type: string
+          format: date-time
+        empresa:
+          type: object
+          properties:
+            id:
+              type: integer
+            nome_fantasia:
+              type: string
+            logo_url:
+              type: string
+        campanha:
+          type: object
+          properties:
+            id:
+              type: integer
+            nome:
+              type: string
+
+    AssinaturaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        empresa_id:
+          type: integer
+        plano_id:
+          type: integer
+        ciclo:
+          type: string
+          enum: [mensal, anual]
+        status:
+          type: string
+          enum: [trial, ativa, inadimplente, cancelada]
+        em_trial:
+          type: boolean
+        dias_restantes_trial:
+          type: integer
+          nullable: true
+        data_inicio:
+          type: string
+          format: date-time
+        data_fim_trial:
+          type: string
+          format: date-time
+        data_proxima_cobranca:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        plano:
+          $ref: '#/components/schemas/PlanoResponse'
+        plano_efetivo:
+          $ref: '#/components/schemas/PlanoResponse'
+
+    CampanhaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        empresa_id:
+          type: integer
+        nome:
+          type: string
+        data_inicio:
+          type: string
+          format: date-time
+        data_fim:
+          type: string
+          format: date-time
+        percentual:
+          type: number
+          format: float
+        validade_padrao:
+          type: integer
+        status:
+          type: string
+          enum: [ativa, inativa, encerrada]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ClienteResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        cpf:
+          type: string
+          description: "CPF mascarado: ***.XXX.XXX-**"
+        nome:
+          type: string
+        telefone:
+          type: string
+        email:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ContestacaoResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        empresa_id:
+          type: integer
+        transacao_id:
+          type: integer
+        cliente_id:
+          type: integer
+        tipo:
+          type: string
+          enum: [cashback_nao_gerado, valor_incorreto, expiracao_indevida, venda_cancelada]
+        descricao:
+          type: string
+        status:
+          type: string
+          enum: [pendente, aprovada, rejeitada]
+        resposta:
+          type: string
+          nullable: true
+        respondido_por:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        transacao:
+          $ref: '#/components/schemas/TransacaoResponse'
+        cliente:
+          $ref: '#/components/schemas/ClienteResponse'
+        respondente:
+          $ref: '#/components/schemas/UserResponse'
+
+    UnidadeNegocioResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        empresa_id:
+          type: integer
+        nome:
+          type: string
+        status:
+          type: string
+          enum: [ativa, inativa]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        email:
+          type: string
+        telefone:
+          type: string
+        tipo_global:
+          type: string
+          enum: [admin, lojista]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        perfil:
+          type: string
+          enum: [gestor, operador, vendedor]
+
+    # ──────────────────────────────────────────
+    # REQUEST SCHEMAS (from form_requests)
+    # ──────────────────────────────────────────
+    RegisterRequest:
+      type: object
+      required: [nome, email, senha, cnpj]
+      properties:
+        nome:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+        senha:
+          type: string
+          minLength: 8
+          description: Deve atender regra StrongPassword
+        telefone:
+          type: string
+          maxLength: 20
+          nullable: true
+        cnpj:
+          type: string
+          description: CNPJ válido (CnpjRule), único em empresas
+        nome_fantasia:
+          type: string
+          maxLength: 255
+          nullable: true
+        telefone_empresa:
+          type: string
+          maxLength: 20
+          nullable: true
+
+    LoginRequest:
+      type: object
+      required: [email, senha]
+      properties:
+        email:
+          type: string
+          format: email
+        senha:
+          type: string
+        plataforma:
+          type: string
+          enum: [web, mobile]
+          nullable: true
+
+    ForgotPasswordRequest:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    ResetPasswordRequest:
+      type: object
+      required: [email, token, senha]
+      properties:
+        email:
+          type: string
+          format: email
+        token:
+          type: string
+        senha:
+          type: string
+          minLength: 8
+          description: Deve atender regra StrongPassword
+
+    SwitchEmpresaRequest:
+      type: object
+      required: [empresa_id]
+      properties:
+        empresa_id:
+          type: integer
+          description: "exists:empresas,id"
+        plataforma:
+          type: string
+          enum: [web, mobile]
+          nullable: true
+
+    GerarCashbackRequest:
+      type: object
+      required: [cpf, valor_compra]
+      properties:
+        cpf:
+          type: string
+          description: CPF válido (CpfRule)
+        valor_compra:
+          type: number
+          minimum: 0.01
+        campanha_id:
+          type: integer
+          nullable: true
+          description: "exists:campanhas,id,empresa_id,{empresa_id}"
+        unidade_negocio_id:
+          type: integer
+          nullable: true
+          description: "exists:unidades_negocio,id,empresa_id,{empresa_id}"
+
+    UtilizarCashbackRequest:
+      type: object
+      required: [cpf, valor_compra]
+      properties:
+        cpf:
+          type: string
+          description: CPF válido (CpfRule)
+        valor_compra:
+          type: number
+          minimum: 0.01
+        unidade_negocio_id:
+          type: integer
+          nullable: true
+          description: "exists:unidades_negocio,id,empresa_id,{empresa_id}"
+
+    ListTransacoesRequest:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+        sort_by:
+          type: string
+          maxLength: 50
+        order:
+          type: string
+          enum: [asc, desc]
+        data_inicio:
+          type: string
+          format: date
+        data_fim:
+          type: string
+          format: date
+          description: "after_or_equal:data_inicio"
+        status_venda:
+          type: string
+          enum: [concluida, cancelada]
+        status_cashback:
+          type: string
+          enum: [pendente, confirmado, utilizado, rejeitado, expirado, congelado]
+        cliente_id:
+          type: integer
+          minimum: 1
+        campanha_id:
+          type: integer
+          minimum: 1
+
+    CriarClienteRequest:
+      type: object
+      required: [cpf]
+      properties:
+        cpf:
+          type: string
+          description: CPF válido (CpfRule)
+        nome:
+          type: string
+          maxLength: 255
+          nullable: true
+        telefone:
+          type: string
+          maxLength: 20
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+
+    AtualizarClienteRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          maxLength: 255
+        telefone:
+          type: string
+          maxLength: 20
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+
+    CriarCampanhaRequest:
+      type: object
+      required: [nome, data_inicio, data_fim, percentual, validade_padrao]
+      properties:
+        nome:
+          type: string
+          maxLength: 255
+        data_inicio:
+          type: string
+          format: date
+          description: "after_or_equal:today"
+        data_fim:
+          type: string
+          format: date
+          description: "after:data_inicio"
+        percentual:
+          type: number
+          minimum: 0.01
+          maximum: 100
+        validade_padrao:
+          type: integer
+          minimum: 1
+
+    AtualizarCampanhaRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          maxLength: 255
+        data_inicio:
+          type: string
+          format: date
+        data_fim:
+          type: string
+          format: date
+          description: "after:data_inicio"
+        percentual:
+          type: number
+          minimum: 0.01
+          maximum: 100
+        validade_padrao:
+          type: integer
+          minimum: 1
+        status:
+          type: string
+          enum: [ativa, inativa, encerrada]
+
+    AtualizarConfigRequest:
+      type: object
+      properties:
+        nome_fantasia:
+          type: string
+          maxLength: 255
+        razao_social:
+          type: string
+          maxLength: 255
+          nullable: true
+        telefone:
+          type: string
+          maxLength: 20
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+        cep:
+          type: string
+          maxLength: 10
+          nullable: true
+        rua:
+          type: string
+          maxLength: 255
+          nullable: true
+        numero:
+          type: string
+          maxLength: 20
+          nullable: true
+        complemento:
+          type: string
+          maxLength: 255
+          nullable: true
+        bairro:
+          type: string
+          maxLength: 255
+          nullable: true
+        cidade:
+          type: string
+          maxLength: 255
+          nullable: true
+        estado:
+          type: string
+          maxLength: 2
+          nullable: true
+        percentual_cashback:
+          type: number
+          minimum: 0.01
+          maximum: 100
+        validade_cashback:
+          type: integer
+          minimum: 1
+        percentual_max_utilizacao:
+          type: number
+          minimum: 0.01
+          maximum: 100
+        carencia_horas:
+          type: integer
+          minimum: 0
+          maximum: 8760
+
+    UploadLogoRequest:
+      type: object
+      required: [logo]
+      properties:
+        logo:
+          type: string
+          format: binary
+          description: "Imagem (jpg, jpeg, png, webp). Máx 2048 KB."
+
+    AtualizarNotificacaoConfigRequest:
+      type: object
+      properties:
+        email:
+          type: boolean
+        sms:
+          type: boolean
+        push:
+          type: boolean
+
+    CriarUnidadeRequest:
+      type: object
+      required: [nome]
+      properties:
+        nome:
+          type: string
+          maxLength: 255
+
+    AtualizarUnidadeRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          maxLength: 255
+        status:
+          type: string
+          enum: [ativa, inativa]
+
+    CriarUsuarioRequest:
+      type: object
+      required: [nome, email, senha, perfil]
+      properties:
+        nome:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+        senha:
+          type: string
+          minLength: 8
+          description: Deve atender regra StrongPassword
+        telefone:
+          type: string
+          maxLength: 20
+          nullable: true
+        perfil:
+          type: string
+          enum: [gestor, operador, vendedor]
+        unidade_negocio_ids:
+          type: array
+          nullable: true
+          items:
+            type: integer
+            description: "exists:unidades_negocio,id"
+
+    AtualizarUsuarioRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          maxLength: 255
+        telefone:
+          type: string
+          maxLength: 20
+          nullable: true
+        perfil:
+          type: string
+          enum: [gestor, operador, vendedor]
+        unidade_negocio_ids:
+          type: array
+          items:
+            type: integer
+            description: "exists:unidades_negocio,id"
+
+    CriarContestacaoRequest:
+      type: object
+      required: [transacao_id, tipo, descricao]
+      properties:
+        transacao_id:
+          type: integer
+          description: "exists:transacoes,id,empresa_id,{empresa_id}"
+        tipo:
+          type: string
+          enum: [cashback_nao_gerado, valor_incorreto, expiracao_indevida, venda_cancelada]
+        descricao:
+          type: string
+          minLength: 10
+          maxLength: 1000
+
+    ListContestacoesRequest:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+        sort_by:
+          type: string
+          maxLength: 50
+        order:
+          type: string
+          enum: [asc, desc]
+        data_inicio:
+          type: string
+          format: date
+        data_fim:
+          type: string
+          format: date
+          description: "after_or_equal:data_inicio"
+        status:
+          type: string
+          enum: [pendente, aprovada, rejeitada]
+        tipo:
+          type: string
+          enum: [cashback_nao_gerado, valor_incorreto, expiracao_indevida, venda_cancelada]
+
+    ResolverContestacaoRequest:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [aprovada, rejeitada]
+        resposta:
+          type: string
+          maxLength: 2000
+          nullable: true
+
+    UpgradeRequest:
+      type: object
+      required: [plano_id, ciclo]
+      properties:
+        plano_id:
+          type: integer
+          description: "exists:planos,id"
+        ciclo:
+          type: string
+          enum: [mensal, anual]
+
+    ListRequest:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+        sort_by:
+          type: string
+          maxLength: 50
+        order:
+          type: string
+          enum: [asc, desc]
+        data_inicio:
+          type: string
+          format: date
+        data_fim:
+          type: string
+          format: date
+          description: "after_or_equal:data_inicio"
+
+    CriarAdminUsuarioRequest:
+      type: object
+      required: [nome, email, senha]
+      properties:
+        nome:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          description: "unique:usuarios,email"
+        senha:
+          type: string
+          minLength: 8
+          description: Deve conter maiúscula, minúscula, número e caractere especial
+        telefone:
+          type: string
+          maxLength: 20
+          nullable: true
+
+    AtualizarAdminUsuarioRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          description: "unique:usuarios,email,{id}"
+        senha:
+          type: string
+          minLength: 8
+          description: Deve conter maiúscula, minúscula, número e caractere especial
+        telefone:
+          type: string
+          maxLength: 20
+          nullable: true
+
+    CriarPlanoRequest:
+      type: object
+      required: [nome, preco_mensal, preco_anual, nivel_relatorio, nivel_suporte]
+      properties:
+        nome:
+          type: string
+          maxLength: 100
+        preco_mensal:
+          type: number
+          minimum: 0
+        preco_anual:
+          type: number
+          minimum: 0
+        max_clientes:
+          type: integer
+          minimum: 1
+          nullable: true
+        max_campanhas:
+          type: integer
+          minimum: 1
+          nullable: true
+        max_usuarios:
+          type: integer
+          minimum: 1
+          nullable: true
+        tem_unidades_negocio:
+          type: boolean
+        nivel_relatorio:
+          type: string
+          enum: [simples, completos, avancados]
+        nivel_suporte:
+          type: string
+          enum: [email, prioritario, 24_7_gerente]
+
+    AtualizarPlanoRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          maxLength: 100
+        preco_mensal:
+          type: number
+          minimum: 0
+        preco_anual:
+          type: number
+          minimum: 0
+        max_clientes:
+          type: integer
+          minimum: 1
+          nullable: true
+        max_campanhas:
+          type: integer
+          minimum: 1
+          nullable: true
+        max_usuarios:
+          type: integer
+          minimum: 1
+          nullable: true
+        tem_unidades_negocio:
+          type: boolean
+        nivel_relatorio:
+          type: string
+          enum: [simples, completos, avancados]
+        nivel_suporte:
+          type: string
+          enum: [email, prioritario, 24_7_gerente]
+
+    AtualizarEmpresaAdminRequest:
+      type: object
+      properties:
+        nome_fantasia:
+          type: string
+          maxLength: 255
+        razao_social:
+          type: string
+          maxLength: 255
+          nullable: true
+        telefone:
+          type: string
+          maxLength: 20
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+        percentual_cashback:
+          type: number
+          minimum: 0.01
+          maximum: 100
+        validade_cashback:
+          type: integer
+          minimum: 1
+          maximum: 365
+        percentual_max_utilizacao:
+          type: number
+          minimum: 0.01
+          maximum: 100
+        carencia_horas:
+          type: integer
+          minimum: 0
+          maximum: 720
+        modo_saldo:
+          type: string
+          enum: [individual, global]
+
+    MobileRegisterRequest:
+      type: object
+      required: [cpf, nome, email, senha]
+      properties:
+        cpf:
+          type: string
+          description: CPF válido (CpfRule)
+        nome:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        senha:
+          type: string
+          minLength: 8
+          description: Deve conter maiúscula e número
+        telefone:
+          type: string
+          maxLength: 20
+          nullable: true
+
+    MobileLoginRequest:
+      type: object
+      required: [email, senha]
+      properties:
+        email:
+          type: string
+          format: email
+        senha:
+          type: string
+
+    MobileOAuthRequest:
+      type: object
+      required: [provider, token]
+      properties:
+        provider:
+          type: string
+          enum: [google, apple]
+        token:
+          type: string
+        nome:
+          type: string
+          maxLength: 255
+          nullable: true
+
+    MobileForgotPasswordRequest:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 255
+
+    MobileResetPasswordRequest:
+      type: object
+      required: [email, token, senha]
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        token:
+          type: string
+        senha:
+          type: string
+          minLength: 8
+          description: Deve conter maiúscula e número
+
+    MobileUpdateProfileRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          maxLength: 255
+        telefone:
+          type: string
+          maxLength: 20
+          nullable: true
+        email:
+          type: string
+          format: email
+          maxLength: 255
+
+    MobileChangePasswordRequest:
+      type: object
+      required: [senha_atual, nova_senha]
+      properties:
+        senha_atual:
+          type: string
+        nova_senha:
+          type: string
+          minLength: 8
+          description: Deve conter maiúscula e número
+
+    MobileDeleteAccountRequest:
+      type: object
+      required: [senha]
+      properties:
+        senha:
+          type: string
+        motivo:
+          type: string
+          maxLength: 500
+          nullable: true
+
+    MobileContestacaoRequest:
+      type: object
+      required: [transacao_id, tipo, descricao]
+      properties:
+        transacao_id:
+          type: integer
+        tipo:
+          type: string
+          enum: [cashback_nao_gerado, valor_incorreto, expiracao_indevida, venda_cancelada]
+        descricao:
+          type: string
+          minLength: 10
+          maxLength: 1000
+
+    MobileQrCodeRequest:
+      type: object
+      required: [empresa_id, valor]
+      properties:
+        empresa_id:
+          type: integer
+          description: "exists:empresas,id"
+        valor:
+          type: number
+          minimum: 0.01
+
+    MobileRegisterDeviceRequest:
+      type: object
+      required: [token, plataforma]
+      properties:
+        token:
+          type: string
+          maxLength: 500
+        plataforma:
+          type: string
+          enum: [ios, android]
+
+    MobileDestroyDeviceRequest:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+
+# ══════════════════════════════════════════════════════════════
+# PATHS
+# ══════════════════════════════════════════════════════════════
+paths:
+  # ──────────────────────────────────────────
+  # INFRAESTRUTURA
+  # ──────────────────────────────────────────
+  /api/health:
+    get:
+      tags: [Infraestrutura]
+      summary: Health check
+      description: Verifica se a aplicação está respondendo
+      operationId: health
+      security: []
+      responses:
+        '200':
+          description: Aplicação saudável
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/ready:
+    get:
+      tags: [Infraestrutura]
+      summary: Readiness check
+      description: Verifica se a aplicação está pronta para receber requisições
+      operationId: ready
+      security: []
+      responses:
+        '200':
+          description: Aplicação pronta
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/version:
+    get:
+      tags: [Infraestrutura]
+      summary: Versão da aplicação
+      description: Retorna a versão atual da aplicação
+      operationId: version
+      security: []
+      responses:
+        '200':
+          description: Versão retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/metrics:
+    get:
+      tags: [Infraestrutura]
+      summary: Métricas da aplicação
+      description: Retorna métricas internas (apenas admin)
+      operationId: metrics
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Métricas retornadas com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/metrics/prometheus:
+    get:
+      tags: [Infraestrutura]
+      summary: Métricas Prometheus
+      description: Endpoint de scraping para Prometheus (InternalOnly)
+      operationId: metricsPrometheus
+      security: []
+      responses:
+        '200':
+          description: Métricas no formato Prometheus
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  # ──────────────────────────────────────────
+  # AUTH WEB/ADMIN
+  # ──────────────────────────────────────────
+  /api/v1/auth/register:
+    post:
+      tags: [Auth]
+      summary: Registro de nova empresa
+      description: Registra um novo usuário e empresa no sistema
+      operationId: authRegister
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Usuário e empresa criados com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/auth/login:
+    post:
+      tags: [Auth]
+      summary: Login
+      description: Autentica o usuário e retorna token JWT
+      operationId: authLogin
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                    example: bearer
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Recuperar senha
+      description: Envia e-mail de recuperação de senha
+      operationId: authForgotPassword
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        '200':
+          description: E-mail de recuperação enviado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Redefinir senha
+      description: Redefine a senha do usuário com token de recuperação
+      operationId: authResetPassword
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+      responses:
+        '200':
+          description: Senha redefinida com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/auth/switch-empresa:
+    post:
+      tags: [Auth]
+      summary: Trocar empresa ativa
+      description: Altera a empresa ativa do usuário (multi-loja)
+      operationId: authSwitchEmpresa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SwitchEmpresaRequest'
+      responses:
+        '200':
+          description: Empresa alterada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Renovar token
+      description: Renova o token JWT atual
+      operationId: authRefresh
+      responses:
+        '200':
+          description: Token renovado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                    example: bearer
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/v1/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout
+      description: Invalida o token JWT atual
+      operationId: authLogout
+      responses:
+        '200':
+          description: Logout realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/v1/auth/me:
+    get:
+      tags: [Auth]
+      summary: Dados do usuário autenticado
+      description: Retorna os dados do usuário logado
+      operationId: authMe
+      responses:
+        '200':
+          description: Dados do usuário
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/v1/auth/2fa/setup:
+    post:
+      tags: [Auth]
+      summary: Configurar 2FA
+      description: Inicia a configuração da autenticação em dois fatores
+      operationId: auth2faSetup
+      responses:
+        '200':
+          description: QR code e secret retornados
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/v1/auth/2fa/confirm:
+    post:
+      tags: [Auth]
+      summary: Confirmar 2FA
+      description: Confirma a ativação do 2FA com código TOTP
+      operationId: auth2faConfirm
+      responses:
+        '200':
+          description: 2FA ativado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/v1/auth/2fa/verify:
+    post:
+      tags: [Auth]
+      summary: Verificar código 2FA
+      description: Verifica o código TOTP durante o login
+      operationId: auth2faVerify
+      responses:
+        '200':
+          description: Código verificado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/v1/auth/2fa/disable:
+    post:
+      tags: [Auth]
+      summary: Desativar 2FA
+      description: Desativa a autenticação em dois fatores
+      operationId: auth2faDisable
+      responses:
+        '200':
+          description: 2FA desativado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/v1/auth/2fa/backup-codes:
+    post:
+      tags: [Auth]
+      summary: Gerar códigos de backup 2FA
+      description: Gera novos códigos de backup para o 2FA
+      operationId: auth2faBackupCodes
+      responses:
+        '200':
+          description: Códigos de backup gerados
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  # ──────────────────────────────────────────
+  # AUTH MOBILE
+  # ──────────────────────────────────────────
+  /api/mobile/v1/auth/register:
+    post:
+      tags: [Auth Mobile]
+      summary: Registro de consumidor mobile
+      description: Registra um novo consumidor no aplicativo mobile
+      operationId: mobileAuthRegister
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileRegisterRequest'
+      responses:
+        '201':
+          description: Consumidor registrado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/mobile/v1/auth/login:
+    post:
+      tags: [Auth Mobile]
+      summary: Login mobile
+      description: Autentica o consumidor mobile e retorna token JWT
+      operationId: mobileAuthLogin
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileLoginRequest'
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                    example: bearer
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/mobile/v1/auth/oauth:
+    post:
+      tags: [Auth Mobile]
+      summary: Login OAuth mobile
+      description: Autentica via Google ou Apple
+      operationId: mobileAuthOAuth
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileOAuthRequest'
+      responses:
+        '200':
+          description: Login OAuth realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                    example: bearer
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/mobile/v1/auth/forgot-password:
+    post:
+      tags: [Auth Mobile]
+      summary: Recuperar senha mobile
+      description: Envia e-mail de recuperação de senha para o consumidor
+      operationId: mobileAuthForgotPassword
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileForgotPasswordRequest'
+      responses:
+        '200':
+          description: E-mail de recuperação enviado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/mobile/v1/auth/reset-password:
+    post:
+      tags: [Auth Mobile]
+      summary: Redefinir senha mobile
+      description: Redefine a senha do consumidor com token
+      operationId: mobileAuthResetPassword
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileResetPasswordRequest'
+      responses:
+        '200':
+          description: Senha redefinida com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/mobile/v1/auth/biometric/verify:
+    post:
+      tags: [Auth Mobile]
+      summary: Verificar biometria
+      description: Verifica a autenticação biométrica do consumidor
+      operationId: mobileAuthBiometricVerify
+      security: []
+      responses:
+        '200':
+          description: Biometria verificada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/mobile/v1/auth/refresh:
+    post:
+      tags: [Auth Mobile]
+      summary: Renovar token mobile
+      description: Renova o token JWT do consumidor mobile
+      operationId: mobileAuthRefresh
+      responses:
+        '200':
+          description: Token renovado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                    example: bearer
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/mobile/v1/auth/logout:
+    post:
+      tags: [Auth Mobile]
+      summary: Logout mobile
+      description: Invalida o token JWT do consumidor mobile
+      operationId: mobileAuthLogout
+      responses:
+        '200':
+          description: Logout realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/mobile/v1/auth/me:
+    get:
+      tags: [Auth Mobile]
+      summary: Dados do consumidor mobile autenticado
+      description: Retorna os dados do consumidor logado no mobile
+      operationId: mobileAuthMe
+      responses:
+        '200':
+          description: Dados do consumidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/mobile/v1/auth/profile:
+    patch:
+      tags: [Auth Mobile]
+      summary: Atualizar perfil mobile
+      description: Atualiza dados do perfil do consumidor mobile
+      operationId: mobileAuthUpdateProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileUpdateProfileRequest'
+      responses:
+        '200':
+          description: Perfil atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/mobile/v1/auth/password:
+    patch:
+      tags: [Auth Mobile]
+      summary: Alterar senha mobile
+      description: Altera a senha do consumidor mobile
+      operationId: mobileAuthChangePassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileChangePasswordRequest'
+      responses:
+        '200':
+          description: Senha alterada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/mobile/v1/auth/delete-account:
+    post:
+      tags: [Auth Mobile]
+      summary: Excluir conta mobile
+      description: Exclui permanentemente a conta do consumidor mobile
+      operationId: mobileAuthDeleteAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileDeleteAccountRequest'
+      responses:
+        '200':
+          description: Conta excluída com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/mobile/v1/auth/biometric/enroll:
+    post:
+      tags: [Auth Mobile]
+      summary: Cadastrar biometria
+      description: Cadastra a autenticação biométrica do consumidor
+      operationId: mobileAuthBiometricEnroll
+      responses:
+        '200':
+          description: Biometria cadastrada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/mobile/v1/auth/sessions:
+    get:
+      tags: [Auth Mobile]
+      summary: Listar sessões ativas
+      description: Retorna as sessões ativas do consumidor mobile
+      operationId: mobileAuthSessions
+      responses:
+        '200':
+          description: Lista de sessões ativas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/mobile/v1/auth/sessions/{id}:
+    delete:
+      tags: [Auth Mobile]
+      summary: Encerrar sessão
+      description: Encerra uma sessão ativa específica do consumidor
+      operationId: mobileAuthSessionDestroy
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Sessão encerrada com sucesso
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ──────────────────────────────────────────
+  # MOBILE CONSUMER
+  # ──────────────────────────────────────────
+  /api/mobile/v1/saldo:
+    get:
+      tags: [Mobile Consumer]
+      summary: Saldo do consumidor
+      description: Retorna o saldo de cashback do consumidor mobile
+      operationId: mobileSaldo
+      responses:
+        '200':
+          description: Saldo retornado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/mobile/v1/extrato:
+    get:
+      tags: [Mobile Consumer]
+      summary: Extrato do consumidor
+      description: Retorna o extrato de transações do consumidor mobile
+      operationId: mobileExtrato
+      responses:
+        '200':
+          description: Extrato retornado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MobileExtratoResponse'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/mobile/v1/utilizacao/lojas:
+    get:
+      tags: [Mobile Consumer]
+      summary: Lojas para utilização
+      description: Retorna lojas onde o consumidor pode utilizar cashback
+      operationId: mobileUtilizacaoLojas
+      responses:
+        '200':
+          description: Lista de lojas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/mobile/v1/utilizacao/qrcode:
+    post:
+      tags: [Mobile Consumer]
+      summary: Gerar QR Code de utilização
+      description: Gera um QR code para utilização de cashback na loja
+      operationId: mobileUtilizacaoQrCode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileQrCodeRequest'
+      responses:
+        '200':
+          description: QR Code gerado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/mobile/v1/devices:
+    post:
+      tags: [Mobile Consumer]
+      summary: Registrar dispositivo
+      description: Registra um dispositivo para push notifications
+      operationId: mobileDeviceRegister
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileRegisterDeviceRequest'
+      responses:
+        '201':
+          description: Dispositivo registrado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags: [Mobile Consumer]
+      summary: Remover dispositivo
+      description: Remove o registro de um dispositivo para push notifications
+      operationId: mobileDeviceDestroy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileDestroyDeviceRequest'
+      responses:
+        '204':
+          description: Dispositivo removido com sucesso
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/mobile/v1/contestacoes:
+    get:
+      tags: [Mobile Consumer]
+      summary: Listar contestações do consumidor
+      description: Retorna as contestações do consumidor mobile
+      operationId: mobileContestacoesList
+      responses:
+        '200':
+          description: Lista de contestações
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ContestacaoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+    post:
+      tags: [Mobile Consumer]
+      summary: Criar contestação mobile
+      description: Cria uma nova contestação de transação pelo consumidor
+      operationId: mobileContestacaoStore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileContestacaoRequest'
+      responses:
+        '201':
+          description: Contestação criada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ContestacaoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/mobile/v1/notifications:
+    get:
+      tags: [Mobile Consumer]
+      summary: Listar notificações
+      description: Retorna as notificações do consumidor mobile
+      operationId: mobileNotificationsList
+      responses:
+        '200':
+          description: Lista de notificações
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/mobile/v1/notifications/{id}/read:
+    patch:
+      tags: [Mobile Consumer]
+      summary: Marcar notificação como lida
+      description: Marca uma notificação específica como lida
+      operationId: mobileNotificationMarkAsRead
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Notificação marcada como lida
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/mobile/v1/notifications/read-all:
+    post:
+      tags: [Mobile Consumer]
+      summary: Marcar todas as notificações como lidas
+      description: Marca todas as notificações do consumidor como lidas
+      operationId: mobileNotificationMarkAllAsRead
+      responses:
+        '200':
+          description: Todas as notificações marcadas como lidas
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/mobile/v1/notifications/preferences:
+    get:
+      tags: [Mobile Consumer]
+      summary: Obter preferências de notificação
+      description: Retorna as preferências de notificação do consumidor
+      operationId: mobileNotificationPreferencesGet
+      responses:
+        '200':
+          description: Preferências retornadas com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+    patch:
+      tags: [Mobile Consumer]
+      summary: Atualizar preferências de notificação
+      description: Atualiza as preferências de notificação do consumidor
+      operationId: mobileNotificationPreferencesUpdate
+      responses:
+        '200':
+          description: Preferências atualizadas com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  # ──────────────────────────────────────────
+  # EMPRESAS
+  # ──────────────────────────────────────────
+  /api/v1/empresas:
+    get:
+      tags: [Empresas]
+      summary: Listar empresas do usuário
+      description: Retorna as empresas associadas ao usuário autenticado (multi-loja)
+      operationId: empresasList
+      responses:
+        '200':
+          description: Lista de empresas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EmpresaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  # ──────────────────────────────────────────
+  # WEBHOOK
+  # ──────────────────────────────────────────
+  /api/v1/webhooks/starkbank:
+    post:
+      tags: [Webhook]
+      summary: Webhook Starkbank
+      description: Recebe notificações de pagamento do Starkbank
+      operationId: webhookStarkbank
+      security: []
+      responses:
+        '200':
+          description: Webhook processado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+
+  # ──────────────────────────────────────────
+  # ADMIN
+  # ──────────────────────────────────────────
+  /api/v1/admin/dashboard:
+    get:
+      tags: [Admin]
+      summary: Dashboard administrativo
+      description: Retorna dados do dashboard do painel admin
+      operationId: adminDashboard
+      responses:
+        '200':
+          description: Dados do dashboard admin
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/v1/admin/empresas:
+    get:
+      tags: [Admin]
+      summary: Listar todas as empresas
+      description: Retorna todas as empresas cadastradas no sistema (admin)
+      operationId: adminEmpresasList
+      responses:
+        '200':
+          description: Lista de empresas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EmpresaResponse'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/v1/admin/empresas/{id}:
+    get:
+      tags: [Admin]
+      summary: Detalhe da empresa
+      description: Retorna os dados detalhados de uma empresa específica (admin)
+      operationId: adminEmpresaShow
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados da empresa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/EmpresaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: [Admin]
+      summary: Atualizar empresa
+      description: Atualiza dados de uma empresa específica (admin)
+      operationId: adminEmpresaUpdate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtualizarEmpresaAdminRequest'
+      responses:
+        '200':
+          description: Empresa atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/EmpresaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/admin/empresas/{id}/block:
+    post:
+      tags: [Admin]
+      summary: Bloquear empresa
+      description: Bloqueia uma empresa específica (admin)
+      operationId: adminEmpresaBlock
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Empresa bloqueada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/EmpresaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/admin/empresas/{id}/unblock:
+    post:
+      tags: [Admin]
+      summary: Desbloquear empresa
+      description: Desbloqueia uma empresa específica (admin)
+      operationId: adminEmpresaUnblock
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Empresa desbloqueada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/EmpresaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/admin/planos:
+    get:
+      tags: [Admin]
+      summary: Listar planos
+      description: Retorna todos os planos de assinatura (admin)
+      operationId: adminPlanosList
+      responses:
+        '200':
+          description: Lista de planos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlanoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: [Admin]
+      summary: Criar plano
+      description: Cria um novo plano de assinatura (admin)
+      operationId: adminPlanoStore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarPlanoRequest'
+      responses:
+        '201':
+          description: Plano criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PlanoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/admin/planos/{id}:
+    patch:
+      tags: [Admin]
+      summary: Atualizar plano
+      description: Atualiza um plano de assinatura existente (admin)
+      operationId: adminPlanoUpdate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtualizarPlanoRequest'
+      responses:
+        '200':
+          description: Plano atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PlanoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/admin/usuarios:
+    get:
+      tags: [Admin]
+      summary: Listar administradores
+      description: Retorna todos os usuários administradores (admin)
+      operationId: adminUsuariosList
+      responses:
+        '200':
+          description: Lista de administradores
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserResponse'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: [Admin]
+      summary: Criar administrador
+      description: Cria um novo usuário administrador (admin)
+      operationId: adminUsuarioStore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarAdminUsuarioRequest'
+      responses:
+        '201':
+          description: Administrador criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/admin/usuarios/{id}:
+    patch:
+      tags: [Admin]
+      summary: Atualizar administrador
+      description: Atualiza um usuário administrador existente (admin)
+      operationId: adminUsuarioUpdate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtualizarAdminUsuarioRequest'
+      responses:
+        '200':
+          description: Administrador atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags: [Admin]
+      summary: Excluir administrador
+      description: Exclui um usuário administrador (admin)
+      operationId: adminUsuarioDestroy
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Administrador excluído com sucesso
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/admin/auditoria:
+    get:
+      tags: [Admin]
+      summary: Log de auditoria admin
+      description: Retorna o log de auditoria do sistema (admin)
+      operationId: adminAuditoriaList
+      responses:
+        '200':
+          description: Log de auditoria
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditoriaResponse'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  # ──────────────────────────────────────────
+  # CASHBACK
+  # ──────────────────────────────────────────
+  /api/v1/qrcode/validate:
+    post:
+      tags: [Cashback]
+      summary: Validar QR Code
+      description: Valida um QR code de utilização de cashback (lojista)
+      operationId: qrcodeValidate
+      responses:
+        '200':
+          description: QR Code validado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+
+  /api/v1/cashback:
+    post:
+      tags: [Cashback]
+      summary: Gerar cashback
+      description: Gera cashback para uma compra realizada pelo cliente
+      operationId: cashbackGerar
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Chave de idempotência para evitar duplicação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GerarCashbackRequest'
+      responses:
+        '201':
+          description: Cashback gerado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TransacaoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    get:
+      tags: [Cashback]
+      summary: Listar transações
+      description: Retorna a lista de transações de cashback com filtros e paginação
+      operationId: cashbackList
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: data_inicio
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: data_fim
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: status_venda
+          in: query
+          schema:
+            type: string
+            enum: [concluida, cancelada]
+        - name: status_cashback
+          in: query
+          schema:
+            type: string
+            enum: [pendente, confirmado, utilizado, rejeitado, expirado, congelado]
+        - name: cliente_id
+          in: query
+          schema:
+            type: integer
+        - name: campanha_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de transações
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TransacaoResponse'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/v1/cashback/utilizar:
+    post:
+      tags: [Cashback]
+      summary: Utilizar cashback
+      description: Utiliza o saldo de cashback do cliente em uma compra
+      operationId: cashbackUtilizar
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Chave de idempotência para evitar duplicação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UtilizarCashbackRequest'
+      responses:
+        '201':
+          description: Cashback utilizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TransacaoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/cashback/{id}:
+    get:
+      tags: [Cashback]
+      summary: Detalhe da transação
+      description: Retorna os dados detalhados de uma transação de cashback
+      operationId: cashbackShow
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados da transação
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TransacaoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/cashback/{id}/cancelar:
+    post:
+      tags: [Cashback]
+      summary: Cancelar transação
+      description: Cancela uma transação de cashback (estorna)
+      operationId: cashbackCancelar
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Transação cancelada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TransacaoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ──────────────────────────────────────────
+  # CLIENTES
+  # ──────────────────────────────────────────
+  /api/v1/clientes:
+    get:
+      tags: [Clientes]
+      summary: Listar clientes
+      description: Retorna a lista de clientes da empresa com paginação
+      operationId: clientesList
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: Lista de clientes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ClienteResponse'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: [Clientes]
+      summary: Criar cliente
+      description: Cadastra um novo cliente na empresa
+      operationId: clienteStore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarClienteRequest'
+      responses:
+        '201':
+          description: Cliente criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ClienteResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/clientes/{id}:
+    get:
+      tags: [Clientes]
+      summary: Detalhe do cliente
+      description: Retorna os dados detalhados de um cliente específico
+      operationId: clienteShow
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados do cliente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ClienteResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: [Clientes]
+      summary: Atualizar cliente
+      description: Atualiza os dados de um cliente existente
+      operationId: clienteUpdate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtualizarClienteRequest'
+      responses:
+        '200':
+          description: Cliente atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ClienteResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/clientes/{id}/saldo:
+    get:
+      tags: [Clientes]
+      summary: Saldo do cliente
+      description: Retorna o saldo de cashback de um cliente específico
+      operationId: clienteSaldo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Saldo do cliente
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/clientes/{id}/extrato:
+    get:
+      tags: [Clientes]
+      summary: Extrato do cliente
+      description: Retorna o extrato de transações de cashback de um cliente
+      operationId: clienteExtrato
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Extrato do cliente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TransacaoResponse'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ──────────────────────────────────────────
+  # CAMPANHAS
+  # ──────────────────────────────────────────
+  /api/v1/campanhas:
+    get:
+      tags: [Campanhas]
+      summary: Listar campanhas
+      description: Retorna a lista de campanhas de cashback da empresa
+      operationId: campanhasList
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: Lista de campanhas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CampanhaResponse'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: [Campanhas]
+      summary: Criar campanha
+      description: Cria uma nova campanha de cashback
+      operationId: campanhaStore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarCampanhaRequest'
+      responses:
+        '201':
+          description: Campanha criada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CampanhaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/campanhas/{id}:
+    get:
+      tags: [Campanhas]
+      summary: Detalhe da campanha
+      description: Retorna os dados detalhados de uma campanha
+      operationId: campanhaShow
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados da campanha
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CampanhaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: [Campanhas]
+      summary: Atualizar campanha
+      description: Atualiza uma campanha de cashback existente
+      operationId: campanhaUpdate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtualizarCampanhaRequest'
+      responses:
+        '200':
+          description: Campanha atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CampanhaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags: [Campanhas]
+      summary: Excluir campanha
+      description: Exclui uma campanha de cashback
+      operationId: campanhaDestroy
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Campanha excluída com sucesso
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ──────────────────────────────────────────
+  # CONFIGURAÇÕES
+  # ──────────────────────────────────────────
+  /api/v1/config:
+    get:
+      tags: [Configurações]
+      summary: Obter configurações da empresa
+      description: Retorna as configurações atuais da empresa
+      operationId: configShow
+      responses:
+        '200':
+          description: Configurações da empresa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/EmpresaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    patch:
+      tags: [Configurações]
+      summary: Atualizar configurações da empresa
+      description: Atualiza as configurações da empresa
+      operationId: configUpdate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtualizarConfigRequest'
+      responses:
+        '200':
+          description: Configurações atualizadas com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/EmpresaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/config/logo:
+    post:
+      tags: [Configurações]
+      summary: Upload do logo da empresa
+      description: Faz upload do logo da empresa (jpg, jpeg, png, webp, máx 2MB)
+      operationId: configUploadLogo
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadLogoRequest'
+      responses:
+        '200':
+          description: Logo enviado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  # ──────────────────────────────────────────
+  # UNIDADES DE NEGÓCIO
+  # ──────────────────────────────────────────
+  /api/v1/unidades:
+    get:
+      tags: [Unidades]
+      summary: Listar unidades de negócio
+      description: Retorna as unidades de negócio da empresa
+      operationId: unidadesList
+      responses:
+        '200':
+          description: Lista de unidades
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UnidadeNegocioResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: [Unidades]
+      summary: Criar unidade de negócio
+      description: Cria uma nova unidade de negócio
+      operationId: unidadeStore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarUnidadeRequest'
+      responses:
+        '201':
+          description: Unidade criada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UnidadeNegocioResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/unidades/{id}:
+    patch:
+      tags: [Unidades]
+      summary: Atualizar unidade de negócio
+      description: Atualiza uma unidade de negócio existente
+      operationId: unidadeUpdate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtualizarUnidadeRequest'
+      responses:
+        '200':
+          description: Unidade atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UnidadeNegocioResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags: [Unidades]
+      summary: Excluir unidade de negócio
+      description: Exclui uma unidade de negócio
+      operationId: unidadeDestroy
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Unidade excluída com sucesso
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ──────────────────────────────────────────
+  # USUÁRIOS INTERNOS
+  # ──────────────────────────────────────────
+  /api/v1/usuarios:
+    get:
+      tags: [Usuários]
+      summary: Listar usuários internos
+      description: Retorna os usuários internos da empresa
+      operationId: usuariosList
+      responses:
+        '200':
+          description: Lista de usuários
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserResponse'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: [Usuários]
+      summary: Criar usuário interno
+      description: Cria um novo usuário interno na empresa
+      operationId: usuarioStore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarUsuarioRequest'
+      responses:
+        '201':
+          description: Usuário criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/usuarios/{id}:
+    patch:
+      tags: [Usuários]
+      summary: Atualizar usuário interno
+      description: Atualiza um usuário interno existente
+      operationId: usuarioUpdate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtualizarUsuarioRequest'
+      responses:
+        '200':
+          description: Usuário atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags: [Usuários]
+      summary: Excluir usuário interno
+      description: Exclui um usuário interno da empresa
+      operationId: usuarioDestroy
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Usuário excluído com sucesso
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ──────────────────────────────────────────
+  # NOTIFICAÇÕES
+  # ──────────────────────────────────────────
+  /api/v1/notificacoes/config:
+    get:
+      tags: [Notificações]
+      summary: Obter configuração de notificações
+      description: Retorna a configuração de notificações da empresa
+      operationId: notificacaoConfigShow
+      responses:
+        '200':
+          description: Configuração de notificações
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NotificacaoConfigResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    patch:
+      tags: [Notificações]
+      summary: Atualizar configuração de notificações
+      description: Atualiza a configuração de notificações da empresa
+      operationId: notificacaoConfigUpdate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtualizarNotificacaoConfigRequest'
+      responses:
+        '200':
+          description: Configuração atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NotificacaoConfigResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  # ──────────────────────────────────────────
+  # FATURAS
+  # ──────────────────────────────────────────
+  /api/v1/faturas:
+    get:
+      tags: [Faturas]
+      summary: Listar faturas
+      description: Retorna as faturas de assinatura da empresa
+      operationId: faturasList
+      responses:
+        '200':
+          description: Lista de faturas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FaturaResponse'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/v1/faturas/{id}/link-pagamento:
+    get:
+      tags: [Faturas]
+      summary: Link de pagamento da fatura
+      description: Retorna o link de pagamento de uma fatura específica
+      operationId: faturaLinkPagamento
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Link de pagamento gerado
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/faturas/{id}/nota-fiscal:
+    get:
+      tags: [Faturas]
+      summary: Nota fiscal da fatura
+      description: Retorna a nota fiscal de uma fatura específica
+      operationId: faturaNotaFiscal
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Nota fiscal retornada
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ──────────────────────────────────────────
+  # ASSINATURAS
+  # ──────────────────────────────────────────
+  /api/v1/assinaturas/planos:
+    get:
+      tags: [Assinaturas]
+      summary: Listar planos disponíveis
+      description: Retorna os planos de assinatura disponíveis para o lojista
+      operationId: assinaturasPlanos
+      responses:
+        '200':
+          description: Lista de planos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlanoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/v1/assinaturas/minha:
+    get:
+      tags: [Assinaturas]
+      summary: Minha assinatura
+      description: Retorna os dados da assinatura atual da empresa
+      operationId: assinaturaMinha
+      responses:
+        '200':
+          description: Dados da assinatura
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AssinaturaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/v1/assinaturas/upgrade:
+    post:
+      tags: [Assinaturas]
+      summary: Upgrade de plano
+      description: Realiza o upgrade do plano de assinatura da empresa
+      operationId: assinaturaUpgrade
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpgradeRequest'
+      responses:
+        '200':
+          description: Upgrade realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AssinaturaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  # ──────────────────────────────────────────
+  # CONTESTAÇÕES
+  # ──────────────────────────────────────────
+  /api/v1/contestacoes:
+    get:
+      tags: [Contestações]
+      summary: Listar contestações
+      description: Retorna as contestações da empresa com filtros e paginação
+      operationId: contestacoesList
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: data_inicio
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: data_fim
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pendente, aprovada, rejeitada]
+        - name: tipo
+          in: query
+          schema:
+            type: string
+            enum: [cashback_nao_gerado, valor_incorreto, expiracao_indevida, venda_cancelada]
+      responses:
+        '200':
+          description: Lista de contestações
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ContestacaoResponse'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: [Contestações]
+      summary: Criar contestação
+      description: Cria uma nova contestação de transação (lojista)
+      operationId: contestacaoStore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarContestacaoRequest'
+      responses:
+        '201':
+          description: Contestação criada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ContestacaoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/contestacoes/{id}:
+    patch:
+      tags: [Contestações]
+      summary: Resolver contestação
+      description: Aprova ou rejeita uma contestação
+      operationId: contestacaoResolve
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResolverContestacaoRequest'
+      responses:
+        '200':
+          description: Contestação resolvida com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ContestacaoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  # ──────────────────────────────────────────
+  # AUDITORIA
+  # ──────────────────────────────────────────
+  /api/v1/auditoria:
+    get:
+      tags: [Auditoria]
+      summary: Log de auditoria da empresa
+      description: Retorna o log de auditoria da empresa
+      operationId: auditoriaList
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: Log de auditoria
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditoriaResponse'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  # ──────────────────────────────────────────
+  # RELATÓRIOS
+  # ──────────────────────────────────────────
+  /api/v1/relatorios:
+    get:
+      tags: [Relatórios]
+      summary: Relatórios consolidados
+      description: Retorna relatórios consolidados da empresa
+      operationId: relatoriosList
+      responses:
+        '200':
+          description: Dados dos relatórios
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  # ──────────────────────────────────────────
+  # DASHBOARD
+  # ──────────────────────────────────────────
+  /api/v1/dashboard/stats:
+    get:
+      tags: [Dashboard]
+      summary: Estatísticas do dashboard
+      description: Retorna as estatísticas resumidas do dashboard do lojista
+      operationId: dashboardStats
+      responses:
+        '200':
+          description: Estatísticas retornadas
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/v1/dashboard/transacoes:
+    get:
+      tags: [Dashboard]
+      summary: Transações recentes do dashboard
+      description: Retorna as transações recentes para o dashboard
+      operationId: dashboardTransacoes
+      responses:
+        '200':
+          description: Transações recentes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TransacaoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/v1/dashboard/top-clientes:
+    get:
+      tags: [Dashboard]
+      summary: Top clientes
+      description: Retorna os clientes com maior volume de cashback
+      operationId: dashboardTopClientes
+      responses:
+        '200':
+          description: Top clientes retornados
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/v1/dashboard/chart:
+    get:
+      tags: [Dashboard]
+      summary: Dados do gráfico do dashboard
+      description: Retorna dados para os gráficos do dashboard
+      operationId: dashboardChart
+      responses:
+        '200':
+          description: Dados do gráfico
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  # ──────────────────────────────────────────
+  # LGPD
+  # ──────────────────────────────────────────
+  /api/v1/lgpd/customers/{clienteId}/export:
+    get:
+      tags: [LGPD]
+      summary: Exportar dados do cliente (LGPD)
+      description: Exporta todos os dados de um cliente para conformidade LGPD
+      operationId: lgpdExport
+      parameters:
+        - name: clienteId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados exportados com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/lgpd/customers/{clienteId}/anonymize:
+    post:
+      tags: [LGPD]
+      summary: Anonimizar dados do cliente (LGPD)
+      description: Anonimiza os dados pessoais de um cliente para conformidade LGPD
+      operationId: lgpdAnonymize
+      parameters:
+        - name: clienteId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados anonimizados com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/lgpd/customers/{clienteId}/consents:
+    get:
+      tags: [LGPD]
+      summary: Listar consentimentos do cliente
+      description: Retorna os consentimentos registrados de um cliente (LGPD)
+      operationId: lgpdConsentsList
+      parameters:
+        - name: clienteId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Consentimentos retornados
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags: [LGPD]
+      summary: Registrar consentimento do cliente
+      description: Registra um novo consentimento do cliente (LGPD)
+      operationId: lgpdConsentStore
+      parameters:
+        - name: clienteId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Consentimento registrado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
