@@ -1,0 +1,538 @@
+{
+  "meta": {
+    "total_form_requests": 41,
+    "total_enums": 18
+  },
+  "form_requests": {
+    "RegisterRequest": {
+      "arquivo": "app/Http/Requests/Auth/RegisterRequest.php",
+      "campos_required": ["nome", "email", "senha", "cnpj"],
+      "regras": {
+        "nome": ["required", "string", "max:255"],
+        "email": ["required", "email", "unique:usuarios,email"],
+        "senha": ["required", "string", "min:8", "StrongPassword"],
+        "telefone": ["nullable", "string", "max:20"],
+        "cnpj": ["required", "string", "CnpjRule", "unique:empresas,cnpj"],
+        "nome_fantasia": ["nullable", "string", "max:255"],
+        "telefone_empresa": ["nullable", "string", "max:20"]
+      }
+    },
+    "LoginRequest": {
+      "arquivo": "app/Http/Requests/Auth/LoginRequest.php",
+      "campos_required": ["email", "senha"],
+      "regras": {
+        "email": ["required", "email"],
+        "senha": ["required", "string"],
+        "plataforma": ["nullable", "string", "in:web,mobile"]
+      }
+    },
+    "ForgotPasswordRequest": {
+      "arquivo": "app/Http/Requests/Auth/ForgotPasswordRequest.php",
+      "campos_required": ["email"],
+      "regras": {
+        "email": ["required", "email"]
+      }
+    },
+    "ResetPasswordRequest": {
+      "arquivo": "app/Http/Requests/Auth/ResetPasswordRequest.php",
+      "campos_required": ["email", "token", "senha"],
+      "regras": {
+        "email": ["required", "email"],
+        "token": ["required", "string"],
+        "senha": ["required", "string", "min:8", "StrongPassword"]
+      }
+    },
+    "SwitchEmpresaRequest": {
+      "arquivo": "app/Http/Requests/Auth/SwitchEmpresaRequest.php",
+      "campos_required": ["empresa_id"],
+      "regras": {
+        "empresa_id": ["required", "integer", "exists:empresas,id"],
+        "plataforma": ["nullable", "string", "in:web,mobile"]
+      }
+    },
+    "GerarCashbackRequest": {
+      "arquivo": "app/Http/Requests/Cashback/GerarCashbackRequest.php",
+      "campos_required": ["cpf", "valor_compra"],
+      "regras": {
+        "cpf": ["required", "string", "CpfRule"],
+        "valor_compra": ["required", "numeric", "min:0.01"],
+        "campanha_id": ["nullable", "integer", "exists:campanhas,id,empresa_id,{empresa_id}"],
+        "unidade_negocio_id": ["nullable", "integer", "exists:unidades_negocio,id,empresa_id,{empresa_id}"]
+      }
+    },
+    "UtilizarCashbackRequest": {
+      "arquivo": "app/Http/Requests/Cashback/UtilizarCashbackRequest.php",
+      "campos_required": ["cpf", "valor_compra"],
+      "regras": {
+        "cpf": ["required", "string", "CpfRule"],
+        "valor_compra": ["required", "numeric", "min:0.01"],
+        "unidade_negocio_id": ["nullable", "integer", "exists:unidades_negocio,id,empresa_id,{empresa_id}"]
+      }
+    },
+    "ListTransacoesRequest": {
+      "arquivo": "app/Http/Requests/Cashback/ListTransacoesRequest.php",
+      "campos_required": [],
+      "extends": "ListRequest",
+      "regras": {
+        "page": ["sometimes", "integer", "min:1"],
+        "limit": ["sometimes", "integer", "min:1", "max:100"],
+        "sort_by": ["sometimes", "string", "max:50"],
+        "order": ["sometimes", "string", "in:asc,desc"],
+        "data_inicio": ["sometimes", "date_format:Y-m-d"],
+        "data_fim": ["sometimes", "date_format:Y-m-d", "after_or_equal:data_inicio"],
+        "status_venda": ["sometimes", "string", "in:concluida,cancelada"],
+        "status_cashback": ["sometimes", "string", "in:pendente,confirmado,utilizado,rejeitado,expirado,congelado"],
+        "cliente_id": ["sometimes", "integer", "min:1"],
+        "campanha_id": ["sometimes", "integer", "min:1"]
+      }
+    },
+    "CriarClienteRequest": {
+      "arquivo": "app/Http/Requests/Cliente/CriarClienteRequest.php",
+      "campos_required": ["cpf"],
+      "regras": {
+        "cpf": ["required", "string", "CpfRule"],
+        "nome": ["nullable", "string", "max:255"],
+        "telefone": ["nullable", "string", "max:20"],
+        "email": ["nullable", "email"]
+      }
+    },
+    "AtualizarClienteRequest": {
+      "arquivo": "app/Http/Requests/Cliente/AtualizarClienteRequest.php",
+      "campos_required": [],
+      "regras": {
+        "nome": ["sometimes", "string", "max:255"],
+        "telefone": ["sometimes", "nullable", "string", "max:20"],
+        "email": ["sometimes", "nullable", "email"]
+      }
+    },
+    "CriarCampanhaRequest": {
+      "arquivo": "app/Http/Requests/Campanha/CriarCampanhaRequest.php",
+      "campos_required": ["nome", "data_inicio", "data_fim", "percentual", "validade_padrao"],
+      "regras": {
+        "nome": ["required", "string", "max:255"],
+        "data_inicio": ["required", "date", "after_or_equal:today"],
+        "data_fim": ["required", "date", "after:data_inicio"],
+        "percentual": ["required", "numeric", "min:0.01", "max:100"],
+        "validade_padrao": ["required", "integer", "min:1"]
+      }
+    },
+    "AtualizarCampanhaRequest": {
+      "arquivo": "app/Http/Requests/Campanha/AtualizarCampanhaRequest.php",
+      "campos_required": [],
+      "regras": {
+        "nome": ["sometimes", "string", "max:255"],
+        "data_inicio": ["sometimes", "date"],
+        "data_fim": ["sometimes", "date", "after:data_inicio"],
+        "percentual": ["sometimes", "numeric", "min:0.01", "max:100"],
+        "validade_padrao": ["sometimes", "integer", "min:1"],
+        "status": ["sometimes", "string", "in:ativa,inativa,encerrada"]
+      }
+    },
+    "AtualizarConfigRequest": {
+      "arquivo": "app/Http/Requests/Config/AtualizarConfigRequest.php",
+      "campos_required": [],
+      "regras": {
+        "nome_fantasia": ["sometimes", "string", "max:255"],
+        "razao_social": ["sometimes", "nullable", "string", "max:255"],
+        "telefone": ["sometimes", "nullable", "string", "max:20"],
+        "email": ["sometimes", "nullable", "email"],
+        "cep": ["sometimes", "nullable", "string", "max:10"],
+        "rua": ["sometimes", "nullable", "string", "max:255"],
+        "numero": ["sometimes", "nullable", "string", "max:20"],
+        "complemento": ["sometimes", "nullable", "string", "max:255"],
+        "bairro": ["sometimes", "nullable", "string", "max:255"],
+        "cidade": ["sometimes", "nullable", "string", "max:255"],
+        "estado": ["sometimes", "nullable", "string", "max:2"],
+        "percentual_cashback": ["sometimes", "numeric", "min:0.01", "max:100"],
+        "validade_cashback": ["sometimes", "integer", "min:1"],
+        "percentual_max_utilizacao": ["sometimes", "numeric", "min:0.01", "max:100"],
+        "carencia_horas": ["sometimes", "integer", "min:0", "max:8760"]
+      }
+    },
+    "UploadLogoRequest": {
+      "arquivo": "app/Http/Requests/Config/UploadLogoRequest.php",
+      "campos_required": ["logo"],
+      "regras": {
+        "logo": ["required", "image", "mimes:jpg,jpeg,png,webp", "max:2048"]
+      }
+    },
+    "AtualizarNotificacaoConfigRequest": {
+      "arquivo": "app/Http/Requests/Config/AtualizarNotificacaoConfigRequest.php",
+      "campos_required": [],
+      "regras": {
+        "email": ["sometimes", "boolean"],
+        "sms": ["sometimes", "boolean"],
+        "push": ["sometimes", "boolean"]
+      }
+    },
+    "CriarUnidadeRequest": {
+      "arquivo": "app/Http/Requests/Unidade/CriarUnidadeRequest.php",
+      "campos_required": ["nome"],
+      "regras": {
+        "nome": ["required", "string", "max:255"]
+      }
+    },
+    "AtualizarUnidadeRequest": {
+      "arquivo": "app/Http/Requests/Unidade/AtualizarUnidadeRequest.php",
+      "campos_required": [],
+      "regras": {
+        "nome": ["sometimes", "string", "max:255"],
+        "status": ["sometimes", "string", "in:ativa,inativa"]
+      }
+    },
+    "CriarUsuarioRequest": {
+      "arquivo": "app/Http/Requests/Usuario/CriarUsuarioRequest.php",
+      "campos_required": ["nome", "email", "senha", "perfil"],
+      "regras": {
+        "nome": ["required", "string", "max:255"],
+        "email": ["required", "email"],
+        "senha": ["required", "string", "min:8", "StrongPassword"],
+        "telefone": ["nullable", "string", "max:20"],
+        "perfil": ["required", "string", "in:gestor,operador,vendedor"],
+        "unidade_negocio_ids": ["nullable", "array"],
+        "unidade_negocio_ids.*": ["integer", "exists:unidades_negocio,id"]
+      }
+    },
+    "AtualizarUsuarioRequest": {
+      "arquivo": "app/Http/Requests/Usuario/AtualizarUsuarioRequest.php",
+      "campos_required": [],
+      "regras": {
+        "nome": ["sometimes", "string", "max:255"],
+        "telefone": ["sometimes", "nullable", "string", "max:20"],
+        "perfil": ["sometimes", "string", "in:gestor,operador,vendedor"],
+        "unidade_negocio_ids": ["sometimes", "array"],
+        "unidade_negocio_ids.*": ["integer", "exists:unidades_negocio,id"]
+      }
+    },
+    "CriarContestacaoRequest": {
+      "arquivo": "app/Http/Requests/Contestacao/CriarContestacaoRequest.php",
+      "campos_required": ["transacao_id", "tipo", "descricao"],
+      "regras": {
+        "transacao_id": ["required", "integer", "exists:transacoes,id,empresa_id,{empresa_id}"],
+        "tipo": ["required", "in:cashback_nao_gerado,valor_incorreto,expiracao_indevida,venda_cancelada"],
+        "descricao": ["required", "string", "min:10", "max:1000"]
+      }
+    },
+    "ListContestacoesRequest": {
+      "arquivo": "app/Http/Requests/Contestacao/ListContestacoesRequest.php",
+      "campos_required": [],
+      "extends": "ListRequest",
+      "regras": {
+        "page": ["sometimes", "integer", "min:1"],
+        "limit": ["sometimes", "integer", "min:1", "max:100"],
+        "sort_by": ["sometimes", "string", "max:50"],
+        "order": ["sometimes", "string", "in:asc,desc"],
+        "data_inicio": ["sometimes", "date_format:Y-m-d"],
+        "data_fim": ["sometimes", "date_format:Y-m-d", "after_or_equal:data_inicio"],
+        "status": ["sometimes", "string", "in:pendente,aprovada,rejeitada"],
+        "tipo": ["sometimes", "string", "in:cashback_nao_gerado,valor_incorreto,expiracao_indevida,venda_cancelada"]
+      }
+    },
+    "ResolverContestacaoRequest": {
+      "arquivo": "app/Http/Requests/Contestacao/ResolverContestacaoRequest.php",
+      "campos_required": ["status"],
+      "regras": {
+        "status": ["required", "in:aprovada,rejeitada"],
+        "resposta": ["nullable", "string", "max:2000"]
+      }
+    },
+    "UpgradeRequest": {
+      "arquivo": "app/Http/Requests/Assinatura/UpgradeRequest.php",
+      "campos_required": ["plano_id", "ciclo"],
+      "regras": {
+        "plano_id": ["required", "integer", "exists:planos,id"],
+        "ciclo": ["required", "in:mensal,anual"]
+      }
+    },
+    "ListRequest": {
+      "arquivo": "app/Http/Requests/ListRequest.php",
+      "campos_required": [],
+      "regras": {
+        "page": ["sometimes", "integer", "min:1"],
+        "limit": ["sometimes", "integer", "min:1", "max:100"],
+        "sort_by": ["sometimes", "string", "max:50"],
+        "order": ["sometimes", "string", "in:asc,desc"],
+        "data_inicio": ["sometimes", "date_format:Y-m-d"],
+        "data_fim": ["sometimes", "date_format:Y-m-d", "after_or_equal:data_inicio"]
+      }
+    },
+    "CriarAdminUsuarioRequest": {
+      "arquivo": "app/Http/Requests/Admin/CriarAdminUsuarioRequest.php",
+      "campos_required": ["nome", "email", "senha"],
+      "regras": {
+        "nome": ["required", "string", "max:255"],
+        "email": ["required", "email", "unique:usuarios,email"],
+        "senha": ["required", "string", "min:8", "regex:/[A-Z]/", "regex:/[a-z]/", "regex:/[0-9]/", "regex:/[@$!%*?&#^()_\\-+=\\[\\]{}|\\\\:;\"'<>,.\\/]/"],
+        "telefone": ["nullable", "string", "max:20"]
+      }
+    },
+    "AtualizarAdminUsuarioRequest": {
+      "arquivo": "app/Http/Requests/Admin/AtualizarAdminUsuarioRequest.php",
+      "campos_required": [],
+      "regras": {
+        "nome": ["sometimes", "string", "max:255"],
+        "email": ["sometimes", "email", "unique:usuarios,email,{id}"],
+        "senha": ["sometimes", "string", "min:8", "regex:/[A-Z]/", "regex:/[a-z]/", "regex:/[0-9]/", "regex:/[@$!%*?&#^()_\\-+=\\[\\]{}|\\\\:;\"'<>,.\\/]/"],
+        "telefone": ["nullable", "string", "max:20"]
+      }
+    },
+    "CriarPlanoRequest": {
+      "arquivo": "app/Http/Requests/Admin/CriarPlanoRequest.php",
+      "campos_required": ["nome", "preco_mensal", "preco_anual", "nivel_relatorio", "nivel_suporte"],
+      "regras": {
+        "nome": ["required", "string", "max:100"],
+        "preco_mensal": ["required", "numeric", "min:0"],
+        "preco_anual": ["required", "numeric", "min:0"],
+        "max_clientes": ["nullable", "integer", "min:1"],
+        "max_campanhas": ["nullable", "integer", "min:1"],
+        "max_usuarios": ["nullable", "integer", "min:1"],
+        "tem_unidades_negocio": ["boolean"],
+        "nivel_relatorio": ["required", "in:simples,completos,avancados"],
+        "nivel_suporte": ["required", "in:email,prioritario,24_7_gerente"]
+      }
+    },
+    "AtualizarPlanoRequest": {
+      "arquivo": "app/Http/Requests/Admin/AtualizarPlanoRequest.php",
+      "campos_required": [],
+      "regras": {
+        "nome": ["sometimes", "string", "max:100"],
+        "preco_mensal": ["sometimes", "numeric", "min:0"],
+        "preco_anual": ["sometimes", "numeric", "min:0"],
+        "max_clientes": ["nullable", "integer", "min:1"],
+        "max_campanhas": ["nullable", "integer", "min:1"],
+        "max_usuarios": ["nullable", "integer", "min:1"],
+        "tem_unidades_negocio": ["boolean"],
+        "nivel_relatorio": ["sometimes", "in:simples,completos,avancados"],
+        "nivel_suporte": ["sometimes", "in:email,prioritario,24_7_gerente"]
+      }
+    },
+    "AtualizarEmpresaAdminRequest": {
+      "arquivo": "app/Http/Requests/Admin/AtualizarEmpresaAdminRequest.php",
+      "campos_required": [],
+      "regras": {
+        "nome_fantasia": ["sometimes", "string", "max:255"],
+        "razao_social": ["sometimes", "nullable", "string", "max:255"],
+        "telefone": ["sometimes", "nullable", "string", "max:20"],
+        "email": ["sometimes", "nullable", "email"],
+        "percentual_cashback": ["sometimes", "numeric", "min:0.01", "max:100"],
+        "validade_cashback": ["sometimes", "integer", "min:1", "max:365"],
+        "percentual_max_utilizacao": ["sometimes", "numeric", "min:0.01", "max:100"],
+        "carencia_horas": ["sometimes", "integer", "min:0", "max:720"],
+        "modo_saldo": ["sometimes", "string", "in:individual,global"]
+      }
+    },
+    "MobileRegisterRequest": {
+      "arquivo": "app/Http/Requests/Mobile/MobileRegisterRequest.php",
+      "campos_required": ["cpf", "nome", "email", "senha"],
+      "regras": {
+        "cpf": ["required", "string", "CpfRule"],
+        "nome": ["required", "string", "max:255"],
+        "email": ["required", "email", "max:255"],
+        "senha": ["required", "string", "min:8", "regex:/[A-Z]/", "regex:/[0-9]/"],
+        "telefone": ["nullable", "string", "max:20"]
+      }
+    },
+    "MobileLoginRequest": {
+      "arquivo": "app/Http/Requests/Mobile/MobileLoginRequest.php",
+      "campos_required": ["email", "senha"],
+      "regras": {
+        "email": ["required", "email"],
+        "senha": ["required", "string"]
+      }
+    },
+    "MobileOAuthRequest": {
+      "arquivo": "app/Http/Requests/Mobile/MobileOAuthRequest.php",
+      "campos_required": ["provider", "token"],
+      "regras": {
+        "provider": ["required", "in:google,apple"],
+        "token": ["required", "string"],
+        "nome": ["nullable", "string", "max:255"]
+      }
+    },
+    "MobileForgotPasswordRequest": {
+      "arquivo": "app/Http/Requests/Mobile/MobileForgotPasswordRequest.php",
+      "campos_required": ["email"],
+      "regras": {
+        "email": ["required", "email", "max:255"]
+      }
+    },
+    "MobileResetPasswordRequest": {
+      "arquivo": "app/Http/Requests/Mobile/MobileResetPasswordRequest.php",
+      "campos_required": ["email", "token", "senha"],
+      "regras": {
+        "email": ["required", "email", "max:255"],
+        "token": ["required", "string"],
+        "senha": ["required", "string", "min:8", "regex:/[A-Z]/", "regex:/[0-9]/"]
+      }
+    },
+    "MobileUpdateProfileRequest": {
+      "arquivo": "app/Http/Requests/Mobile/MobileUpdateProfileRequest.php",
+      "campos_required": [],
+      "regras": {
+        "nome": ["sometimes", "string", "max:255"],
+        "telefone": ["sometimes", "nullable", "string", "max:20"],
+        "email": ["sometimes", "email", "max:255"]
+      }
+    },
+    "MobileChangePasswordRequest": {
+      "arquivo": "app/Http/Requests/Mobile/MobileChangePasswordRequest.php",
+      "campos_required": ["senha_atual", "nova_senha"],
+      "regras": {
+        "senha_atual": ["required", "string"],
+        "nova_senha": ["required", "string", "min:8", "regex:/[A-Z]/", "regex:/[0-9]/"]
+      }
+    },
+    "MobileDeleteAccountRequest": {
+      "arquivo": "app/Http/Requests/Mobile/MobileDeleteAccountRequest.php",
+      "campos_required": ["senha"],
+      "regras": {
+        "senha": ["required", "string"],
+        "motivo": ["nullable", "string", "max:500"]
+      }
+    },
+    "MobileContestacaoRequest": {
+      "arquivo": "app/Http/Requests/Mobile/MobileContestacaoRequest.php",
+      "campos_required": ["transacao_id", "tipo", "descricao"],
+      "regras": {
+        "transacao_id": ["required", "integer"],
+        "tipo": ["required", "in:cashback_nao_gerado,valor_incorreto,expiracao_indevida,venda_cancelada"],
+        "descricao": ["required", "string", "min:10", "max:1000"]
+      }
+    },
+    "MobileQrCodeRequest": {
+      "arquivo": "app/Http/Requests/Mobile/MobileQrCodeRequest.php",
+      "campos_required": ["empresa_id", "valor"],
+      "regras": {
+        "empresa_id": ["required", "exists:empresas,id"],
+        "valor": ["required", "numeric", "min:0.01"]
+      }
+    },
+    "MobileRegisterDeviceRequest": {
+      "arquivo": "app/Http/Requests/Mobile/MobileRegisterDeviceRequest.php",
+      "campos_required": ["token", "plataforma"],
+      "regras": {
+        "token": ["required", "string", "max:500"],
+        "plataforma": ["required", "in:ios,android"]
+      }
+    },
+    "MobileDestroyDeviceRequest": {
+      "arquivo": "app/Http/Requests/Mobile/MobileDestroyDeviceRequest.php",
+      "campos_required": ["token"],
+      "regras": {
+        "token": ["required", "string"]
+      }
+    }
+  },
+  "enums": {
+    "status_cashback": {
+      "valores": ["pendente", "confirmado", "utilizado", "rejeitado", "expirado", "congelado"],
+      "fonte": "PHP Enum (backed string)",
+      "arquivo": "app/Enums/CashbackStatus.php",
+      "transicoes": {
+        "pendente": ["confirmado", "rejeitado"],
+        "confirmado": ["utilizado", "expirado", "congelado", "rejeitado"],
+        "congelado": ["confirmado"],
+        "utilizado": [],
+        "rejeitado": [],
+        "expirado": ["confirmado"]
+      }
+    },
+    "status_venda": {
+      "valores": ["concluida", "cancelada"],
+      "fonte": "PHP Enum (backed string)",
+      "arquivo": "app/Enums/VendaStatus.php"
+    },
+    "status_assinatura": {
+      "valores": ["trial", "ativa", "inadimplente", "cancelada"],
+      "fonte": "PHP Enum (backed string)",
+      "arquivo": "app/Enums/AssinaturaStatus.php",
+      "transicoes": {
+        "trial": ["ativa", "cancelada"],
+        "ativa": ["inadimplente", "cancelada"],
+        "inadimplente": ["ativa", "cancelada"],
+        "cancelada": ["ativa"]
+      }
+    },
+    "status_fatura": {
+      "valores": ["gerada", "enviada", "paga", "vencida"],
+      "fonte": "PHP Enum (backed string)",
+      "arquivo": "app/Enums/FaturaStatus.php",
+      "transicoes": {
+        "gerada": ["enviada", "vencida"],
+        "enviada": ["paga", "vencida"],
+        "vencida": ["paga"],
+        "paga": []
+      }
+    },
+    "status_campanha": {
+      "valores": ["ativa", "inativa", "encerrada"],
+      "fonte": "PHP Enum (backed string)",
+      "arquivo": "app/Enums/CampanhaStatus.php"
+    },
+    "status_contestacao": {
+      "valores": ["pendente", "aprovada", "rejeitada"],
+      "fonte": "PHP Enum (backed string)",
+      "arquivo": "app/Enums/ContestacaoStatus.php"
+    },
+    "tipo_contestacao": {
+      "valores": ["cashback_nao_gerado", "valor_incorreto", "expiracao_indevida", "venda_cancelada"],
+      "fonte": "FormRequest in: rule",
+      "arquivo": "app/Http/Requests/Contestacao/CriarContestacaoRequest.php"
+    },
+    "perfil_usuario": {
+      "valores": ["gestor", "operador", "vendedor"],
+      "fonte": "FormRequest in: rule",
+      "arquivo": "app/Http/Requests/Usuario/CriarUsuarioRequest.php"
+    },
+    "tipo_global": {
+      "valores": ["admin", "lojista"],
+      "fonte": "Middleware check.perfil:admin (literal do routes/api.php)",
+      "arquivo": "routes/api.php"
+    },
+    "modo_saldo": {
+      "valores": ["individual", "global"],
+      "fonte": "FormRequest in: rule",
+      "arquivo": "app/Http/Requests/Admin/AtualizarEmpresaAdminRequest.php"
+    },
+    "ciclo_assinatura": {
+      "valores": ["mensal", "anual"],
+      "fonte": "FormRequest in: rule",
+      "arquivo": "app/Http/Requests/Assinatura/UpgradeRequest.php"
+    },
+    "nivel_relatorio": {
+      "valores": ["simples", "completos", "avancados"],
+      "fonte": "FormRequest in: rule",
+      "arquivo": "app/Http/Requests/Admin/CriarPlanoRequest.php"
+    },
+    "nivel_suporte": {
+      "valores": ["email", "prioritario", "24_7_gerente"],
+      "fonte": "FormRequest in: rule",
+      "arquivo": "app/Http/Requests/Admin/CriarPlanoRequest.php"
+    },
+    "plataforma_login": {
+      "valores": ["web", "mobile"],
+      "fonte": "FormRequest in: rule",
+      "arquivo": "app/Http/Requests/Auth/LoginRequest.php"
+    },
+    "plataforma_device": {
+      "valores": ["ios", "android"],
+      "fonte": "FormRequest in: rule",
+      "arquivo": "app/Http/Requests/Mobile/MobileRegisterDeviceRequest.php"
+    },
+    "oauth_provider": {
+      "valores": ["google", "apple"],
+      "fonte": "FormRequest in: rule",
+      "arquivo": "app/Http/Requests/Mobile/MobileOAuthRequest.php"
+    },
+    "status_unidade": {
+      "valores": ["ativa", "inativa"],
+      "fonte": "FormRequest in: rule",
+      "arquivo": "app/Http/Requests/Unidade/AtualizarUnidadeRequest.php"
+    },
+    "order_direction": {
+      "valores": ["asc", "desc"],
+      "fonte": "FormRequest in: rule",
+      "arquivo": "app/Http/Requests/ListRequest.php"
+    }
+  }
+}

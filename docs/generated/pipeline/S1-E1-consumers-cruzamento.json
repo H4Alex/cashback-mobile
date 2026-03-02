@@ -1,0 +1,336 @@
+{
+  "consumers": {
+    "web": {
+      "stack": "React 18.2.0 + TypeScript 5.3.3 + Vite 6.4.1 + Tailwind CSS 3.4.17 + Zustand 4.4.7 + TanStack React Query 5.14.2 + React Hook Form 7.71.1 + Zod 4.3.6 + Chart.js 4.5.1 + Sentry 10.39.0 + Axios 1.6.2",
+      "base_url": "import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'",
+      "auth_mechanism": "JWT Bearer token (httpOnly cookies + AES-GCM encrypted localStorage fallback)",
+      "error_handling": "Interceptor: 401 auto-refresh, 402 redirect /configuracoes?tab=pagamentos, 429/5xx retry 3x exponential backoff, Zod runtime validation on all responses",
+      "telas": [
+        {"path": "/login", "componente": "LoginPage", "endpoints_usados": ["POST /api/v1/auth/login"]},
+        {"path": "/cadastro", "componente": "CadastroPage", "endpoints_usados": ["POST /api/v1/auth/register"]},
+        {"path": "/recuperacao", "componente": "RecuperacaoPage", "endpoints_usados": ["POST /api/v1/auth/forgot-password", "POST /api/v1/auth/reset-password"]},
+        {"path": "/", "componente": "DashboardPage", "endpoints_usados": ["GET /api/v1/dashboard/stats", "GET /api/v1/dashboard/transacoes", "GET /api/v1/dashboard/top-clientes", "GET /api/v1/dashboard/chart"]},
+        {"path": "/gerar-cashback", "componente": "GerarCashbackPage", "endpoints_usados": ["POST /api/v1/cashback", "GET /api/v1/campanhas"]},
+        {"path": "/utilizar-cashback", "componente": "UtilizarCashbackPage", "endpoints_usados": ["POST /api/v1/cashback/utilizar"]},
+        {"path": "/campanhas", "componente": "CampanhasPage", "endpoints_usados": ["GET /api/v1/campanhas", "GET /api/v1/campanhas/{id}", "POST /api/v1/campanhas", "PATCH /api/v1/campanhas/{id}", "DELETE /api/v1/campanhas/{id}"]},
+        {"path": "/clientes", "componente": "ClientesPage", "endpoints_usados": ["GET /api/v1/clientes", "GET /api/v1/clientes/{id}", "POST /api/v1/clientes", "PATCH /api/v1/clientes/{id}", "GET /api/v1/clientes/{id}/saldo", "GET /api/v1/clientes/{id}/extrato"]},
+        {"path": "/vendas", "componente": "VendasPage", "endpoints_usados": ["GET /api/v1/cashback", "GET /api/v1/cashback/{id}", "POST /api/v1/cashback/{id}/cancelar"]},
+        {"path": "/relatorios", "componente": "RelatoriosPage", "endpoints_usados": ["GET /api/v1/relatorios"]},
+        {"path": "/configuracoes", "componente": "ConfiguracoesPage", "endpoints_usados": ["GET /api/v1/config", "PATCH /api/v1/config", "POST /api/v1/config/logo", "GET /api/v1/unidades", "POST /api/v1/unidades", "PATCH /api/v1/unidades/{id}", "DELETE /api/v1/unidades/{id}", "GET /api/v1/usuarios", "POST /api/v1/usuarios", "PATCH /api/v1/usuarios/{id}", "DELETE /api/v1/usuarios/{id}", "GET /api/v1/notificacoes/config", "PATCH /api/v1/notificacoes/config", "GET /api/v1/faturas", "POST /api/v1/faturas/{id}/link", "GET /api/v1/faturas/{id}/nfe", "GET /api/v1/assinaturas/planos", "GET /api/v1/assinaturas/minha", "POST /api/v1/assinaturas/upgrade", "POST /api/v1/auth/2fa/setup", "POST /api/v1/auth/2fa/confirm", "POST /api/v1/auth/2fa/verify", "POST /api/v1/auth/2fa/disable", "POST /api/v1/auth/2fa/backup-codes"]},
+        {"path": "/contestacoes", "componente": "ContestacoesPage", "endpoints_usados": ["GET /api/v1/contestacoes", "POST /api/v1/contestacoes", "PATCH /api/v1/contestacoes/{id}"]},
+        {"path": "/auditoria", "componente": "AuditoriaPage", "endpoints_usados": ["GET /api/v1/auditoria"]},
+        {"path": "/multiloja", "componente": "MultilojaPage", "endpoints_usados": ["GET /api/v1/empresas", "POST /api/v1/auth/switch-empresa"]},
+        {"path": "/cliente", "componente": "DashboardClientePage", "endpoints_usados": ["GET /api/v1/clientes/{id}/saldo", "GET /api/v1/cashback"]},
+        {"path": "/cliente/saldo", "componente": "SaldoClientePage", "endpoints_usados": ["GET /api/v1/clientes/{id}/saldo"]},
+        {"path": "/cliente/extrato", "componente": "ExtratoCashbackPage", "endpoints_usados": ["GET /api/v1/clientes/{id}/extrato"]}
+      ],
+      "endpoints_chamados": [
+        "POST /api/v1/auth/login",
+        "POST /api/v1/auth/register",
+        "POST /api/v1/auth/logout",
+        "GET /api/v1/auth/me",
+        "POST /api/v1/auth/refresh",
+        "POST /api/v1/auth/switch-empresa",
+        "POST /api/v1/auth/forgot-password",
+        "POST /api/v1/auth/reset-password",
+        "POST /api/v1/auth/2fa/setup",
+        "POST /api/v1/auth/2fa/confirm",
+        "POST /api/v1/auth/2fa/verify",
+        "POST /api/v1/auth/2fa/disable",
+        "POST /api/v1/auth/2fa/backup-codes",
+        "GET /api/v1/dashboard/stats",
+        "GET /api/v1/dashboard/transacoes",
+        "GET /api/v1/dashboard/top-clientes",
+        "GET /api/v1/dashboard/chart",
+        "GET /api/v1/cashback",
+        "GET /api/v1/cashback/{id}",
+        "POST /api/v1/cashback",
+        "POST /api/v1/cashback/utilizar",
+        "POST /api/v1/cashback/{id}/cancelar",
+        "GET /api/v1/clientes",
+        "GET /api/v1/clientes/{id}",
+        "POST /api/v1/clientes",
+        "PATCH /api/v1/clientes/{id}",
+        "GET /api/v1/clientes/{id}/saldo",
+        "GET /api/v1/clientes/{id}/extrato",
+        "GET /api/v1/campanhas",
+        "GET /api/v1/campanhas/{id}",
+        "POST /api/v1/campanhas",
+        "PATCH /api/v1/campanhas/{id}",
+        "DELETE /api/v1/campanhas/{id}",
+        "GET /api/v1/config",
+        "PATCH /api/v1/config",
+        "POST /api/v1/config/logo",
+        "GET /api/v1/unidades",
+        "POST /api/v1/unidades",
+        "PATCH /api/v1/unidades/{id}",
+        "DELETE /api/v1/unidades/{id}",
+        "GET /api/v1/usuarios",
+        "POST /api/v1/usuarios",
+        "PATCH /api/v1/usuarios/{id}",
+        "DELETE /api/v1/usuarios/{id}",
+        "GET /api/v1/notificacoes/config",
+        "PATCH /api/v1/notificacoes/config",
+        "GET /api/v1/faturas",
+        "POST /api/v1/faturas/{id}/link",
+        "GET /api/v1/faturas/{id}/nfe",
+        "GET /api/v1/assinaturas/planos",
+        "GET /api/v1/assinaturas/minha",
+        "POST /api/v1/assinaturas/upgrade",
+        "GET /api/v1/contestacoes",
+        "POST /api/v1/contestacoes",
+        "PATCH /api/v1/contestacoes/{id}",
+        "GET /api/v1/auditoria",
+        "GET /api/v1/relatorios",
+        "GET /api/v1/empresas"
+      ]
+    },
+    "admin": {
+      "stack": "React 18.2.0 + TypeScript 5.3.3 + Vite 6.4.1 + Material-UI (MUI) + Zustand 4.4.7 + TanStack React Query 5.14.2 + Axios + Zod",
+      "base_url": "import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'",
+      "auth_mechanism": "JWT Bearer token (localStorage)",
+      "error_handling": "Interceptor: 401 auto-refresh -> logout, Zod runtime validation on all responses",
+      "telas": [
+        {"path": "/login", "componente": "LoginPage", "endpoints_usados": ["POST /api/v1/auth/login"]},
+        {"path": "/", "componente": "DashboardPage", "endpoints_usados": ["GET /api/v1/admin/dashboard"]},
+        {"path": "/empresas", "componente": "EmpresasPage", "endpoints_usados": ["GET /api/v1/admin/empresas"]},
+        {"path": "/empresas/:id", "componente": "EmpresaDetalhePage", "endpoints_usados": ["GET /api/v1/admin/empresas/{id}", "PATCH /api/v1/admin/empresas/{id}", "POST /api/v1/admin/empresas/{id}/block", "POST /api/v1/admin/empresas/{id}/unblock"]},
+        {"path": "/planos", "componente": "PlanosPage", "endpoints_usados": ["GET /api/v1/admin/planos", "POST /api/v1/admin/planos", "PATCH /api/v1/admin/planos/{id}"]},
+        {"path": "/administradores", "componente": "AdminUsuariosPage", "endpoints_usados": ["GET /api/v1/admin/usuarios", "POST /api/v1/admin/usuarios", "PATCH /api/v1/admin/usuarios/{id}", "DELETE /api/v1/admin/usuarios/{id}"]},
+        {"path": "/auditoria", "componente": "AuditoriaPage", "endpoints_usados": ["GET /api/v1/admin/auditoria"]},
+        {"path": "/configuracoes", "componente": "ConfiguracoesPage", "endpoints_usados": ["[NÃO IDENTIFICADO] — stub local, endpoint /admin/configuracoes não existe no backend"]}
+      ],
+      "endpoints_chamados": [
+        "POST /api/v1/auth/login",
+        "POST /api/v1/auth/logout",
+        "GET /api/v1/auth/me",
+        "POST /api/v1/auth/refresh",
+        "GET /api/v1/admin/dashboard",
+        "GET /api/v1/admin/empresas",
+        "GET /api/v1/admin/empresas/{id}",
+        "PATCH /api/v1/admin/empresas/{id}",
+        "POST /api/v1/admin/empresas/{id}/block",
+        "POST /api/v1/admin/empresas/{id}/unblock",
+        "GET /api/v1/admin/planos",
+        "POST /api/v1/admin/planos",
+        "PATCH /api/v1/admin/planos/{id}",
+        "GET /api/v1/admin/usuarios",
+        "POST /api/v1/admin/usuarios",
+        "PATCH /api/v1/admin/usuarios/{id}",
+        "DELETE /api/v1/admin/usuarios/{id}",
+        "GET /api/v1/admin/auditoria"
+      ]
+    },
+    "mobile": {
+      "stack": "React Native 0.76.9 + Expo 52 + TypeScript 5.3 + expo-router 4.0 + NativeWind 4.1 (Tailwind) + Zustand 4.4 + TanStack React Query 5.14 + React Hook Form 7.50 + Zod 3.22 + Axios 1.7 + expo-secure-store 14 + Sentry React Native 6.10 + Lucide Icons",
+      "base_url": "[NÃO IDENTIFICADO] — configurado via env no api-client.ts (prefixos explícitos: /api/mobile/v1 e /api/v1)",
+      "auth_mechanism": "JWT Bearer token (expo-secure-store)",
+      "error_handling": "Interceptor com auto-refresh, Zod runtime validation seletivo, retry com exponential backoff",
+      "telas": [
+        {"path": "(auth)/login", "componente": "LoginScreen", "endpoints_usados": ["POST /api/mobile/v1/auth/login"]},
+        {"path": "(auth)/register", "componente": "RegisterScreen", "endpoints_usados": ["POST /api/mobile/v1/auth/register"]},
+        {"path": "(auth)/forgot-password", "componente": "ForgotPasswordScreen", "endpoints_usados": ["POST /api/mobile/v1/auth/forgot-password"]},
+        {"path": "(auth)/onboarding", "componente": "OnboardingScreen", "endpoints_usados": []},
+        {"path": "(auth)/consent", "componente": "ConsentScreen", "endpoints_usados": []},
+        {"path": "(consumer)/home/index", "componente": "HomeScreen", "endpoints_usados": ["GET /api/mobile/v1/saldo", "GET /api/mobile/v1/extrato"]},
+        {"path": "(consumer)/home/extrato", "componente": "ExtratoScreen", "endpoints_usados": ["GET /api/mobile/v1/extrato"]},
+        {"path": "(consumer)/home/historico", "componente": "HistoricoScreen", "endpoints_usados": ["GET /api/mobile/v1/extrato"]},
+        {"path": "(consumer)/saldo/index", "componente": "SaldoScreen", "endpoints_usados": ["GET /api/mobile/v1/saldo", "GET /api/mobile/v1/utilizacao/lojas"]},
+        {"path": "(consumer)/qrcode/index", "componente": "QRCodeScreen", "endpoints_usados": ["POST /api/mobile/v1/utilizacao/qrcode"]},
+        {"path": "(consumer)/notifications/index", "componente": "NotificationsScreen", "endpoints_usados": ["GET /api/mobile/v1/notifications", "PATCH /api/mobile/v1/notifications/{id}/read", "POST /api/mobile/v1/notifications/read-all"]},
+        {"path": "(consumer)/notifications/preferences", "componente": "NotificationPreferencesScreen", "endpoints_usados": ["GET /api/mobile/v1/notifications/preferences", "PATCH /api/mobile/v1/notifications/preferences"]},
+        {"path": "(consumer)/profile/index", "componente": "ProfileScreen", "endpoints_usados": ["GET /api/mobile/v1/auth/me"]},
+        {"path": "(consumer)/profile/edit", "componente": "EditProfileScreen", "endpoints_usados": ["PATCH /api/mobile/v1/auth/profile"]},
+        {"path": "(consumer)/profile/change-password", "componente": "ChangePasswordScreen", "endpoints_usados": ["PATCH /api/mobile/v1/auth/password"]},
+        {"path": "(consumer)/profile/delete-account", "componente": "DeleteAccountScreen", "endpoints_usados": ["POST /api/mobile/v1/auth/delete-account"]},
+        {"path": "(consumer)/contestacao/index", "componente": "ContestacaoListScreen", "endpoints_usados": ["GET /api/mobile/v1/contestacoes"]},
+        {"path": "(consumer)/contestacao/create", "componente": "CreateContestacaoScreen", "endpoints_usados": ["POST /api/mobile/v1/contestacoes"]},
+        {"path": "(merchant)/dashboard", "componente": "MerchantDashboardScreen", "endpoints_usados": ["GET /api/v1/dashboard/stats", "GET /api/v1/dashboard/transacoes", "GET /api/v1/dashboard/top-clientes", "GET /api/v1/dashboard/chart"]},
+        {"path": "(merchant)/cashback/gerar", "componente": "GerarCashbackScreen", "endpoints_usados": ["POST /api/v1/cashback", "GET /api/v1/clientes", "GET /api/v1/clientes/{id}/saldo", "GET /api/v1/campanhas"]},
+        {"path": "(merchant)/cashback/utilizar", "componente": "UtilizarCashbackScreen", "endpoints_usados": ["POST /api/v1/cashback/utilizar", "GET /api/v1/clientes", "GET /api/v1/clientes/{id}/saldo"]},
+        {"path": "(merchant)/cashback/qr-scan", "componente": "QRScanScreen", "endpoints_usados": ["POST /api/v1/qrcode/validate"]},
+        {"path": "(merchant)/cashback/index", "componente": "CashbackListScreen", "endpoints_usados": ["GET /api/v1/cashback"]},
+        {"path": "(merchant)/clientes/index", "componente": "ClientesScreen", "endpoints_usados": ["GET /api/v1/clientes"]},
+        {"path": "(merchant)/clientes/[id]", "componente": "ClienteDetailScreen", "endpoints_usados": ["GET /api/v1/clientes/{id}"]},
+        {"path": "(merchant)/more/campanhas", "componente": "CampanhasScreen", "endpoints_usados": ["GET /api/v1/campanhas", "POST /api/v1/campanhas", "PATCH /api/v1/campanhas/{id}", "DELETE /api/v1/campanhas/{id}"]},
+        {"path": "(merchant)/more/config", "componente": "ConfigScreen", "endpoints_usados": ["GET /api/v1/config", "PATCH /api/v1/config", "POST /api/v1/config/logo"]},
+        {"path": "(merchant)/more/contestacoes", "componente": "ContestacoesMerchantScreen", "endpoints_usados": ["GET /api/v1/contestacoes", "PATCH /api/v1/contestacoes/{id}"]},
+        {"path": "(merchant)/more/vendas", "componente": "VendasScreen", "endpoints_usados": ["GET /api/v1/cashback"]},
+        {"path": "(merchant)/more/relatorios", "componente": "RelatoriosScreen", "endpoints_usados": ["GET /api/v1/relatorios"]},
+        {"path": "(merchant)/multiloja", "componente": "MultilojaScreen", "endpoints_usados": ["GET /api/v1/empresas", "POST /api/v1/auth/switch-empresa"]}
+      ],
+      "endpoints_chamados": [
+        "POST /api/mobile/v1/auth/register",
+        "POST /api/mobile/v1/auth/login",
+        "POST /api/mobile/v1/auth/oauth",
+        "POST /api/mobile/v1/auth/forgot-password",
+        "POST /api/mobile/v1/auth/reset-password",
+        "POST /api/mobile/v1/auth/biometric/verify",
+        "POST /api/mobile/v1/auth/refresh",
+        "POST /api/mobile/v1/auth/logout",
+        "GET /api/mobile/v1/auth/me",
+        "PATCH /api/mobile/v1/auth/profile",
+        "PATCH /api/mobile/v1/auth/password",
+        "POST /api/mobile/v1/auth/delete-account",
+        "POST /api/mobile/v1/auth/biometric/enroll",
+        "GET /api/mobile/v1/auth/sessions",
+        "DELETE /api/mobile/v1/auth/sessions/{id}",
+        "GET /api/mobile/v1/saldo",
+        "GET /api/mobile/v1/extrato",
+        "GET /api/mobile/v1/utilizacao/lojas",
+        "POST /api/mobile/v1/utilizacao/qrcode",
+        "GET /api/mobile/v1/contestacoes",
+        "POST /api/mobile/v1/contestacoes",
+        "GET /api/mobile/v1/notifications",
+        "PATCH /api/mobile/v1/notifications/{id}/read",
+        "POST /api/mobile/v1/notifications/read-all",
+        "GET /api/mobile/v1/notifications/preferences",
+        "PATCH /api/mobile/v1/notifications/preferences",
+        "POST /api/v1/qrcode/validate",
+        "GET /api/v1/dashboard/stats",
+        "GET /api/v1/dashboard/transacoes",
+        "GET /api/v1/dashboard/top-clientes",
+        "GET /api/v1/dashboard/chart",
+        "GET /api/v1/clientes",
+        "GET /api/v1/clientes/{id}",
+        "GET /api/v1/clientes/{id}/saldo",
+        "GET /api/v1/campanhas",
+        "POST /api/v1/campanhas",
+        "PATCH /api/v1/campanhas/{id}",
+        "DELETE /api/v1/campanhas/{id}",
+        "GET /api/v1/cashback",
+        "POST /api/v1/cashback",
+        "POST /api/v1/cashback/utilizar",
+        "GET /api/v1/contestacoes",
+        "PATCH /api/v1/contestacoes/{id}",
+        "GET /api/v1/config",
+        "PATCH /api/v1/config",
+        "POST /api/v1/config/logo",
+        "GET /api/v1/relatorios",
+        "GET /api/v1/empresas",
+        "POST /api/v1/auth/switch-empresa"
+      ]
+    }
+  },
+  "cruzamento": {
+    "endpoints_mortos": [
+      {
+        "endpoint": "GET /api/health",
+        "motivo": "Infraestrutura — nenhum consumer frontend chama diretamente"
+      },
+      {
+        "endpoint": "GET /api/ready",
+        "motivo": "Infraestrutura — health check para kubernetes/orchestrator"
+      },
+      {
+        "endpoint": "GET /api/version",
+        "motivo": "Infraestrutura — nenhum consumer frontend chama diretamente"
+      },
+      {
+        "endpoint": "GET /api/metrics",
+        "motivo": "Infraestrutura — Prometheus/monitoramento interno"
+      },
+      {
+        "endpoint": "GET /api/metrics/prometheus",
+        "motivo": "Infraestrutura — Prometheus scraping (InternalOnly)"
+      },
+      {
+        "endpoint": "POST /api/v1/webhooks/starkbank",
+        "motivo": "Webhook — chamado pelo Starkbank, não por consumer"
+      },
+      {
+        "endpoint": "POST /api/mobile/v1/devices",
+        "motivo": "Backend tem rota, mas nenhum service do mobile chama POST /devices (MobileRegisterDeviceRequest). Possível push notifications não implementado ainda."
+      },
+      {
+        "endpoint": "DELETE /api/mobile/v1/devices",
+        "motivo": "Backend tem rota, mas nenhum service do mobile chama DELETE /devices."
+      },
+      {
+        "endpoint": "GET /api/v1/lgpd/customers/{clienteId}/export",
+        "motivo": "LGPD — nenhum consumer implementa chamada"
+      },
+      {
+        "endpoint": "POST /api/v1/lgpd/customers/{clienteId}/anonymize",
+        "motivo": "LGPD — nenhum consumer implementa chamada"
+      },
+      {
+        "endpoint": "GET /api/v1/lgpd/customers/{clienteId}/consents",
+        "motivo": "LGPD — nenhum consumer implementa chamada"
+      },
+      {
+        "endpoint": "POST /api/v1/lgpd/customers/{clienteId}/consents",
+        "motivo": "LGPD — nenhum consumer implementa chamada"
+      }
+    ],
+    "endpoints_fantasma": [
+      {
+        "endpoint": "POST /api/v1/faturas/{id}/link",
+        "consumer": "web",
+        "arquivo": "cashback-frontend/src/services/fatura.service.ts",
+        "motivo": "Frontend chama POST /faturas/{id}/link, mas backend só tem GET /faturas/{id}/link-pagamento. Divergência de método (POST vs GET) e URI (/link vs /link-pagamento)."
+      },
+      {
+        "endpoint": "GET /api/v1/faturas/{id}/nfe",
+        "consumer": "web",
+        "arquivo": "cashback-frontend/src/services/fatura.service.ts",
+        "motivo": "Frontend chama GET /faturas/{id}/nfe, mas backend tem GET /faturas/{id}/nota-fiscal. Divergência de URI (/nfe vs /nota-fiscal)."
+      },
+      {
+        "endpoint": "GET /admin/configuracoes (stub)",
+        "consumer": "admin",
+        "arquivo": "cashback-admin/src/services/admin.service.ts",
+        "motivo": "Admin usa stub local (Promise.resolve) — endpoint /admin/configuracoes não existe no backend. Marcado com TODO no código."
+      }
+    ],
+    "divergencias_contrato": [
+      {
+        "tipo": "metodo_e_uri",
+        "consumer": "web",
+        "consumer_chama": "POST /api/v1/faturas/{id}/link",
+        "backend_tem": "GET /api/v1/faturas/{id}/link-pagamento",
+        "arquivo_consumer": "cashback-frontend/src/services/fatura.service.ts:40",
+        "arquivo_backend": "routes/api.php:320",
+        "severidade": "ALTA — chamada falhará com 404/405"
+      },
+      {
+        "tipo": "uri_diferente",
+        "consumer": "web",
+        "consumer_chama": "GET /api/v1/faturas/{id}/nfe",
+        "backend_tem": "GET /api/v1/faturas/{id}/nota-fiscal",
+        "arquivo_consumer": "cashback-frontend/src/services/fatura.service.ts:50",
+        "arquivo_backend": "routes/api.php:324",
+        "severidade": "ALTA — chamada falhará com 404"
+      },
+      {
+        "tipo": "endpoint_ausente",
+        "consumer": "admin",
+        "consumer_chama": "GET /api/v1/admin/configuracoes + PATCH /api/v1/admin/configuracoes",
+        "backend_tem": "[NÃO EXISTE]",
+        "arquivo_consumer": "cashback-admin/src/services/admin.service.ts:123",
+        "arquivo_backend": "N/A",
+        "severidade": "BAIXA — já usa stub local, marcado como TODO"
+      },
+      {
+        "tipo": "devices_nao_consumido",
+        "consumer": "mobile",
+        "consumer_chama": "[NÃO CHAMA]",
+        "backend_tem": "POST /api/mobile/v1/devices + DELETE /api/mobile/v1/devices",
+        "arquivo_consumer": "N/A",
+        "arquivo_backend": "routes/api.php:95-96",
+        "severidade": "MEDIA — push notifications provavelmente não integrado ainda no mobile"
+      }
+    ],
+    "aliases_deprecated_em_uso": {
+      "nota": "Nenhum consumer usa as rotas deprecated (/customers, /campaigns, /settings, /invoices, /subscriptions, /users, /units, /disputes aliases em inglês). Todos os consumers usam as rotas canônicas em português."
+    },
+    "resumo_cobertura": {
+      "total_endpoints_unicos_backend": 111,
+      "endpoints_infra_webhook": 6,
+      "endpoints_lgpd_sem_consumer": 4,
+      "endpoints_devices_sem_consumer": 2,
+      "endpoints_consumidos_por_pelo_menos_1_consumer": 99,
+      "taxa_cobertura_percentual": 89.2
+    }
+  }
+}
