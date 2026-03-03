@@ -26,15 +26,15 @@ export const saldoDataSchema = z.object({
   por_empresa: z.array(
     z.object({
       empresa_id: z.number(),
-      nome_fantasia: z.string().optional(),
-      logo_url: z.string().nullable().optional(),
+      nome_fantasia: z.string().nullable(),
+      logo_url: z.string().nullable(),
       saldo: z.number(),
     })
   ),
   proximo_a_expirar: z
     .object({
       valor: z.number(),
-      data_expiracao: z.string().nullable(),
+      quantidade: z.number(),
     })
     .nullable()
     .optional(),
@@ -57,6 +57,7 @@ export const extratoEntrySchema = z.object({
     .object({
       id: z.number(),
       nome_fantasia: z.string(),
+      logo_url: z.string().nullable(),
     })
     .optional(),
   campanha: z

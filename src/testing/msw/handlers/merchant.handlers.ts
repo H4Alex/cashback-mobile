@@ -32,7 +32,7 @@ export const merchantHandlers = [
 
     // Paginated management endpoint (has page param, no search param)
     if (page && !search) {
-      const clientes = Array.from({ length: 10 }, () => ({
+      const clientes = [...Array(10)].map(() => ({
         id: faker.number.int({ min: 1, max: 99_999 }),
         nome: faker.person.fullName(),
         email: faker.internet.email(),
@@ -54,7 +54,7 @@ export const merchantHandlers = [
     }
 
     // Search endpoint
-    const results = Array.from({ length: 2 }, () => createMockClienteSearchResult())
+    const results = [...Array(2)].map(() => createMockClienteSearchResult())
     return HttpResponse.json({
       status: true,
       data: results,
@@ -97,7 +97,7 @@ export const merchantHandlers = [
 
   /** GET /campanhas */
   http.get(`${BASE}/campanhas`, () => {
-    const campanhas = Array.from({ length: 5 }, () => createMockCampanhaMerchant())
+    const campanhas = [...Array(5)].map(() => createMockCampanhaMerchant())
     return HttpResponse.json({
       status: true,
       data: campanhas,
@@ -158,7 +158,7 @@ export const merchantHandlers = [
 
   /** GET /cashback — List vendas/cashback transactions */
   http.get(`${BASE}/cashback`, () => {
-    const vendas = Array.from({ length: 10 }, () => ({
+    const vendas = [...Array(10)].map(() => ({
       id: faker.number.int({ min: 1, max: 99_999 }),
       cliente_nome: faker.person.fullName(),
       cpf: faker.string.numeric(11),
@@ -183,7 +183,7 @@ export const merchantHandlers = [
 
   /** GET /empresas */
   http.get(`${BASE}/empresas`, () => {
-    const empresas = Array.from({ length: 3 }, () => createMockEmpresaMerchant())
+    const empresas = [...Array(3)].map(() => createMockEmpresaMerchant())
     return HttpResponse.json({
       status: true,
       data: empresas,
@@ -216,7 +216,7 @@ export const merchantHandlers = [
 
   /** GET /dashboard/transacoes */
   http.get(`${BASE}/dashboard/transacoes`, () => {
-    const transacoes = Array.from({ length: 10 }, () => ({
+    const transacoes = [...Array(10)].map(() => ({
       id: faker.number.int({ min: 1, max: 99_999 }),
       cliente_nome: faker.person.fullName(),
       tipo: faker.helpers.arrayElement(['compra', 'utilizacao']),
@@ -233,7 +233,7 @@ export const merchantHandlers = [
 
   /** GET /dashboard/top-clientes */
   http.get(`${BASE}/dashboard/top-clientes`, () => {
-    const topClientes = Array.from({ length: 5 }, () => ({
+    const topClientes = [...Array(5)].map(() => ({
       id: faker.number.int({ min: 1, max: 99_999 }),
       nome: faker.person.fullName(),
       total_compras: faker.number.int({ min: 5, max: 100 }),
@@ -249,7 +249,7 @@ export const merchantHandlers = [
 
   /** GET /dashboard/chart */
   http.get(`${BASE}/dashboard/chart`, () => {
-    const chartData = Array.from({ length: 12 }, (_, i) => ({
+    const chartData = [...Array(12)].map((_, i: number) => ({
       label: faker.date.month(),
       valor: faker.number.float({ min: 100, max: 10_000, fractionDigits: 2 }),
       quantidade: faker.number.int({ min: 5, max: 200 }),
@@ -266,7 +266,7 @@ export const merchantHandlers = [
 
   /** GET /contestacoes */
   http.get(`${BASE}/contestacoes`, () => {
-    const contestacoes = Array.from({ length: 5 }, () =>
+    const contestacoes = [...Array(5)].map(() =>
       createMockContestacao()
     )
     return HttpResponse.json({
