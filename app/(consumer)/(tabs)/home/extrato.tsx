@@ -33,7 +33,10 @@ export default function ExtratoScreen() {
 
   useRefreshOnFocus(handleRefresh);
 
+  const CONTESTABLE_STATUSES = new Set(["rejeitado", "expirado", "congelado"]);
+
   const handleEntryPress = (entry: ExtratoEntry) => {
+    if (!CONTESTABLE_STATUSES.has(entry.status_cashback)) return;
     router.push({
       pathname: "/(consumer)/contestacao/create",
       params: { cashback_entry_id: String(entry.id), empresa_nome: entry.empresa?.nome_fantasia ?? "" },
@@ -89,7 +92,10 @@ export default function ExtratoScreen() {
       data={allEntries}
       keyExtractor={(item) => String(item.id)}
       renderItem={({ item }) => (
-        <TransactionCard entry={item} onPress={() => handleEntryPress(item)} />
+        <TransactionCard
+          entry={item}
+          onPress={CONTESTABLE_STATUSES.has(item.status_cashback) ? () => handleEntryPress(item) : undefined}
+        />
       )}
       ListHeaderComponent={ListHeader}
       onEndReached={() => {

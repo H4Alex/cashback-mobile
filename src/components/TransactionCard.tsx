@@ -52,7 +52,7 @@ export function TransactionCard({ entry, onPress }: TransactionCardProps) {
             </Text>
           )}
         </View>
-        <Text className={`text-base font-bold ${isNegative ? "text-gray-400" : "text-green-600"}`}>
+        <Text className={`text-base font-bold ${isNegative ? "text-red-500" : "text-green-600"}`}>
           {isNegative ? "-" : "+"}
           {formatCurrency(entry.valor_cashback)}
         </Text>

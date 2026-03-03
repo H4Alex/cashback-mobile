@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, ScrollView, RefreshControl } from "react-native";
+import { View, Text, ScrollView, RefreshControl, TouchableOpacity } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useDashboardStats,
@@ -23,14 +23,21 @@ const TIPO_PREFIX: Record<string, string> = {
   cancelado: "~",
 };
 
+const CHART_PERIODS = [
+  { value: "7d", label: "7 dias" },
+  { value: "30d", label: "30 dias" },
+  { value: "90d", label: "90 dias" },
+];
+
 export default function MerchantDashboardScreen() {
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
+  const [chartPeriod, setChartPeriod] = useState("7d");
 
   const { data: stats, isLoading: loadingStats } = useDashboardStats();
   const { data: transacoes, isLoading: loadingTx } = useDashboardTransacoes();
   const { data: topClientes, isLoading: loadingTop } = useDashboardTopClientes();
-  const { data: chartData, isLoading: loadingChart } = useDashboardChart("7d");
+  const { data: chartData, isLoading: loadingChart } = useDashboardChart(chartPeriod);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -72,8 +79,29 @@ export default function MerchantDashboardScreen() {
         ) : null}
       </ScrollView>
 
+      {/* Chart period selector */}
+      <View className="flex-row mx-4 mt-4 mb-2 gap-2">
+        {CHART_PERIODS.map((p) => (
+          <TouchableOpacity
+            key={p.value}
+            className={`px-3 py-1.5 rounded-full ${
+              chartPeriod === p.value ? "bg-blue-600" : "bg-gray-200"
+            }`}
+            onPress={() => setChartPeriod(p.value)}
+          >
+            <Text
+              className={`text-xs font-medium ${
+                chartPeriod === p.value ? "text-white" : "text-gray-600"
+              }`}
+            >
+              {p.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
       {/* Chart */}
-      <AnimatedCardEntry index={1} className="mx-4 mt-4">
+      <AnimatedCardEntry index={1} className="mx-4">
         <DashboardChart
           data={(chartData ?? []).map((d) => ({
             label: d.data,

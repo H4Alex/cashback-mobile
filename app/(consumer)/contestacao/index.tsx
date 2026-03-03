@@ -1,12 +1,19 @@
-import { useCallback } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { useContestacoes } from "@/src/hooks/useContestacao";
 import { useRefreshOnFocus } from "@/src/hooks";
 import { EmptyState, SkeletonTransaction } from "@/src/components";
 import { StatusBadge } from "@/src/components/StatusBadge";
+import { FilterChips } from "@/src/components/FilterChips";
 import { formatCurrency, formatDate } from "@/src/utils/formatters";
 import type { Contestacao } from "@/src/types/contestacao";
+
+const CONTESTACAO_STATUS_OPTIONS = [
+  { value: "pendente" as const, label: "Pendente" },
+  { value: "aprovada" as const, label: "Aprovada" },
+  { value: "rejeitada" as const, label: "Rejeitada" },
+];
 
 function ContestacaoRow({ item }: { item: Contestacao }) {
   const tipoLabels: Record<string, string> = {
@@ -52,11 +59,15 @@ function ContestacaoRow({ item }: { item: Contestacao }) {
 
 export default function ContestacaoListScreen() {
   const router = useRouter();
+  const [statusFilter, setStatusFilter] = useState<string | undefined>();
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
     useContestacoes();
 
-  const allItems = data?.pages.flatMap((p) => p.data) ?? [];
+  const filteredItems = useMemo(() => {
+    const allItems = data?.pages.flatMap((p) => p.data) ?? [];
+    return statusFilter ? allItems.filter((c) => c.status === statusFilter) : allItems;
+  }, [data?.pages, statusFilter]);
 
   const handleRefresh = useCallback(() => {
     refetch();
@@ -65,17 +76,20 @@ export default function ContestacaoListScreen() {
   useRefreshOnFocus(handleRefresh);
 
   const ListHeader = () => (
-    <View className="px-4 pt-4 pb-4 flex-row items-center justify-between">
-      <View>
-        <Text className="text-2xl font-bold">Contestações</Text>
-        <Text className="text-gray-500 text-sm mt-1">Acompanhe suas contestações</Text>
+    <View>
+      <View className="px-4 pt-4 pb-2 flex-row items-center justify-between">
+        <View>
+          <Text className="text-2xl font-bold">Contestações</Text>
+          <Text className="text-gray-500 text-sm mt-1">Acompanhe suas contestações</Text>
+        </View>
+        <TouchableOpacity
+          className="bg-blue-600 rounded-lg px-4 py-2"
+          onPress={() => router.push("/(consumer)/contestacao/create")}
+        >
+          <Text className="text-white font-semibold text-sm">Nova</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        className="bg-blue-600 rounded-lg px-4 py-2"
-        onPress={() => router.push("/(consumer)/contestacao/create")}
-      >
-        <Text className="text-white font-semibold text-sm">Nova</Text>
-      </TouchableOpacity>
+      <FilterChips options={CONTESTACAO_STATUS_OPTIONS} selected={statusFilter} onSelect={setStatusFilter} />
     </View>
   );
 
@@ -90,13 +104,19 @@ export default function ContestacaoListScreen() {
     );
   }
 
-  if (allItems.length === 0) {
+  if (filteredItems.length === 0 && !isLoading) {
     return (
       <View className="flex-1 bg-gray-50">
         <ListHeader />
         <EmptyState
-          title="Sem contestações"
-          message="Você não tem nenhuma contestação registrada."
+          title={statusFilter ? "Nenhum resultado" : "Sem contestações"}
+          message={
+            statusFilter
+              ? "Tente alterar o filtro para ver mais resultados."
+              : "Você não tem nenhuma contestação registrada."
+          }
+          actionLabel={statusFilter ? "Limpar filtro" : undefined}
+          onAction={statusFilter ? () => setStatusFilter(undefined) : undefined}
         />
       </View>
     );
@@ -105,7 +125,7 @@ export default function ContestacaoListScreen() {
   return (
     <FlatList
       className="flex-1 bg-gray-50"
-      data={allItems}
+      data={filteredItems}
       keyExtractor={(item) => String(item.id)}
       renderItem={({ item }) => <ContestacaoRow item={item} />}
       ListHeaderComponent={ListHeader}

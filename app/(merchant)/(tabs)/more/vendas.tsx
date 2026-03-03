@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { useMemo, useState } from "react";
+import { View, Text, FlatList, TouchableOpacity, TextInput } from "react-native";
 import { useVendas } from "@/src/hooks/useMerchantManagement";
 import { FilterChips } from "@/src/components/FilterChips";
 import { EmptyState, Skeleton } from "@/src/components";
@@ -12,6 +12,24 @@ const STATUS_FILTERS = [
   { value: "cancelado" as const, label: "Canceladas" },
 ];
 
+const DATE_RANGE_OPTIONS = [
+  { value: "7d", label: "7 dias" },
+  { value: "30d", label: "30 dias" },
+  { value: "90d", label: "90 dias" },
+];
+
+function getDateRange(range: string | undefined): { data_inicio?: string; data_fim?: string } {
+  if (!range) return {};
+  const now = new Date();
+  const days = parseInt(range);
+  const start = new Date(now);
+  start.setDate(start.getDate() - days);
+  return {
+    data_inicio: start.toISOString().slice(0, 10),
+    data_fim: now.toISOString().slice(0, 10),
+  };
+}
+
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   confirmado: { bg: "bg-green-100", text: "text-green-700" },
   pendente: { bg: "bg-yellow-100", text: "text-yellow-700" },
@@ -20,10 +38,16 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
 
 export default function VendasScreen() {
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
+  const [dateRange, setDateRange] = useState<string | undefined>();
+  const [clienteSearch, setClienteSearch] = useState("");
   const [page, setPage] = useState(1);
 
-  const { data, isLoading } = useVendas({ page, status: statusFilter });
-  const vendas = data?.data ?? [];
+  const dateParams = useMemo(() => getDateRange(dateRange), [dateRange]);
+  const { data, isLoading } = useVendas({ page, status: statusFilter, ...dateParams });
+  const allVendas = data?.data ?? [];
+  const vendas = clienteSearch
+    ? allVendas.filter((v) => v.cliente_nome.toLowerCase().includes(clienteSearch.toLowerCase()))
+    : allVendas;
   const totalPages = data?.total_pages ?? 1;
 
   const renderItem = ({ item }: { item: VendaResource }) => {
@@ -64,6 +88,39 @@ export default function VendasScreen() {
           setPage(1);
         }}
       />
+
+      {/* Date range + client search */}
+      <View className="px-4 pb-2 gap-2">
+        <View className="flex-row gap-2">
+          {DATE_RANGE_OPTIONS.map((opt) => (
+            <TouchableOpacity
+              key={opt.value}
+              className={`px-3 py-1.5 rounded-full ${
+                dateRange === opt.value ? "bg-blue-600" : "bg-gray-200"
+              }`}
+              onPress={() => {
+                setDateRange(dateRange === opt.value ? undefined : opt.value);
+                setPage(1);
+              }}
+            >
+              <Text
+                className={`text-xs font-medium ${
+                  dateRange === opt.value ? "text-white" : "text-gray-600"
+                }`}
+              >
+                {opt.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <TextInput
+          className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm"
+          placeholder="Buscar por cliente..."
+          placeholderTextColor="#9ca3af"
+          value={clienteSearch}
+          onChangeText={setClienteSearch}
+        />
+      </View>
 
       {isLoading ? (
         <View className="px-4">

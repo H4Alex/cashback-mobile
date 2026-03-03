@@ -23,11 +23,11 @@ export default function ChangePasswordScreen() {
     formState: { errors },
   } = useForm<ChangePasswordFormData>({
     resolver: zodResolver(changePasswordSchema),
-    defaultValues: { senha_atual: "", nova_senha: "" },
+    defaultValues: { senha_atual: "", nova_senha: "", nova_senha_confirmation: "" },
   });
 
   const onSubmit = (data: ChangePasswordFormData) => {
-    mutation.mutate(data, {
+    mutation.mutate({ senha_atual: data.senha_atual, nova_senha: data.nova_senha }, {
       onSuccess: () => {
         Alert.alert("Sucesso", "Senha alterada com sucesso!");
         router.back();
@@ -79,6 +79,25 @@ export default function ChangePasswordScreen() {
       />
       {errors.nova_senha && (
         <Text className="text-red-500 text-xs mb-3">{errors.nova_senha.message}</Text>
+      )}
+
+      <Text className="text-sm font-medium text-gray-700 mb-1 mt-3">Confirmar Nova Senha</Text>
+      <Controller
+        control={control}
+        name="nova_senha_confirmation"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            className="border border-gray-300 rounded-lg px-4 py-3 mb-1 text-base"
+            placeholder="Repita a nova senha"
+            secureTextEntry
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+          />
+        )}
+      />
+      {errors.nova_senha_confirmation && (
+        <Text className="text-red-500 text-xs mb-3">{errors.nova_senha_confirmation.message}</Text>
       )}
 
       <TouchableOpacity

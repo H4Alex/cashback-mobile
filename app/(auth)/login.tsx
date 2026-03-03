@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   View,
   Text,
@@ -15,12 +14,10 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormData } from "@/src/schemas";
 import { useLogin } from "@/src/hooks";
-import type { OAuthProvider } from "@/src/types";
 
 export default function LoginScreen() {
   const router = useRouter();
   const loginMutation = useLogin();
-  const [oauthLoading, setOAuthLoading] = useState<OAuthProvider | null>(null);
 
   const {
     control,
@@ -36,22 +33,6 @@ export default function LoginScreen() {
       onSuccess: () => router.replace("/"),
       onError: (err) => Alert.alert("Erro", err.message || "Credenciais inválidas"),
     });
-  };
-
-  const handleOAuth = async (provider: OAuthProvider) => {
-    setOAuthLoading(provider);
-    try {
-      // In production, expo-auth-session would be used to get the id_token
-      // from Google/Apple before calling the backend.
-      // This is the integration point — the id_token comes from the native
-      // OAuth flow and is sent to our backend for verification.
-      Alert.alert(
-        "OAuth",
-        `Integração ${provider === "google" ? "Google" : "Apple"} Sign-In será ativada com expo-auth-session. Configure as credenciais OAuth no app.json.`,
-      );
-    } finally {
-      setOAuthLoading(null);
-    }
   };
 
   return (
@@ -124,41 +105,6 @@ export default function LoginScreen() {
             <Text className="text-white font-semibold text-base">Entrar</Text>
           )}
         </TouchableOpacity>
-
-        {/* Divider */}
-        <View className="flex-row items-center my-4">
-          <View className="flex-1 h-px bg-gray-300" />
-          <Text className="mx-4 text-gray-500 text-sm">ou</Text>
-          <View className="flex-1 h-px bg-gray-300" />
-        </View>
-
-        {/* Google Sign-In */}
-        <TouchableOpacity
-          className="border border-gray-300 rounded-lg py-4 items-center mb-3 flex-row justify-center"
-          onPress={() => handleOAuth("google")}
-          disabled={oauthLoading !== null}
-        >
-          {oauthLoading === "google" ? (
-            <ActivityIndicator />
-          ) : (
-            <Text className="font-medium text-base">Entrar com Google</Text>
-          )}
-        </TouchableOpacity>
-
-        {/* Apple Sign-In */}
-        {Platform.OS === "ios" && (
-          <TouchableOpacity
-            className="bg-black rounded-lg py-4 items-center mb-3 flex-row justify-center"
-            onPress={() => handleOAuth("apple")}
-            disabled={oauthLoading !== null}
-          >
-            {oauthLoading === "apple" ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text className="text-white font-medium text-base">Entrar com Apple</Text>
-            )}
-          </TouchableOpacity>
-        )}
 
         {/* Register link */}
         <View className="flex-row justify-center mt-6">

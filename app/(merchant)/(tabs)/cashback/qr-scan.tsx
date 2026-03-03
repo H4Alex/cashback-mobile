@@ -165,21 +165,23 @@ export default function QRScanScreen() {
         </View>
       </View>
 
-      {/* Simulated scan button (in production camera auto-scans) */}
-      <View className="px-6 pb-8">
-        {validateMutation.isPending ? (
-          <View className="bg-white/20 rounded-xl py-4 items-center">
-            <ActivityIndicator color="white" />
-          </View>
-        ) : (
-          <TouchableOpacity
-            className="bg-white rounded-xl py-4 items-center"
-            onPress={() => handleScan("simulated-qr-token-" + Date.now())}
-          >
-            <Text className="font-semibold text-base">Simular Scan</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      {/* Simulated scan button — dev only (in production camera auto-scans) */}
+      {__DEV__ && (
+        <View className="px-6 pb-8">
+          {validateMutation.isPending ? (
+            <View className="bg-white/20 rounded-xl py-4 items-center">
+              <ActivityIndicator color="white" />
+            </View>
+          ) : (
+            <TouchableOpacity
+              className="bg-white rounded-xl py-4 items-center"
+              onPress={() => handleScan("simulated-qr-token-" + Date.now())}
+            >
+              <Text className="font-semibold text-base">Simular Scan</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
     </View>
   );
 }

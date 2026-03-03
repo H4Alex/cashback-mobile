@@ -59,6 +59,17 @@ export const biometricService = {
   },
 
   /**
+   * Unenroll biometric on the backend.
+   * Called when the user disables biometric login.
+   */
+  async unenroll(deviceId: string): Promise<{ success: boolean }> {
+    const res = await apiClient.post<ApiResponse<{ success: boolean }>>(`${PREFIX}/auth/biometric/unenroll`, {
+      device_id: deviceId,
+    });
+    return res.data.data;
+  },
+
+  /**
    * Verify biometric token to get a JWT.
    * Used for biometric login.
    */

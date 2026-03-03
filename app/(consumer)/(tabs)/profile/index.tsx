@@ -1,7 +1,6 @@
 import { View, Text, TouchableOpacity, ScrollView, Switch, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuthStore } from "@/src/stores";
-import { useDeviceStore } from "@/src/stores/device.store";
 import { ThemeToggle } from "@/src/components/ThemeToggle";
 import { useBiometric } from "@/src/hooks/useBiometric";
 
@@ -31,8 +30,7 @@ export default function ProfileScreen() {
   const router = useRouter();
   const cliente = useAuthStore((s) => s.cliente);
   const logout = useAuthStore((s) => s.logout);
-  const { biometricAvailable, biometricEnrolled, enroll } = useBiometric();
-  const setBiometricEnrolled = useDeviceStore((s) => s.setBiometricEnrolled);
+  const { biometricAvailable, biometricEnrolled, enroll, unenroll } = useBiometric();
 
   const handleLogout = () => {
     Alert.alert("Sair", "Deseja realmente sair da conta?", [
@@ -55,7 +53,10 @@ export default function ProfileScreen() {
         Alert.alert("Erro", "Não foi possível ativar a biometria.");
       }
     } else {
-      setBiometricEnrolled(false);
+      const success = await unenroll();
+      if (!success) {
+        Alert.alert("Aviso", "Biometria desativada localmente, mas houve erro ao sincronizar.");
+      }
     }
   };
 

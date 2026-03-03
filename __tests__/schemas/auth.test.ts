@@ -40,7 +40,7 @@ describe("registerSchema", () => {
     const result = registerSchema.safeParse({
       nome: "João Silva",
       email: "joao@example.com",
-      cpf: "12345678901",
+      cpf: "52998224725",
       senha: "123456",
       senha_confirmation: "123456",
     });
@@ -51,7 +51,7 @@ describe("registerSchema", () => {
     const result = registerSchema.safeParse({
       nome: "João Silva",
       email: "joao@example.com",
-      cpf: "12345678901",
+      cpf: "52998224725",
       senha: "123456",
       senha_confirmation: "654321",
     });
@@ -63,6 +63,17 @@ describe("registerSchema", () => {
       nome: "João Silva",
       email: "joao@example.com",
       cpf: "123",
+      senha: "123456",
+      senha_confirmation: "123456",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects CPF with invalid check digits", () => {
+    const result = registerSchema.safeParse({
+      nome: "João Silva",
+      email: "joao@example.com",
+      cpf: "12345678901",
       senha: "123456",
       senha_confirmation: "123456",
     });
@@ -133,6 +144,7 @@ describe("changePasswordSchema", () => {
     const result = changePasswordSchema.safeParse({
       senha_atual: "oldpass",
       nova_senha: "newpass",
+      nova_senha_confirmation: "newpass",
     });
     expect(result.success).toBe(true);
   });
@@ -141,6 +153,7 @@ describe("changePasswordSchema", () => {
     const result = changePasswordSchema.safeParse({
       senha_atual: "",
       nova_senha: "newpass",
+      nova_senha_confirmation: "newpass",
     });
     expect(result.success).toBe(false);
   });
@@ -149,6 +162,16 @@ describe("changePasswordSchema", () => {
     const result = changePasswordSchema.safeParse({
       senha_atual: "oldpass",
       nova_senha: "12",
+      nova_senha_confirmation: "12",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects mismatched confirmation", () => {
+    const result = changePasswordSchema.safeParse({
+      senha_atual: "oldpass",
+      nova_senha: "newpass",
+      nova_senha_confirmation: "different",
     });
     expect(result.success).toBe(false);
   });

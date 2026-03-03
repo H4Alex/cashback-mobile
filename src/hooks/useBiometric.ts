@@ -40,10 +40,26 @@ export function useBiometric() {
     }
   }, [deviceId, setBiometricEnrolled]);
 
+  const unenroll = useCallback(async () => {
+    if (!deviceId) {
+      setBiometricEnrolled(false);
+      return true;
+    }
+    try {
+      await biometricService.unenroll(deviceId);
+      setBiometricEnrolled(false);
+      return true;
+    } catch {
+      setBiometricEnrolled(false);
+      return false;
+    }
+  }, [deviceId, setBiometricEnrolled]);
+
   return {
     biometricAvailable,
     biometricEnrolled,
     authenticate,
     enroll,
+    unenroll,
   };
 }

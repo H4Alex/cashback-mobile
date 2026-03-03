@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useClienteSearch, useCampanhas, useCashbackCreate } from "@/src/hooks/useMerchant";
 import { CPFSearchInput } from "@/src/components/CPFSearchInput";
 import { CashbackConfirmation, makeConfirmationItems } from "@/src/components/CashbackConfirmation";
+import { gerarCashbackMerchantSchema } from "@/src/schemas/merchant";
 import type { Campanha } from "@/src/types/merchant";
 import { formatCurrency } from "@/src/utils/formatters";
 
@@ -30,7 +31,24 @@ export default function GerarCashbackScreen() {
   const percentual = selectedCampanha?.percentual ?? 5;
   const cashbackValor = valorNum * (percentual / 100);
 
+  const [formError, setFormError] = useState<string | null>(null);
   const canConfirm = selectedCliente && valorNum > 0;
+
+  const handleGoToConfirm = () => {
+    if (!selectedCliente) return;
+    const result = gerarCashbackMerchantSchema.safeParse({
+      cpf: selectedCliente.cpf,
+      valor: valorNum,
+      campanha_id: selectedCampanha?.id,
+    });
+    if (!result.success) {
+      const msg = result.error.issues.map((i) => i.message).join("\n");
+      setFormError(msg);
+      return;
+    }
+    setFormError(null);
+    setStep("confirm");
+  };
 
   const handleConfirm = () => {
     if (!selectedCliente) return;
@@ -193,13 +211,20 @@ export default function GerarCashbackScreen() {
             </View>
           )}
 
+          {/* Validation error */}
+          {formError && (
+            <View className="mx-4 mt-3 bg-red-50 border border-red-200 rounded-xl p-3">
+              <Text className="text-sm text-red-700">{formError}</Text>
+            </View>
+          )}
+
           {/* Submit */}
           <View className="px-4 mt-6 mb-8">
             <Text
               className={`text-center py-4 rounded-xl font-semibold text-base ${
                 canConfirm ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-400"
               }`}
-              onPress={() => canConfirm && setStep("confirm")}
+              onPress={() => canConfirm && handleGoToConfirm()}
             >
               GERAR CASHBACK
             </Text>

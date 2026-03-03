@@ -84,24 +84,8 @@ export default function NotificationPreferencesScreen() {
       <SectionHeader title="Categorias" />
 
       <PreferenceRow
-        label="Transações"
-        description="Cashback recebido, resgates e expirações"
-        value={prefs.push_enabled}
-        onValueChange={(v) => handleToggle("push_enabled", v)}
-        disabled={updateMutation.isPending}
-      />
-
-      <PreferenceRow
-        label="Promoções"
-        description="Ofertas e campanhas de lojistas parceiros"
-        value={prefs.marketing_enabled}
-        onValueChange={(v) => handleToggle("marketing_enabled", v)}
-        disabled={updateMutation.isPending}
-      />
-
-      <PreferenceRow
-        label="Marketing"
-        description="Novidades, dicas e conteúdo do app"
+        label="Marketing e Promoções"
+        description="Ofertas, campanhas, novidades e conteúdo do app"
         value={prefs.marketing_enabled}
         onValueChange={(v) => handleToggle("marketing_enabled", v)}
         disabled={updateMutation.isPending}

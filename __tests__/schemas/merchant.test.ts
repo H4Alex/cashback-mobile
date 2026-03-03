@@ -6,7 +6,7 @@ import {
 describe("gerarCashbackMerchantSchema", () => {
   it("validates correct data", () => {
     const result = gerarCashbackMerchantSchema.safeParse({
-      cpf: "12345678901",
+      cpf: "52998224725",
       valor: 100.0,
     });
     expect(result.success).toBe(true);
@@ -14,7 +14,7 @@ describe("gerarCashbackMerchantSchema", () => {
 
   it("validates with optional campanha_id", () => {
     const result = gerarCashbackMerchantSchema.safeParse({
-      cpf: "12345678901",
+      cpf: "52998224725",
       valor: 50.0,
       campanha_id: 5,
     });
@@ -23,12 +23,12 @@ describe("gerarCashbackMerchantSchema", () => {
 
   it("strips non-numeric characters from CPF via transform", () => {
     const result = gerarCashbackMerchantSchema.safeParse({
-      cpf: "123.456.789-01",
+      cpf: "529.982.247-25",
       valor: 100.0,
     });
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.cpf).toBe("12345678901");
+      expect(result.data.cpf).toBe("52998224725");
     }
   });
 
@@ -42,7 +42,7 @@ describe("gerarCashbackMerchantSchema", () => {
 
   it("rejects negative valor", () => {
     const result = gerarCashbackMerchantSchema.safeParse({
-      cpf: "12345678901",
+      cpf: "52998224725",
       valor: -10,
     });
     expect(result.success).toBe(false);
@@ -50,7 +50,7 @@ describe("gerarCashbackMerchantSchema", () => {
 
   it("rejects zero valor", () => {
     const result = gerarCashbackMerchantSchema.safeParse({
-      cpf: "12345678901",
+      cpf: "52998224725",
       valor: 0,
     });
     expect(result.success).toBe(false);
@@ -60,7 +60,7 @@ describe("gerarCashbackMerchantSchema", () => {
 describe("utilizarCashbackSchema", () => {
   it("validates correct data", () => {
     const result = utilizarCashbackSchema.safeParse({
-      cpf: "12345678901",
+      cpf: "52998224725",
       valor: 50.0,
     });
     expect(result.success).toBe(true);
@@ -68,12 +68,12 @@ describe("utilizarCashbackSchema", () => {
 
   it("strips non-numeric characters from CPF via transform", () => {
     const result = utilizarCashbackSchema.safeParse({
-      cpf: "123.456.789-01",
+      cpf: "529.982.247-25",
       valor: 25.0,
     });
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.cpf).toBe("12345678901");
+      expect(result.data.cpf).toBe("52998224725");
     }
   });
 
@@ -87,7 +87,7 @@ describe("utilizarCashbackSchema", () => {
 
   it("rejects negative valor", () => {
     const result = utilizarCashbackSchema.safeParse({
-      cpf: "12345678901",
+      cpf: "52998224725",
       valor: -5,
     });
     expect(result.success).toBe(false);
@@ -95,7 +95,7 @@ describe("utilizarCashbackSchema", () => {
 
   it("rejects zero valor", () => {
     const result = utilizarCashbackSchema.safeParse({
-      cpf: "12345678901",
+      cpf: "52998224725",
       valor: 0,
     });
     expect(result.success).toBe(false);

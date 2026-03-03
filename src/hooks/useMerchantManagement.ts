@@ -114,7 +114,12 @@ export function useDeleteCampanha() {
 }
 
 // --- Vendas ---
-export function useVendas(params?: { page?: number; status?: string }) {
+export function useVendas(params?: {
+  page?: number;
+  status?: string;
+  data_inicio?: string;
+  data_fim?: string;
+}) {
   return useQuery({
     queryKey: [...KEYS.vendas, params],
     queryFn: () =>
@@ -122,6 +127,8 @@ export function useVendas(params?: { page?: number; status?: string }) {
         page: params?.page ?? 1,
         limit: 20,
         status: params?.status,
+        data_inicio: params?.data_inicio,
+        data_fim: params?.data_fim,
       }),
   });
 }

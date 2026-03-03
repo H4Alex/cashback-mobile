@@ -23,7 +23,10 @@ export type RegisterRequest = z.infer<typeof registerSchema>;
 export type ForgotPasswordRequest = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordRequest = z.infer<typeof resetPasswordSchema>;
 export type UpdateProfileRequest = z.infer<typeof updateProfileSchema>;
-export type ChangePasswordRequest = z.infer<typeof changePasswordSchema>;
+export type ChangePasswordRequest = Pick<
+  z.infer<typeof changePasswordSchema>,
+  "senha_atual" | "nova_senha"
+>;
 export type DeleteAccountRequest = z.infer<typeof deleteAccountSchema>;
 export type OAuthRequest = z.infer<typeof oauthSchema>;
 export type ClienteResource = z.infer<typeof clienteResourceSchema>;
