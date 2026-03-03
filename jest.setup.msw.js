@@ -1,9 +1,10 @@
+/* global beforeAll, afterEach, afterAll */
 /**
  * MSW setup for Jest — lifecycle hooks for mock server.
  *
- * This file is loaded via jest.config.js setupFilesAfterFramework.
- * It starts the MSW server before all tests, resets handlers after each,
- * and closes the server after all tests complete.
+ * Import this file in tests that need the MSW server, or add it
+ * to jest.config.js setupFiles when the test framework globals
+ * are available.
  */
 const { server } = require('./src/testing/msw/server');
 
