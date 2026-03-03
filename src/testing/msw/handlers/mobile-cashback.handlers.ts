@@ -7,7 +7,6 @@ import { http, HttpResponse } from 'msw'
 import {
   createMockSaldoData,
   createMockExtratoList,
-  createMockEmpresaMerchant,
 } from '../fixtures'
 import { faker } from '@faker-js/faker/locale/pt_BR'
 

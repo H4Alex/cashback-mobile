@@ -5,24 +5,24 @@
  * a single `handlers` export for use with setupServer / setupWorker.
  */
 
+import { mobileAuthHandlers, mobileAuthErrorHandlers } from './mobile-auth.handlers'
+import { mobileCashbackHandlers, mobileCashbackErrorHandlers } from './mobile-cashback.handlers'
+import { mobileContestacaoHandlers, mobileContestacaoErrorHandlers } from './mobile-contestacao.handlers'
+import { mobileQRCodeHandlers, mobileQRCodeErrorHandlers } from './mobile-qrcode.handlers'
+import { mobileNotificationHandlers, mobileNotificationErrorHandlers } from './mobile-notification.handlers'
+import { merchantHandlers, merchantErrorHandlers } from './merchant.handlers'
+
 // ─── Mobile consumer handlers ───────────────────────────────
-export { mobileAuthHandlers, mobileAuthErrorHandlers } from './mobile-auth.handlers'
-export { mobileCashbackHandlers, mobileCashbackErrorHandlers } from './mobile-cashback.handlers'
-export { mobileContestacaoHandlers, mobileContestacaoErrorHandlers } from './mobile-contestacao.handlers'
-export { mobileQRCodeHandlers, mobileQRCodeErrorHandlers } from './mobile-qrcode.handlers'
-export { mobileNotificationHandlers, mobileNotificationErrorHandlers } from './mobile-notification.handlers'
+export { mobileAuthHandlers, mobileAuthErrorHandlers }
+export { mobileCashbackHandlers, mobileCashbackErrorHandlers }
+export { mobileContestacaoHandlers, mobileContestacaoErrorHandlers }
+export { mobileQRCodeHandlers, mobileQRCodeErrorHandlers }
+export { mobileNotificationHandlers, mobileNotificationErrorHandlers }
 
 // ─── Merchant handlers ──────────────────────────────────────
-export { merchantHandlers, merchantErrorHandlers } from './merchant.handlers'
+export { merchantHandlers, merchantErrorHandlers }
 
 // ─── Combined handlers array ────────────────────────────────
-import { mobileAuthHandlers } from './mobile-auth.handlers'
-import { mobileCashbackHandlers } from './mobile-cashback.handlers'
-import { mobileContestacaoHandlers } from './mobile-contestacao.handlers'
-import { mobileQRCodeHandlers } from './mobile-qrcode.handlers'
-import { mobileNotificationHandlers } from './mobile-notification.handlers'
-import { merchantHandlers } from './merchant.handlers'
-
 export const handlers = [
   ...mobileAuthHandlers,
   ...mobileCashbackHandlers,

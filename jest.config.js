@@ -18,6 +18,5 @@ module.exports = {
     },
   },
   setupFiles: ["<rootDir>/jest.setup.js"],
-  setupFilesAfterFramework: ["<rootDir>/jest.setup.msw.js"],
   testPathIgnorePatterns: ["/node_modules/", "__tests__/a11y/a11y-helpers.ts", "__tests__/fixtures.ts"],
 };
