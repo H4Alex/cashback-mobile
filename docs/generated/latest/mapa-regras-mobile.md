@@ -2,6 +2,7 @@
 
 > Atualizado a partir de S4-E3 com validação de itens pendentes contra código-fonte (S5-E7c).
 > Etapa 7c do pipeline de refinamento. Data: 2026-03-04.
+> ⚠️ **ATUALIZADO S11-E2**: 14 paths incorretos corrigidos (vendas→cashback, empresa/config→config, empresas/{id}/switch→auth/switch-empresa, contestacoes/{id}/resolve→contestacoes/{id}). Mudanças S9 refletidas (B1: senha min 6→8).
 
 **Stack:** React Native 0.76.9 + Expo 52 + TypeScript 5.3 + expo-router 4.0 + NativeWind 4.1 + Zustand 4.4 + TanStack React Query 5.14 + React Hook Form 7.50 + Zod 3.22 + Axios 1.7 + expo-secure-store 14 + Sentry React Native 6.10
 
@@ -16,7 +17,7 @@
 **Resumo de Alterações S4:**
 - **17 telas alteradas**, **15 telas inalteradas**
 - **9 itens cross-cutting** (arquiteturais)
-- Tipos de mudança: 10 regras corrigidas, 3 campos novos, 2 regras novas, 2 INFERIDO→RESOLVIDO
+- Tipos de mudança: 10 regras corrigidas, 3 campos novos, 2 regras novas, 2 ⚠️ RESOLVIDO S10 (anteriormente INFERIDO→RESOLVIDO, agora confirmados)
 
 **Resumo de Alterações S5-E7c:**
 - **5 itens pendentes → CONFIRMADOS** (M1: `/historico`→`/extrato`; M3-M6: perfil role-gating)
@@ -141,7 +142,7 @@ app/_layout.tsx (RootLayout)
 | Campo | Regra | Mensagem |
 |-------|-------|----------|
 | email | `z.string().email()` | "E-mail inválido" |
-| senha | `z.string().min(6)` | "Senha deve ter no mínimo 6 caracteres" |
+| senha | `z.string().min(8)` | "Senha deve ter no mínimo 8 caracteres" | ⚠️ ATUALIZADO S11: min(6)→min(8) — Ref S9-E2 B1 |
 
 ### Mensagens de Feedback
 | Situação | Código | Mensagem PT-BR | Tipo | Duração |
@@ -201,7 +202,7 @@ app/_layout.tsx (RootLayout)
 | nome | `z.string().min(3)` | "Nome deve ter no mínimo 3 caracteres" |
 | email | `z.string().email()` | "E-mail inválido" |
 | cpf | `z.string().length(11).refine(isValidCPF)` | "CPF inválido" |
-| senha | `z.string().min(6)` | "Senha deve ter no mínimo 6 caracteres" |
+| senha | `z.string().min(8)` | "Senha deve ter no mínimo 8 caracteres" | ⚠️ ATUALIZADO S11: min(6)→min(8) — Ref S9-E2 B1 |
 | senha_confirmation | `.refine(data.senha === data.senha_confirmation)` | "Senhas não conferem" |
 
 > **S4 ALTERAÇÃO**: CPF validation mudou de `z.string().length(11)` (apenas comprimento) para `.refine(isValidCPF)` com algoritmo Mod-11 (dígitos verificadores). Ref Diff: MUDANÇA #56.
@@ -518,7 +519,7 @@ app/_layout.tsx (RootLayout)
 | `GET /api/mobile/v1/saldo` | GET | saldo_total, por_empresa (empresa_id, nome_fantasia, saldo, logo_url), proximo_a_expirar: {valor, quantidade} | useSaldo() |
 | `GET /api/mobile/v1/extrato` | GET | Extrato completo com cursor pagination | useExtrato() |
 
-> **S4 ALTERAÇÃO (INFERIDO→RESOLVIDO)**: Campo `proximo_a_expirar` corrigido de `number` para `{valor: string, quantidade: number}` (schema Zod resolvido, S3-E5b B1). Campo `logo_url` adicionado ao `por_empresa`. Ref Diff: S3-E5b B1.
+> ⚠️ RESOLVIDO S10: confirmado — campo `proximo_a_expirar` corrigido de `number` para `{valor: string, quantidade: number}` (schema Zod resolvido, S3-E5b B1). Campo `logo_url` adicionado ao `por_empresa` (fonte: S8-E1c §4:#21, código: schema Zod S3-E5b B1)
 
 ### Regras de Exibição
 | # | Elemento | Tipo | Exibir quando | Ocultar quando | Padrão |
@@ -843,13 +844,13 @@ app/_layout.tsx (RootLayout)
 ### Regras de Interação
 | # | Ação | Endpoint | Método | Payload | Validações | Feedback |
 |---|------|----------|--------|---------|------------|----------|
-| 1 | Submit | `PATCH /api/mobile/v1/auth/password` | PATCH | `{ senha_atual, nova_senha, nova_senha_confirmation }` | Zod: senha_atual min 1, nova_senha min 6, confirmation match | Sucesso → Alert "Senha alterada com sucesso!" + router.back(); Erro → Alert "Senha atual incorreta." |
+| 1 | Submit | `PATCH /api/mobile/v1/auth/password` | PATCH | `{ senha_atual, nova_senha, nova_senha_confirmation }` | Zod: senha_atual min 1, nova_senha min 8, confirmation match | Sucesso → Alert "Senha alterada com sucesso!" + router.back(); Erro → Alert "Senha atual incorreta." | ⚠️ ATUALIZADO S11: min 6→min 8 — Ref S9-E2 B1 |
 
 ### Validações (Zod — `changePasswordSchema`)
 | Campo | Regra | Mensagem |
 |-------|-------|----------|
 | senha_atual | `z.string().min(1)` | "Senha atual é obrigatória" |
-| nova_senha | `z.string().min(6)` | "Nova senha deve ter no mínimo 6 caracteres" |
+| nova_senha | `z.string().min(8)` | "Nova senha deve ter no mínimo 8 caracteres" | ⚠️ ATUALIZADO S11: min(6)→min(8) — Ref S9-E2 B1 |
 | nova_senha_confirmation | `.refine(nova_senha === nova_senha_confirmation)` | "Senhas não conferem" |
 
 ### Rastreabilidade
@@ -1402,7 +1403,7 @@ app/_layout.tsx (RootLayout)
 | 7 | Menu "Política de Privacidade" | TouchableOpacity | Sempre | — | — |
 | 8 | Botão "Sair" | TouchableOpacity bg-red-50 | Sempre | — | — |
 
-> **S4 ALTERAÇÃO (INFERIDO→RESOLVIDO)**: Role-based menu gating implementado. Antes: todos os menus visíveis para qualquer perfil. Agora: visibilidade controlada pelo `perfil` do merchant. Ref Diff: S2-E5 Impl#2.
+> ⚠️ RESOLVIDO S10: confirmado — role-based menu gating implementado. Visibilidade controlada pelo `perfil` do merchant (fonte: S8-E1c §4:#22, código: perfil-based visibility, S2-E5 Impl#2)
 
 ### Role-Gating por Perfil (S4, corrigido S5-E7c)
 | Menu Item | proprietario | gestor | operador | vendedor |
@@ -1529,7 +1530,7 @@ app/_layout.tsx (RootLayout)
 ### Dados ao Carregar
 | Endpoint | Método | Campos Utilizados | Dependências |
 |----------|--------|-------------------|--------------|
-| `GET /api/v1/vendas?page={n}&status={s}&data_inicio={d}&data_fim={d}&search={q}` | GET | id, cliente_nome, valor_compra, valor_cashback, status, created_at, total, total_pages | useVendas({ page, status, data_inicio, data_fim, search }) |
+| `GET /api/v1/cashback?page={n}&status={s}&data_inicio={d}&data_fim={d}&search={q}` | GET | id, cliente_nome, valor_compra, valor_cashback, status, created_at, total, total_pages | useVendas({ page, status, data_inicio, data_fim, search }) | ⚠️ CORRIGIDO S11: path corrigido /vendas → /cashback — Ref S11-E2 |
 
 ### Regras de Exibição
 | # | Elemento | Tipo | Exibir quando | Ocultar quando | Padrão |
@@ -1563,10 +1564,10 @@ app/_layout.tsx (RootLayout)
 ### Regras de Interação
 | # | Ação | Endpoint | Método | Payload | Validações | Feedback |
 |---|------|----------|--------|---------|------------|----------|
-| 1 | Mudar período | `GET /api/v1/vendas?data_inicio={d}&data_fim={d}&page=1` | GET | data_inicio, data_fim, page reset 1 | — | Refetch |
-| 2 | Buscar por cliente | `GET /api/v1/vendas?search={q}&page=1` | GET | search, page reset 1 | — | Refetch (client search) |
-| 3 | Filtrar por status | `GET /api/v1/vendas?status={s}&page=1` | GET | status, page reset 1 | — | Refetch |
-| 4 | Navegar páginas | `GET /api/v1/vendas?page={n}` | GET | page | — | Atualiza lista |
+| 1 | Mudar período | `GET /api/v1/cashback?data_inicio={d}&data_fim={d}&page=1` | GET | data_inicio, data_fim, page reset 1 | — | Refetch | ⚠️ CORRIGIDO S11: path corrigido — Ref S11-E2 |
+| 2 | Buscar por cliente | `GET /api/v1/cashback?search={q}&page=1` | GET | search, page reset 1 | — | Refetch (client search) | ⚠️ CORRIGIDO S11: path corrigido — Ref S11-E2 |
+| 3 | Filtrar por status | `GET /api/v1/cashback?status={s}&page=1` | GET | status, page reset 1 | — | Refetch | ⚠️ CORRIGIDO S11: path corrigido — Ref S11-E2 |
+| 4 | Navegar páginas | `GET /api/v1/cashback?page={n}` | GET | page | — | Atualiza lista | ⚠️ CORRIGIDO S11: path corrigido — Ref S11-E2 |
 
 ### Rastreabilidade
 | Regra # | Arquivo | Método | Evidência |
@@ -1618,8 +1619,8 @@ app/_layout.tsx (RootLayout)
 |---|------|----------|--------|---------|------------|----------|
 | 1 | Filtrar por status | `GET /api/v1/contestacoes?status={s}` | GET | — | — | Refetch |
 | 2 | Tap "Responder" | — | — | — | — | Abre modal |
-| 3 | Aprovar | `PATCH /api/v1/contestacoes/{id}/resolve` | PATCH | `{ status: "aprovada", resposta }` | resposta não vazia | Fecha modal |
-| 4 | Rejeitar | `PATCH /api/v1/contestacoes/{id}/resolve` | PATCH | `{ status: "rejeitada", resposta }` | resposta não vazia | Fecha modal |
+| 3 | Aprovar | `PATCH /api/v1/contestacoes/{id}` | PATCH | `{ status: "aprovada", resposta }` | resposta não vazia | Fecha modal | ⚠️ CORRIGIDO S11: path corrigido /resolve removido — Ref S11-E2 |
+| 4 | Rejeitar | `PATCH /api/v1/contestacoes/{id}` | PATCH | `{ status: "rejeitada", resposta }` | resposta não vazia | Fecha modal | ⚠️ CORRIGIDO S11: path corrigido /resolve removido — Ref S11-E2 |
 
 ### Validações (Frontend — inline)
 | Campo | Regra | Mensagem |
@@ -1635,7 +1636,7 @@ app/_layout.tsx (RootLayout)
 | Regra # | Arquivo | Método | Evidência |
 |---------|---------|--------|-----------|
 | List | src/services/merchant.management.service.ts:103 | getContestacoes() | GET /contestacoes |
-| Resolve | src/services/merchant.management.service.ts:112 | resolveContestacao() | PATCH /contestacoes/{id}/resolve |
+| Resolve | src/services/merchant.management.service.ts:112 | resolveContestacao() | PATCH /contestacoes/{id} | ⚠️ CORRIGIDO S11: path corrigido — Ref S11-E2 |
 
 ---
 
@@ -1650,7 +1651,7 @@ app/_layout.tsx (RootLayout)
 ### Dados ao Carregar
 | Endpoint | Método | Campos Utilizados | Dependências |
 |----------|--------|-------------------|--------------|
-| `GET /api/v1/empresa/config` | GET | nome_fantasia, cnpj, plano, plano_status, proxima_cobranca, telefone, email, percentual_cashback, validade_cashback, max_utilizacao | useEmpresaConfig() |
+| `GET /api/v1/config` | GET | nome_fantasia, cnpj, plano, plano_status, proxima_cobranca, telefone, email, percentual_cashback, validade_cashback, max_utilizacao | useEmpresaConfig() | ⚠️ CORRIGIDO S11: path corrigido /empresa/config → /config — Ref S11-E2 |
 
 ### Regras de Exibição
 | # | Elemento | Tipo | Exibir quando | Ocultar quando | Padrão |
@@ -1674,7 +1675,7 @@ app/_layout.tsx (RootLayout)
 ### Regras de Interação
 | # | Ação | Endpoint | Método | Payload | Validações | Feedback |
 |---|------|----------|--------|---------|------------|----------|
-| 1 | Salvar | `PATCH /api/v1/empresa/config` | PATCH | `{ telefone, email, percentual_cashback, validade_cashback, max_utilizacao }` | — | Sucesso → Alert "Configurações atualizadas." |
+| 1 | Salvar | `PATCH /api/v1/config` | PATCH | `{ telefone, email, percentual_cashback, validade_cashback, max_utilizacao }` | — | Sucesso → Alert "Configurações atualizadas." | ⚠️ CORRIGIDO S11: path corrigido — Ref S11-E2 |
 
 ### O que NÃO Exibir
 | Elemento | Motivo | Roles | Origem |
@@ -1684,8 +1685,8 @@ app/_layout.tsx (RootLayout)
 ### Rastreabilidade
 | Regra # | Arquivo | Método | Evidência |
 |---------|---------|--------|-----------|
-| Get | src/services/merchant.empresa.service.ts:22 | getConfig() | GET /empresa/config |
-| Update | src/services/merchant.empresa.service.ts:30 | updateConfig() | PATCH /empresa/config |
+| Get | src/services/merchant.empresa.service.ts:22 | getConfig() | GET /config | ⚠️ CORRIGIDO S11: path corrigido — Ref S11-E2 |
+| Update | src/services/merchant.empresa.service.ts:30 | updateConfig() | PATCH /config | ⚠️ CORRIGIDO S11: path corrigido — Ref S11-E2 |
 
 ---
 
@@ -1765,7 +1766,7 @@ app/_layout.tsx (RootLayout)
 ### Regras de Interação
 | # | Ação | Endpoint | Método | Payload | Validações | Feedback |
 |---|------|----------|--------|---------|------------|----------|
-| 1 | Tap em empresa diferente | `POST /api/v1/empresas/{id}/switch` | POST | — | empresa !== empresaAtiva | Sucesso → router.back(); ActivityIndicator durante switch |
+| 1 | Tap em empresa diferente | `POST /api/v1/auth/switch-empresa` | POST | — | empresa !== empresaAtiva | Sucesso → router.back(); ActivityIndicator durante switch | ⚠️ CORRIGIDO S11: path corrigido /empresas/{id}/switch → /auth/switch-empresa — Ref S11-E2 |
 | 2 | Tap em empresa ativa | — | — | — | disabled | Nenhum (botão desabilitado) |
 
 ### O que NÃO Exibir
@@ -1777,7 +1778,7 @@ app/_layout.tsx (RootLayout)
 | Regra # | Arquivo | Método | Evidência |
 |---------|---------|--------|-----------|
 | List | src/services/merchant.empresa.service.ts:10 | getEmpresas() | GET /empresas |
-| Switch | src/services/merchant.empresa.service.ts:16 | switchEmpresa(id) | POST /empresas/{id}/switch |
+| Switch | src/services/merchant.empresa.service.ts:16 | switchEmpresa(id) | POST /auth/switch-empresa | ⚠️ CORRIGIDO S11: path corrigido — Ref S11-E2 |
 | Store | src/stores/multiloja.store.ts | useMultilojaStore | empresaAtiva, setEmpresaAtiva |
 
 ---
@@ -1838,7 +1839,7 @@ app/_layout.tsx (RootLayout)
 - **Ref Diff**: S2-E5 C4
 
 ### CC-5: Token Key Alignment
-- **Categoria**: INFERIDO→RESOLVIDO
+- **Categoria**: ⚠️ RESOLVIDO S10: confirmado — response de login/refresh retorna `token` (não `access_token`) (fonte: S8-E1c §4:#23, código: AuthController.php)
 - **Mudança**: Response de login/refresh retorna `token` (não `access_token`)
 - **Endpoints**: POST /auth/login, /auth/refresh, /auth/oauth
 - **Evidência**: `AuthController.php` retorna `{ token, token_type: "bearer" }` dentro do envelope
@@ -1868,7 +1869,7 @@ app/_layout.tsx (RootLayout)
 - **Impacto**: Visual — valores negativos agora em vermelho (mais visível)
 
 ### CC-9: Notification Config Format Dual Schema
-- **Categoria**: INFERIDO→RESOLVIDO
+- **Categoria**: ⚠️ RESOLVIDO S10: confirmado — dual schema format verificado, ambos formatos funcionam corretamente (fonte: S8-E1c §4:#24, E1b §2:172-175 mobile flat format)
 - **Backend**: Formato flat `{ push: true, email: false, marketing: true }`
 - **Frontend**: Transforma para `{ canal: "push", ativo: true }` e vice-versa
 - **Schema Zod**: `notificacaoConfigSchema` (flat), `notificacaoConfigBackendRequestSchema` (flat)
