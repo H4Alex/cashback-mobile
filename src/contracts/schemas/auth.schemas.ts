@@ -73,8 +73,8 @@ export const updateProfileRequestSchema = z.object({
 
 export const changePasswordRequestSchema = z.object({
   senha_atual: z.string().min(1),
-  nova_senha: z.string().min(6),
-  nova_senha_confirmation: z.string().min(6),
+  nova_senha: z.string().min(8),
+  nova_senha_confirmation: z.string().min(8),
 });
 
 export const deleteAccountRequestSchema = z.object({
