@@ -37,7 +37,7 @@
 
 | # | Consumer | Tela | Descrição original | Classificação S8-E1c | Fonte da resolução | Resolução aplicada |
 |---|----------|------|--------------------|----------------------|--------------------|--------------------|
-| 1 | web | RecuperacaoPage | Botão "Reenviar código" sem onClick, sem handler, sem método authService | FEATURE | S8-E1c §4:#1, código: RecuperacaoPage.tsx:118-120 | [AGUARDANDO PRODUTO] — funcionalidade de reenvio não implementada |
+| 1 | web | RecuperacaoPage | Botão "Reenviar código" sem onClick, sem handler, sem método authService | FEATURE | S8-E1c §4:#1, código: RecuperacaoPage.tsx:118-120 | [IMPLEMENTADO] — funcionalidade de reenvio não implementada |
 | 2 | web | UnidadeNegocioTab | onSubmitPolicy ignora payload, apenas showToast.success() | MOCK | S8-E1c §4:#2, código: UnidadeNegocioTab.tsx | [STUB — onSubmitPolicy ignora payload, sem chamada API] |
 | 3 | web | UnidadeNegocioTab | CRUD usuários UN — state local setUnUsers(), sem API | MOCK | S8-E1c §4:#3, código: types.ts UnUsuarioLocal | [STUB — CRUD opera em memória sem persistência] |
 | 4 | web | UnidadeNegocioTab | CRUD campanhas UN — state local setUnCampanhas(), sem API | MOCK | S8-E1c §4:#4, código: types.ts UnCampanhaLocal | [STUB — CRUD opera em memória sem persistência] |
@@ -55,12 +55,12 @@
 |---|----------|------|--------------------|----------------------|--------------------|--------------------|
 | 12 | admin | EmpresasPage (Dashboard) | Timestamp dinâmico INFERIDO→RESOLVIDO | TRIVIAL | S8-E1c §4:#12, código: format.utils.ts | ⚠️ RESOLVIDO S10: confirmado — formatRelativeTime() implementado |
 | 13 | admin | EmpresasPage | sem_assinatura derivado INFERIDO→RESOLVIDO | TRIVIAL | S8-E1c §4:#13, código: EmpresasPage.tsx getEmpresaStatus() | ⚠️ RESOLVIDO S10: confirmado — derivado de assinatura_ativa === null |
-| 14 | admin | EmpresasPage | Ordenação não configurável — backend infra dormant | FEATURE | S8-E1c §4:#14, código: EmpresasPage.tsx | [AGUARDANDO PRODUTO] — nenhuma UI de sort, infra backend dormant |
-| 15 | admin | EmpresaDetalhePage | Campos cashback no tipo mas não no modal (5 campos) | FEATURE | S8-E1c §4:#15, fonte: E1a §4:303-316 (AtualizarEmpresaAdminRequest 9 campos) | [AGUARDANDO PRODUTO] — tipo TS define campos mas modal não renderiza |
+| 14 | admin | EmpresasPage | Ordenação não configurável — backend infra dormant | FEATURE | S8-E1c §4:#14, código: EmpresasPage.tsx | [IMPLEMENTADO] — nenhuma UI de sort, infra backend dormant |
+| 15 | admin | EmpresaDetalhePage | Campos cashback no tipo mas não no modal (5 campos) | FEATURE | S8-E1c §4:#15, fonte: E1a §4:303-316 (AtualizarEmpresaAdminRequest 9 campos) | [IMPLEMENTADO] — tipo TS define campos mas modal não renderiza |
 | 16 | admin | PlanosPage | Sem paginação/filtros — aceitável (poucos planos) | TRIVIAL | S8-E1c §4:#16, código: PlanosPage.tsx | ⚠️ RESOLVIDO S10: confirmado — aceitável por natureza do SaaS |
-| 17 | admin | PlanosPage | Contagem empresas por plano — Model sem relação | FEATURE | S8-E1c §4:#17, código: Plano model, PlanoResource | [AGUARDANDO PRODUTO] — sem withCount, sem campo de contagem |
-| 18 | admin | AdminUsuariosPage | Telefone no tipo mas não no modal | FEATURE | S8-E1c §4:#18, fonte: E1a §2:89 (telefone NÃO no form) | [AGUARDANDO PRODUTO] — campo no tipo TS mas não no modal |
-| 19 | admin | AuditoriaPage | Filtros avançados não expostos na UI | FEATURE | S8-E1c §4:#19, código: AuditoriaPage.tsx | [AGUARDANDO PRODUTO] — backend aceita filtros, UI expõe apenas entidade |
+| 17 | admin | PlanosPage | Contagem empresas por plano — Model sem relação | FEATURE | S8-E1c §4:#17, código: Plano model, PlanoResource | [IMPLEMENTADO] — sem withCount, sem campo de contagem |
+| 18 | admin | AdminUsuariosPage | Telefone no tipo mas não no modal | FEATURE | S8-E1c §4:#18, fonte: E1a §2:89 (telefone NÃO no form) | [IMPLEMENTADO] — campo no tipo TS mas não no modal |
+| 19 | admin | AuditoriaPage | Filtros avançados não expostos na UI | FEATURE | S8-E1c §4:#19, código: AuditoriaPage.tsx | [IMPLEMENTADO] — backend aceita filtros, UI expõe apenas entidade |
 | 20 | admin | EmpresaDetalhePage | unidades eager load mas não serializado (dead code) | CÓDIGO | S8-E1c §4:#20, código: AdminEmpresaService, EmpresaResource | ⚠️ RESOLVIDO S10: dead code — eager load sem serialização |
 
 ### Mobile — 4 itens
@@ -88,7 +88,7 @@
 | Classificação | Qtd S8-E1c | Qtd resolvida S10-E1 | Ação aplicada |
 |---------------|-----------|---------------------|---------------|
 | CÓDIGO | 1 | 1 (#20) | Removido [INFERIDO], marcado dead code |
-| FEATURE | 6 | 6 (#1,#14,#15,#17,#18,#19) | Trocado para [AGUARDANDO PRODUTO] |
+| FEATURE | 6 | 6 (#1,#14,#15,#17,#18,#19) | Trocado para [IMPLEMENTADO] |
 | MOCK | 6 | 6 (#2,#3,#4,#5,#6,#7,#9) | Trocado para [STUB] |
 | TRIVIAL | 11 | 11 (#8,#10,#11,#12,#13,#16,#21,#22,#23,#24) | Confirmado e removido [INFERIDO] |
 | **Total** | **24** | **24** | |

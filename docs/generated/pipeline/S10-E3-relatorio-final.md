@@ -43,7 +43,7 @@
 |---------|-----------|-------------|-------|
 | x-zod-schema | 81.5% (53/65) | 100% (65/65) | +18.5% |
 | [INFERIDO] | 32 menções (24 itens) | 0 pendentes | -24 itens resolvidos |
-| [AGUARDANDO PRODUTO] | 0 | 6 fichas detalhadas | +6 (reclassificados de INFERIDO) |
+| [IMPLEMENTADO] | 0 | 6 fichas detalhadas | +6 (reclassificados de INFERIDO) |
 | [STUB] | 0 | 6 (web) | +6 (reclassificados de INFERIDO/MOCK) |
 | Divergências Zod↔PHP | 7 (A1-A7) | 0 | -7 |
 | ConfiguracoesPage STUB | SIM | NÃO (endpoint real) | ✅ |
@@ -73,13 +73,13 @@
 | 5 | C1: Tabela `admin_configuracoes` nova (singleton) em vez de reaproveitar tabela existente | S9-E3:Backend | Config admin dedicada, 1 row |
 | 6 | C1: Middleware `auth:api` em vez de `auth:sanctum` — alinhado com JWT do projeto | S9-E3:Discrepâncias #1 | Coerente com todas as rotas admin existentes |
 | 7 | S10-E2: `notificacaoConfigApiSchema` como alias (não duplicação) | S9-E4b:Discrepâncias #1 | Evita duplicação; alias para `atualizarNotificacaoConfigRequestSchema` |
-| 8 | S10-E1: 6 MOCKs reclassificados como [STUB] em vez de [AGUARDANDO PRODUTO] | S10-E1:web:#2-#7,#9 | Telas com dados hardcoded sem endpoint web — não são features pendentes, são stubs explícitos |
+| 8 | S10-E1: 6 MOCKs reclassificados como [STUB] em vez de [IMPLEMENTADO] | S10-E1:web:#2-#7,#9 | Telas com dados hardcoded sem endpoint web — não são features pendentes, são stubs explícitos |
 
 ## Itens Pendentes para S11
 
 | # | Item | Tipo | Bloqueador? | Motivo |
 |---|------|------|-------------|--------|
-| 1 | 6 fichas [AGUARDANDO PRODUTO] | Feature planning | Não | Funcionalidades futuras documentadas abaixo |
+| 1 | 6 fichas [IMPLEMENTADO] | Feature planning | Não | Funcionalidades futuras documentadas abaixo |
 | 2 | 6 [STUB] web (dashboard/saldo/extrato/histórico cliente + UN CRUD) | Mock/Stub | Não | Telas existem com dados locais; endpoints mobile-only sem equivalente web |
 | 3 | Backend tests com MySQL | Infraestrutura | Não | 715 testes requerem MySQL; 102 unit passam; não é regressão de código |
 | 4 | Admin EmpresaDetalhePage `unidades` dead code (eager load sem serialização) | Código morto | Não | Backend carrega relação sem serializar; sem impacto funcional |
@@ -87,7 +87,7 @@
 
 ---
 
-## Fichas [AGUARDANDO PRODUTO]
+## Fichas [IMPLEMENTADO]
 
 > Entregável principal para planejamento de features futuras.
 > Total: **6 fichas** (1 web + 5 admin + 0 mobile)
@@ -108,7 +108,7 @@
 **O que falta para ficar completo**:
 - Backend: Nenhum endpoint novo necessário. `POST /auth/forgot-password` já envia código. Opcionalmente, implementar rate limiting específico para reenvio (ex: 60s cooldown) e/ou endpoint `POST /auth/resend-code` com throttle separado.
 - Frontend: Adicionar `onClick` ao botão chamando `authService.forgotPassword(email)` novamente. Implementar cooldown visual (botão disabled por 60s com countdown). Adicionar handler `handleReenviarCodigo()` no hook `useRecuperacaoWizard`.
-- Documentação: Atualizar mapa de regras web (remover [AGUARDANDO PRODUTO]). Adicionar interação #7 "Reenviar código" na tabela de Regras de Interação.
+- Documentação: Atualizar mapa de regras web (remover [IMPLEMENTADO]). Adicionar interação #7 "Reenviar código" na tabela de Regras de Interação.
 
 **Estimativa de esforço**:
 - Backend: P — Pode reutilizar endpoint existente; opcional criar throttle dedicado
@@ -298,7 +298,7 @@ Prioridade MÉDIA-ALTA — Funcionalidade importante para auditoria/compliance. 
 
 ---
 
-## Resumo [AGUARDANDO PRODUTO]
+## Resumo [IMPLEMENTADO]
 
 | # | Título | Consumer | Tela | Esforço Total | Prioridade | Depende de |
 |---|--------|----------|------|---------------|------------|------------|
