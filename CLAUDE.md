@@ -1,30 +1,36 @@
-# CLAUDE.md — Regras de Pipeline Infra Testes
+# CLAUDE.md — cash-mobile (H4Cashback Mobile)
 
-> Este arquivo é lido automaticamente pelo Claude Code em toda sessão.
+> Lido automaticamente pelo Claude Code em toda sessão neste repo.
 
-## Variáveis de Projeto
-- SAAS_NAME: cash
-- REPOS_PIPELINE: cash-back cash-front cash-admin cash-mobile
-- BRANCH: pipeline/S1-S5-infra-testes
+## Projeto
+- **Nome**: H4Cashback Mobile — app do cliente (SaaS cashback)
+- **Stack**: React Native + Expo + TypeScript
+- **Testes**: Jest (unitários/integração/schema/contract)
 
-## Regras Estruturais
-- ⚡ Execução autônoma: rodar todas as etapas sem pausas. Só parar se gate falhou 3x, pré-requisito ausente, ou fim do sistema
-- ⚠️ CWD: sessão inicia no diretório PAI dos repos. Guard: `[ -d "./cash-back" ] || cd ..`
-- Cada sistema em sessão separada — etapas sequenciais na mesma sessão
-- Artefatos intermediários: `./docs/generated/pipeline/infra-testes/`
-- Artefatos finais: `./docs/generated/latest/infra-testes/`
-- 🛡️ Anti-truncamento: máx ~400 linhas por bloco
-- Edição cirúrgica — NUNCA reescrever arquivos inteiros
-- Multi-repo: branch em todos os repos, nunca `git push origin HEAD`
-- `find` restrito ao workspace — nunca `/`
-- Timeout em comandos longos
-- Stderr separado: JSON/YAML/CSV → nunca `2>&1`
-- Etapas 💻 alimentam `registro-impacto.json`
+## Comandos Essenciais
 
-## Regras de Projeto
-- 🚫 Arquivos protegidos: `.github/workflows/` (exceto T3.4/T3.5), `infra/`, `.env`
-- Padrão de commit: `[tipo](escopo): descrição — ref: SN-EN`
-- Branch: `pipeline/S1-S5-infra-testes`
+```bash
+# Dev
+npx expo start                 # Metro bundler
 
-## Referência Completa
-- `./docs/generated/pipeline/REGRAS-UNIVERSAIS.md` (no cash-back)
+# Validação local (rodar antes de push)
+npm run test:pipeline          # tsc + eslint + jest + schema + contract
+
+# Testes individuais
+npm run test                   # Jest (watch mode)
+npm run test:ci                # Jest + coverage (CI mode)
+npm run test:coverage          # Jest + coverage report
+npm run test:changed           # Jest (only changed files)
+
+# Qualidade
+npm run lint                   # ESLint
+npx tsc --noEmit               # Type check
+
+# Build
+eas build                      # Build via EAS
+```
+
+## Convenções
+- Testes em `src/**/__tests__/` ao lado do código
+- Coverage provider: Jest default
+- Watchman ativo para hot reload

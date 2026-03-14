@@ -14,39 +14,45 @@ print_header() {
 }
 
 ########################################
-# Step 1: Type Checking
+# Step 1: Type Checking + Linting (parallel)
 ########################################
-print_header "Step 1/5: Type Checking (tsc --noEmit)"
-npx tsc --noEmit
-echo "[PASS] Type Checking"
+print_header "Step 1/3: Type Checking + Linting (parallel)"
+
+npx tsc --noEmit &
+TSC_PID=$!
+
+npm run lint &
+LINT_PID=$!
+
+TSC_OK=true
+LINT_OK=true
+
+wait $TSC_PID || TSC_OK=false
+wait $LINT_PID || LINT_OK=false
+
+if [ "$TSC_OK" = false ]; then
+  echo "[FAIL] Type Checking"
+  exit 1
+fi
+if [ "$LINT_OK" = false ]; then
+  echo "[FAIL] Linting"
+  exit 1
+fi
+echo "[PASS] Type Checking + Linting"
 
 ########################################
-# Step 2: Linting
+# Step 2: All Tests (jest)
 ########################################
-print_header "Step 2/5: Linting (npm run lint)"
-npm run lint
-echo "[PASS] Linting"
-
-########################################
-# Step 3: Unit / Integration Tests
-########################################
-print_header "Step 3/5: Unit / Integration Tests (jest --passWithNoTests)"
+print_header "Step 2/3: All Tests (jest --passWithNoTests)"
 npx jest --passWithNoTests
-echo "[PASS] Unit / Integration Tests"
+echo "[PASS] All Tests"
 
 ########################################
-# Step 4: Schema Tests
+# Step 3: Schema + Contract Tests
 ########################################
-print_header "Step 4/5: Schema Tests (jest --testPathPattern=__tests__/schemas)"
-npx jest --testPathPattern=__tests__/schemas --passWithNoTests
-echo "[PASS] Schema Tests"
-
-########################################
-# Step 5: Contract Tests
-########################################
-print_header "Step 5/5: Contract Tests (jest --testPathPattern=__tests__/contracts)"
-npx jest --testPathPattern=__tests__/contracts --passWithNoTests
-echo "[PASS] Contract Tests"
+print_header "Step 3/3: Schema + Contract Tests"
+npx jest --testPathPattern="__tests__/(schemas|contracts)" --passWithNoTests
+echo "[PASS] Schema + Contract Tests"
 
 ########################################
 # Summary
@@ -56,7 +62,7 @@ echo "========================================"
 echo "  PIPELINE SUMMARY"
 echo "========================================"
 echo ""
-echo "  Results: 5 / 5 steps passed"
+echo "  Results: 3 / 3 steps passed"
 echo ""
 echo "  All checks passed!"
 echo ""
