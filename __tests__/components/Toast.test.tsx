@@ -1,11 +1,14 @@
 import { render, screen } from "@testing-library/react-native";
 import { Toast } from "@/src/components/ui/Toast";
 
-jest.useFakeTimers();
-
 describe("Toast", () => {
   afterEach(() => {
-    jest.runOnlyPendingTimers();
+    jest.clearAllTimers();
+    jest.useRealTimers();
+  });
+
+  beforeEach(() => {
+    jest.useFakeTimers();
   });
 
   it("renders message when visible", () => {
