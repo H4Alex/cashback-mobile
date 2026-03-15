@@ -12,7 +12,7 @@ const isDev = __DEV__;
 interface ContractViolation {
   endpoint: string;
   method: string;
-  errors: z.typeToFlattenedError<unknown>;
+  errors: z.ZodFlattenedError<unknown>;
   timestamp: string;
 }
 
@@ -23,7 +23,7 @@ function reportContractViolation(violation: ContractViolation): void {
   if (isDev) {
     console.warn(
       `[Contract Violation] ${violation.method} ${violation.endpoint}`,
-      violation.errors.fieldErrors
+      violation.errors.fieldErrors,
     );
   }
 }
@@ -47,7 +47,7 @@ interface ApiCallOptions<T extends z.ZodTypeAny> {
 
 export async function apiCall<T extends z.ZodTypeAny>(
   httpClient: AxiosInstance,
-  options: ApiCallOptions<T>
+  options: ApiCallOptions<T>,
 ): Promise<z.infer<T>> {
   const { schema, url, method, data, params, config } = options;
 
@@ -76,7 +76,7 @@ export async function apiCall<T extends z.ZodTypeAny>(
 export function validateWithSchema<T extends z.ZodTypeAny>(
   schema: T,
   data: unknown,
-  label: string
+  label: string,
 ): z.infer<T> {
   const parsed = schema.safeParse(data);
   if (!parsed.success) {

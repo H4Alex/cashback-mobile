@@ -1,10 +1,13 @@
 import { z } from "zod";
 
 export const createContestacaoSchema = z.object({
-  transacao_id: z.number({ required_error: "Selecione uma transação" }),
-  tipo: z.enum(["cashback_nao_gerado", "valor_incorreto", "expiracao_indevida", "venda_cancelada"], {
-    required_error: "Selecione o tipo da contestação",
-  }),
+  transacao_id: z.number({ error: "Selecione uma transação" }),
+  tipo: z.enum(
+    ["cashback_nao_gerado", "valor_incorreto", "expiracao_indevida", "venda_cancelada"],
+    {
+      error: "Selecione o tipo da contestação",
+    },
+  ),
   descricao: z
     .string()
     .min(10, "Descreva o problema com pelo menos 10 caracteres")

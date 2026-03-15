@@ -51,14 +51,14 @@ export const cursorPaginationMetaSchema = z.object({
 
 export const laravelValidationErrorSchema = z.object({
   message: z.string(),
-  errors: z.record(z.array(z.string())),
+  errors: z.record(z.string(), z.array(z.string())),
 });
 
 export const apiErrorDetailSchema = z.object({
   code: z.string(),
   message: z.string(),
   correlation_id: z.string().optional(),
-  details: z.record(z.array(z.string())).optional(),
+  details: z.record(z.string(), z.array(z.string())).optional(),
 });
 
 export const apiErrorResponseSchema = z.object({
@@ -79,9 +79,7 @@ export function apiResponseSchema<T extends z.ZodTypeAny>(dataSchema: T) {
   });
 }
 
-export function paginatedResponseSchema<T extends z.ZodTypeAny>(
-  itemSchema: T
-) {
+export function paginatedResponseSchema<T extends z.ZodTypeAny>(itemSchema: T) {
   return z.object({
     status: z.literal(true),
     data: z.array(itemSchema),
@@ -91,9 +89,7 @@ export function paginatedResponseSchema<T extends z.ZodTypeAny>(
   });
 }
 
-export function cursorPaginatedResponseSchema<T extends z.ZodTypeAny>(
-  itemSchema: T
-) {
+export function cursorPaginatedResponseSchema<T extends z.ZodTypeAny>(itemSchema: T) {
   return z.object({
     status: z.literal(true),
     data: z.object({
@@ -109,8 +105,6 @@ export function cursorPaginatedResponseSchema<T extends z.ZodTypeAny>(
 
 export type PaginationMeta = z.infer<typeof paginationMetaSchema>;
 export type CursorPaginationMeta = z.infer<typeof cursorPaginationMetaSchema>;
-export type LaravelValidationError = z.infer<
-  typeof laravelValidationErrorSchema
->;
+export type LaravelValidationError = z.infer<typeof laravelValidationErrorSchema>;
 export type ApiErrorDetail = z.infer<typeof apiErrorDetailSchema>;
 export type ApiErrorResponse = z.infer<typeof apiErrorResponseSchema>;

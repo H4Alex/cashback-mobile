@@ -30,8 +30,8 @@ describe("monetarioSchema", () => {
     expect(monetarioSchema.safeParse("abc").success).toBe(false);
   });
 
-  it("aceita Infinity como number (branch z.number())", () => {
-    expect(monetarioSchema.safeParse(Infinity).success).toBe(true);
+  it("rejeita Infinity", () => {
+    expect(monetarioSchema.safeParse(Infinity).success).toBe(false);
   });
 
   it("rejeita NaN", () => {

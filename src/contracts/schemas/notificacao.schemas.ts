@@ -15,7 +15,7 @@ export const notificationSchema = z.object({
   mensagem: z.string(),
   tipo: z.string(),
   lida: z.boolean(),
-  dados_extras: z.record(z.unknown()).nullable().optional(),
+  dados_extras: z.record(z.string(), z.unknown()).nullable().optional(),
   created_at: isoTimestampSchema,
 });
 
@@ -30,6 +30,4 @@ export const notificationPreferencesSchema = z.object({
 // ─── Tipos derivados ─────────────────────────────────────────
 
 export type MobileNotification = z.infer<typeof notificationSchema>;
-export type NotificationPreferences = z.infer<
-  typeof notificationPreferencesSchema
->;
+export type NotificationPreferences = z.infer<typeof notificationPreferencesSchema>;
