@@ -48,7 +48,7 @@ export const contestacaoSchema = z.object({
 export const createContestacaoRequestSchema = z.object({
   transacao_id: z.number().positive(),
   tipo: contestacaoTipoEnum,
-  descricao: z.string().min(10).max(500),
+  descricao: z.string().min(10).max(1000),
 });
 
 // ─── Tipos derivados ─────────────────────────────────────────

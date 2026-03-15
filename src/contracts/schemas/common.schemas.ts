@@ -10,9 +10,13 @@ import { z } from "zod";
 
 // ─── Helpers ─────────────────────────────────────────────────
 
-export const monetarioSchema = z
-  .string()
-  .regex(/^-?\d+(\.\d{1,2})?$/, "Valor monetário inválido");
+export const monetarioSchema = z.union([
+  z.number(),
+  z
+    .string()
+    .transform((v) => Number(v))
+    .pipe(z.number().finite()),
+]);
 export const isoTimestampSchema = z.string().min(1);
 
 // ─── Paginação ───────────────────────────────────────────────
