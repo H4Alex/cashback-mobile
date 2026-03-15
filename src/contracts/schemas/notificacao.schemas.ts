@@ -15,7 +15,7 @@ export const notificationSchema = z.object({
   mensagem: z.string(),
   tipo: z.string(),
   lida: z.boolean(),
-  dados_extras: z.record(z.unknown()).nullable().optional(),
+  dados_extras: z.record(z.string(), z.any()).nullable().optional(),
   created_at: isoTimestampSchema,
 });
 
