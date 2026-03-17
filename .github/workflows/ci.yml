@@ -107,6 +107,7 @@ jobs:
   lint:
     name: Lint
     needs: setup
+    if: always() && needs.setup.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -126,6 +127,7 @@ jobs:
   type-check:
     name: Type Check
     needs: setup
+    if: always() && needs.setup.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -145,6 +147,7 @@ jobs:
   test:
     name: Tests
     needs: setup
+    if: always() && needs.setup.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
