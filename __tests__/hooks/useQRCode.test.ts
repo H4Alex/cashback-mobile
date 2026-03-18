@@ -18,6 +18,7 @@ describe("useQRCode hooks", () => {
     });
 
     it("calls gerarQRCode service", async () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { mobileQRCodeService } = require("@/src/services");
       const { result } = renderHook(() => useGerarQRCode(), { wrapper: createWrapper() });
       act(() => {
@@ -35,6 +36,7 @@ describe("useQRCode hooks", () => {
     });
 
     it("calls validarQRCode service", async () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { mobileQRCodeService } = require("@/src/services");
       const { result } = renderHook(() => useValidarQRCode(), { wrapper: createWrapper() });
       act(() => {

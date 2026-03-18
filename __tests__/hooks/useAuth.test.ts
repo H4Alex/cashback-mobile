@@ -31,6 +31,7 @@ describe("useAuth hooks", () => {
     });
 
     it("calls login service on mutate", async () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { mobileAuthService } = require("@/src/services");
       const { result } = renderHook(() => useLogin(), { wrapper: createWrapper() });
       act(() => {
@@ -58,6 +59,7 @@ describe("useAuth hooks", () => {
     });
 
     it("calls forgotPassword service", async () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { mobileAuthService } = require("@/src/services");
       const { result } = renderHook(() => useForgotPassword(), { wrapper: createWrapper() });
       act(() => {
