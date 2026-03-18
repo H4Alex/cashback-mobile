@@ -188,7 +188,7 @@ describe("useOfflineQueue", () => {
 
   it("flush drops items after MAX_RETRIES (3) and tracks analytics", async () => {
     (apiClient.post as jest.Mock).mockRejectedValue(new Error("Persistent Error"));
-    const { result } = renderHook(() => useOfflineQueue());
+    renderHook(() => useOfflineQueue());
 
     // Manually seed a queue item with retries=3 (at max)
     const maxRetriedItem = {
@@ -281,7 +281,7 @@ describe("useOfflineQueue", () => {
 
   it("auto-flushes when coming back online with queued items", async () => {
     useConnectivityStore.setState({ isOnline: false });
-    const { result, rerender } = renderHook(() => useOfflineQueue());
+    const { result } = renderHook(() => useOfflineQueue());
 
     act(() => {
       result.current.enqueue("auto_action", {

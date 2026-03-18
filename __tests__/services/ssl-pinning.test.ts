@@ -1,6 +1,7 @@
 import type { InternalAxiosRequestConfig } from "axios";
+import { sslPinningInterceptor, validateApiHost } from "@/src/lib/ssl-pinning";
 
-// Control isProd from tests
+// Control isProd from tests — jest.mock is hoisted above imports by babel-jest
 let mockIsProd = false;
 let mockApiBaseUrl = "http://localhost:3000";
 
@@ -19,8 +20,6 @@ jest.mock("@/src/config/env", () => ({
     };
   },
 }));
-
-import { sslPinningInterceptor, validateApiHost } from "@/src/lib/ssl-pinning";
 
 function makeConfig(
   overrides: Partial<InternalAxiosRequestConfig> = {},

@@ -3,6 +3,6 @@ import expoConfig from "eslint-config-expo/flat.js";
 export default [
   ...expoConfig,
   {
-    ignores: ["dist/*", "node_modules/*", ".expo/*"],
+    ignores: ["dist/*", "node_modules/*", ".expo/*", "jest-log-processor.js"],
   },
 ];
