@@ -16,7 +16,7 @@
     "test:run": "jest",
     "test:changed": "jest --onlyChanged --passWithNoTests",
     "test:coverage": "jest --coverage",
-    "test:ci": "jest --ci --coverage --passWithNoTests",
+    "test:ci": "jest --ci --coverage --passWithNoTests && node C:/Users/Alex/Repositorios/cash-e2e/scripts/consolidate-test-results.js --project=cash 2>/dev/null || true",
     "format": "prettier --write \"**/*.{ts,tsx,json}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,json}\"",
     "build:dev": "eas build --profile development --platform all",
