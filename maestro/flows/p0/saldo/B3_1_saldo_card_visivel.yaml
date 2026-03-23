@@ -13,7 +13,7 @@ appId: com.h4alex.cashback
 
 # Verificar card de saldo
 - assertVisible:
-    text: "Saldo Total"
+    text: "Saldo disponível"
     timeout: 5000
 
 # Verificar que saldo está formatado em R$

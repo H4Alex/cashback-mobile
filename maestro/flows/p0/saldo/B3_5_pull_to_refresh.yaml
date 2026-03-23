@@ -13,7 +13,7 @@ appId: com.h4alex.cashback
 
 # Verificar saldo inicial
 - assertVisible:
-    text: "Saldo Total"
+    text: "Saldo disponível"
     timeout: 5000
 - assertVisible: "R$"
 
@@ -24,7 +24,7 @@ appId: com.h4alex.cashback
 
 # Aguardar refresh completar
 - assertVisible:
-    text: "Saldo Total"
+    text: "Saldo disponível"
     timeout: 5000
 
 # Verificar que saldo ainda está visível (não desapareceu)

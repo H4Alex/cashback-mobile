@@ -1,7 +1,9 @@
 # B1.3 — Cadastro básico (registro de novo consumidor)
-# Cenário: Preencher nome, email, CPF, telefone, senha → aceitar termos → conta criada
+# Cenário: Preencher nome, email, CPF, senha → submeter → tela de consentimento LGPD
 # Pré-condição: App na tela de login (onboarding completo)
 # Critério: Formulário aceita dados, submete e navega para consentimento LGPD
+# Nota: Register.tsx tem 5 campos: nome, email, cpf, senha, confirmar senha.
+#   NÃO tem telefone nem checkbox de termos (termos ficam na tela de consent).
 appId: com.h4alex.cashback
 
 ---
@@ -22,6 +24,11 @@ appId: com.h4alex.cashback
 # Ir para registro
 - tapOn: "Cadastre-se"
 
+# Verificar título "Criar Conta"
+- assertVisible:
+    text: "Criar Conta"
+    timeout: 5000
+
 # Preencher nome
 - tapOn:
     id: "input-nome"
@@ -37,11 +44,6 @@ appId: com.h4alex.cashback
     id: "input-cpf"
 - inputText: "52998224725"
 
-# Preencher telefone
-- tapOn:
-    id: "input-telefone"
-- inputText: "11988887777"
-
 # Preencher senha
 - tapOn:
     id: "input-password"
@@ -52,14 +54,10 @@ appId: com.h4alex.cashback
     id: "input-confirm-password"
 - inputText: "Senha@E2E123"
 
-# Aceitar termos
-- tapOn:
-    id: "checkbox-termos"
-
 # Submeter cadastro
 - tapOn: "Cadastrar"
 
 # Verificar navegação para consentimento LGPD
 - assertVisible:
-    text: "Consentimento"
+    text: "Consentimento LGPD"
     timeout: 10000

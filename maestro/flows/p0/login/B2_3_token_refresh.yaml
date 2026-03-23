@@ -21,9 +21,9 @@ appId: com.h4alex.cashback
     timeout: 5000
 
 # Voltar para Home
-- tapOn: "Home"
+- tapOn: "Início"
 - assertVisible:
-    text: "Saldo Total"
+    text: "Saldo disponível"
     timeout: 5000
 
 # Navegar para QR Code
@@ -33,15 +33,16 @@ appId: com.h4alex.cashback
     timeout: 5000
 
 # Navegar para Notificações
-- tapOn: "Notificações"
+- tapOn: "Alertas"
 - assertVisible:
     text: "Notificações"
     timeout: 5000
+# Nota: tab label é "Alertas" mas o header da tela é "Notificações"
 
 # Voltar para Home — confirmar que sessão ainda está ativa
-- tapOn: "Home"
+- tapOn: "Início"
 - assertVisible:
-    text: "Saldo Total"
+    text: "Saldo disponível"
     timeout: 5000
 
 # Verificar que "Olá," ainda aparece (não redirecionou para login)
@@ -50,7 +51,7 @@ appId: com.h4alex.cashback
 # Navegar para Perfil e verificar dados do usuário
 - tapOn: "Perfil"
 - assertVisible:
-    text: "Meus Dados"
+    text: "Editar Perfil"
     timeout: 5000
 
 # Sessão continua ativa — token refresh funciona silenciosamente

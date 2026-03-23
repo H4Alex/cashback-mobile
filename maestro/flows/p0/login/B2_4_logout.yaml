@@ -13,7 +13,7 @@ appId: com.h4alex.cashback
 
 # Verificar que estamos no dashboard
 - assertVisible:
-    text: "Saldo Total"
+    text: "Saldo disponível"
     timeout: 5000
 
 # Navegar para Perfil

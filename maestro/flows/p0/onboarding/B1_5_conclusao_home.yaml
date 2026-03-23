@@ -43,7 +43,7 @@ appId: com.h4alex.cashback
 
 # Dashboard com saldo
 - assertVisible:
-    text: "Saldo Total"
+    text: "Saldo disponível"
     timeout: 10000
 
 - assertVisible: "R$"

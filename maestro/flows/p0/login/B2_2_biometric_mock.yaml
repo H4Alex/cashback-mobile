@@ -41,5 +41,5 @@ appId: com.h4alex.cashback
 - tapOn: "Entrar"
 
 - assertVisible:
-    text: "Saldo Total"
+    text: "Saldo disponível"
     timeout: 10000
