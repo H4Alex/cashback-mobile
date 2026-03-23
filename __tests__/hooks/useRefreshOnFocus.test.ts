@@ -21,4 +21,34 @@ describe("useRefreshOnFocus", () => {
     unmount();
     expect(removeMock).toHaveBeenCalled();
   });
+
+  it("calls refetch when transitioning from background to active", () => {
+    const refetch = jest.fn();
+    let appStateCallback: (state: string) => void = () => {};
+    jest.spyOn(AppState, "addEventListener").mockImplementation((_type, cb) => {
+      appStateCallback = cb as (state: string) => void;
+      return { remove: jest.fn() } as any;
+    });
+
+    Object.defineProperty(AppState, "currentState", { value: "background", configurable: true });
+    renderHook(() => useRefreshOnFocus(refetch));
+
+    appStateCallback("active");
+    expect(refetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not call refetch when staying active", () => {
+    const refetch = jest.fn();
+    let appStateCallback: (state: string) => void = () => {};
+    jest.spyOn(AppState, "addEventListener").mockImplementation((_type, cb) => {
+      appStateCallback = cb as (state: string) => void;
+      return { remove: jest.fn() } as any;
+    });
+
+    Object.defineProperty(AppState, "currentState", { value: "active", configurable: true });
+    renderHook(() => useRefreshOnFocus(refetch));
+
+    appStateCallback("active");
+    expect(refetch).not.toHaveBeenCalled();
+  });
 });

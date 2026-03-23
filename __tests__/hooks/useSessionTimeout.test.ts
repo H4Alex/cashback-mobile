@@ -1,4 +1,5 @@
 import { renderHook, act } from "@testing-library/react-native";
+import { AppState } from "react-native";
 import { useSessionTimeout } from "@/src/hooks/useSessionTimeout";
 import { useAuthStore } from "@/src/stores/auth.store";
 
@@ -53,5 +54,61 @@ describe("useSessionTimeout", () => {
     });
 
     expect(logoutSpy).not.toHaveBeenCalled();
+  });
+
+  it("logs out when returning to foreground after timeout", () => {
+    const logoutSpy = jest.fn();
+    useAuthStore.setState({ logout: logoutSpy } as any);
+
+    let appStateCallback: (state: string) => void = () => {};
+    jest.spyOn(AppState, "addEventListener").mockImplementation((_type, cb) => {
+      appStateCallback = cb as (state: string) => void;
+      return { remove: jest.fn() } as any;
+    });
+
+    renderHook(() => useSessionTimeout());
+
+    // Simulate 16 minutes passing while in background
+    act(() => {
+      jest.advanceTimersByTime(16 * 60_000);
+    });
+
+    // Return to foreground after timeout elapsed
+    act(() => {
+      appStateCallback("active");
+    });
+
+    expect(logoutSpy).toHaveBeenCalled();
+  });
+
+  it("resets timer when returning to foreground before timeout", () => {
+    const logoutSpy = jest.fn();
+    useAuthStore.setState({ logout: logoutSpy } as any);
+
+    let appStateCallback: (state: string) => void = () => {};
+    jest.spyOn(AppState, "addEventListener").mockImplementation((_type, cb) => {
+      appStateCallback = cb as (state: string) => void;
+      return { remove: jest.fn() } as any;
+    });
+
+    renderHook(() => useSessionTimeout());
+
+    // 5 minutes pass
+    act(() => {
+      jest.advanceTimersByTime(5 * 60_000);
+    });
+
+    // Return to foreground — should reset timer
+    act(() => {
+      appStateCallback("active");
+    });
+
+    expect(logoutSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not set timer when not authenticated", () => {
+    useAuthStore.setState({ isAuthenticated: false } as any);
+    const { result } = renderHook(() => useSessionTimeout());
+    expect(result.current.resetTimer).toBeDefined();
   });
 });

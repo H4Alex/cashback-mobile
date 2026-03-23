@@ -32,4 +32,54 @@ describe("useConnectivity", () => {
     expect(result.current.isOnline).toBe(false);
     expect(result.current.connectionType).toBe("wifi");
   });
+
+  it("updates store when NetInfo reports wifi connected", () => {
+    let netInfoCallback: (state: unknown) => void = () => {};
+    (NetInfo.addEventListener as jest.Mock).mockImplementation((cb: (state: unknown) => void) => {
+      netInfoCallback = cb;
+      return jest.fn();
+    });
+
+    renderHook(() => useConnectivity());
+    netInfoCallback({ isConnected: true, type: "wifi" });
+    expect(useConnectivityStore.getState().isOnline).toBe(true);
+    expect(useConnectivityStore.getState().connectionType).toBe("wifi");
+  });
+
+  it("updates store for cellular connection", () => {
+    let netInfoCallback: (state: unknown) => void = () => {};
+    (NetInfo.addEventListener as jest.Mock).mockImplementation((cb: (state: unknown) => void) => {
+      netInfoCallback = cb;
+      return jest.fn();
+    });
+
+    renderHook(() => useConnectivity());
+    netInfoCallback({ isConnected: true, type: "cellular" });
+    expect(useConnectivityStore.getState().connectionType).toBe("cellular");
+  });
+
+  it("sets connectionType to none when disconnected", () => {
+    let netInfoCallback: (state: unknown) => void = () => {};
+    (NetInfo.addEventListener as jest.Mock).mockImplementation((cb: (state: unknown) => void) => {
+      netInfoCallback = cb;
+      return jest.fn();
+    });
+
+    renderHook(() => useConnectivity());
+    netInfoCallback({ isConnected: false, type: "none" });
+    expect(useConnectivityStore.getState().isOnline).toBe(false);
+    expect(useConnectivityStore.getState().connectionType).toBe("none");
+  });
+
+  it("sets connectionType to unknown for unrecognized type", () => {
+    let netInfoCallback: (state: unknown) => void = () => {};
+    (NetInfo.addEventListener as jest.Mock).mockImplementation((cb: (state: unknown) => void) => {
+      netInfoCallback = cb;
+      return jest.fn();
+    });
+
+    renderHook(() => useConnectivity());
+    netInfoCallback({ isConnected: true, type: "vpn" });
+    expect(useConnectivityStore.getState().connectionType).toBe("unknown");
+  });
 });

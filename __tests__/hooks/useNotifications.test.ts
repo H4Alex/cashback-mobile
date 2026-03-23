@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react-native";
+import { renderHook, act, waitFor } from "@testing-library/react-native";
 import { createWrapper } from "@/src/testing/hook-test-helpers";
 import {
   useNotifications,
@@ -71,6 +71,52 @@ describe("useNotifications hooks", () => {
         wrapper: createWrapper(),
       });
       expect(result.current.mutate).toBeDefined();
+    });
+
+    it("calls updatePreferences service on mutate", async () => {
+      const { mobileNotificationService } = require("@/src/services");
+      const { result } = renderHook(() => useUpdateNotificationPreferences(), {
+        wrapper: createWrapper(),
+      });
+
+      act(() => {
+        result.current.mutate({ push: false, email: true });
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(mobileNotificationService.updatePreferences).toHaveBeenCalled();
+    });
+  });
+
+  describe("useMarkNotificationRead - mutation flow", () => {
+    it("calls markAsRead on mutate and invalidates queries", async () => {
+      const { mobileNotificationService } = require("@/src/services");
+      const { result } = renderHook(() => useMarkNotificationRead(), {
+        wrapper: createWrapper(),
+      });
+
+      act(() => {
+        result.current.mutate(42);
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(mobileNotificationService.markAsRead).toHaveBeenCalledWith(42);
+    });
+  });
+
+  describe("useMarkAllNotificationsRead - mutation flow", () => {
+    it("calls markAllAsRead on mutate and resets unread count", async () => {
+      const { mobileNotificationService } = require("@/src/services");
+      const { result } = renderHook(() => useMarkAllNotificationsRead(), {
+        wrapper: createWrapper(),
+      });
+
+      act(() => {
+        result.current.mutate();
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(mobileNotificationService.markAllAsRead).toHaveBeenCalled();
     });
   });
 });

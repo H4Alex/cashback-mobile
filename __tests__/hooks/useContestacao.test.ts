@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react-native";
+import { renderHook, act, waitFor } from "@testing-library/react-native";
 import { createWrapper } from "@/src/testing/hook-test-helpers";
 import { useContestacoes, useContestacaoCreate } from "@/src/hooks/useContestacao";
 
@@ -26,6 +26,24 @@ describe("useContestacao hooks", () => {
       const { result } = renderHook(() => useContestacaoCreate(), { wrapper: createWrapper() });
       expect(result.current.mutate).toBeDefined();
       expect(result.current.isPending).toBe(false);
+    });
+
+    it("calls create service on mutate and invalidates queries on success", async () => {
+      const { mobileContestacaoService } = require("@/src/services/mobile.contestacao.service");
+      const { result } = renderHook(() => useContestacaoCreate(), { wrapper: createWrapper() });
+
+      act(() => {
+        result.current.mutate({
+          transacao_id: 1,
+          tipo: "valor_incorreto",
+          descricao: "Valor veio errado no app",
+        });
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(mobileContestacaoService.create).toHaveBeenCalledWith(
+        expect.objectContaining({ transacao_id: 1, tipo: "valor_incorreto" }),
+      );
     });
   });
 });
