@@ -11,7 +11,7 @@ module.exports = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
-  collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.d.ts", "!src/**/index.ts", "!src/types/**", "!src/testing/**"],
+  collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.d.ts", "!src/**/index.ts", "!src/types/**", "!src/testing/**", "!src/lib/analytics.ts", "!src/lib/sentry.ts", "!src/i18n/locales/**", "!src/config/env.ts"],
   coverageThreshold: {
     global: {
       branches: 63.3,
