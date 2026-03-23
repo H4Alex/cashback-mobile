@@ -14,7 +14,7 @@ function formatNumber(val: number, decimals: number): string {
   const formatted = val.toFixed(decimals);
   const [intPart, decPart] = formatted.split(".");
   const withDots = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  return `${withDots},${decPart}`;
+  return decPart !== undefined ? `${withDots},${decPart}` : withDots;
 }
 
 export function AnimatedCounter({

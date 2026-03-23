@@ -44,6 +44,17 @@ describe("AnimatedCounter", () => {
     expect(getByText("1.000.000,00")).toBeTruthy();
   });
 
+  it("formats correctly with decimals=0 (no comma)", () => {
+    const { getByText } = render(<AnimatedCounter value={1500} duration={100} decimals={0} />);
+
+    act(() => {
+      jest.advanceTimersByTime(100);
+    });
+
+    // With decimals=0, should show "1.500" without trailing comma
+    expect(getByText("1.500")).toBeTruthy();
+  });
+
   it("respects custom decimals", () => {
     const { getByText } = render(<AnimatedCounter value={42.5} duration={100} decimals={1} />);
 
