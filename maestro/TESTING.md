@@ -167,6 +167,28 @@ npm run test:e2e:mobile:all             # P0 + P1
 maestro test maestro/flows/p1/contestacao/  # Grupo específico
 ```
 
+## Maestro Cloud (execução remota)
+
+Alternativa ao emulador local — executa flows em dispositivos reais na nuvem.
+
+### Setup
+1. Criar conta em [cloud.mobile.dev](https://cloud.mobile.dev) (free tier: 100 flows/mês)
+2. Gerar API key
+3. Configurar: `export MAESTRO_CLOUD_API_KEY=<key>`
+4. Ter APK do app buildado
+
+### Executar
+```bash
+bash scripts/maestro-cloud.sh          # P0 tests
+bash scripts/maestro-cloud.sh p1       # P1 tests
+bash scripts/maestro-cloud.sh all      # Todos
+```
+
+### CI via Maestro Cloud
+O workflow `e2e.yml` usa emulador local no GitHub Actions. Para usar Maestro Cloud:
+- Adicionar secret `MAESTRO_CLOUD_API_KEY` no repo
+- Substituir `maestro test` por `maestro cloud` no workflow
+
 ## Próximas etapas
 
 ### P2 (~11 testes)
