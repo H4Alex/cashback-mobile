@@ -1,0 +1,40 @@
+# C2.3 — Preferências de notificação
+# Cenário: Perfil → "Preferências de Notificação" → toggles push/email/marketing
+# Pré-condição: Consumidor autenticado
+# Critério: Tela "Preferências" com seções Canais e Categorias, switches visíveis
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para Perfil via tab
+- tapOn: "Perfil"
+
+# Scroll até "Preferências de Notificação"
+- scrollUntilVisible:
+    element: "Preferências de Notificação"
+    direction: DOWN
+
+- tapOn: "Preferências de Notificação"
+
+# Verificar tela
+- assertVisible:
+    text: "Preferências"
+    timeout: 5000
+
+- assertVisible: "Escolha como e quando deseja ser notificado."
+
+# Seção Canais
+- assertVisible: "CANAIS"
+- assertVisible: "Push Notifications"
+- assertVisible: "Receber alertas no celular em tempo real"
+- assertVisible: "Email"
+- assertVisible: "Receber resumos e alertas por email"
+
+# Seção Categorias
+- assertVisible: "CATEGORIAS"
+- assertVisible: "Marketing e Promoções"

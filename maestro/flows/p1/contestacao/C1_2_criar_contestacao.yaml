@@ -1,0 +1,29 @@
+# C1.2 — Criar nova contestação
+# Cenário: Navegar para extrato → tocar transação contestável → tela de criação
+# Pré-condição: Consumidor autenticado com transações contestáveis (rejeitado/expirado/congelado)
+# Critério: Tela "Nova Contestação" renderiza com formulário
+# Nota: Contestações são criadas a partir de transações no extrato com status
+#   rejeitado, expirado ou congelado. O fluxo é: Extrato → tap na transação → create.
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para Contestações via quick action
+- tapOn: "Contestações"
+
+- assertVisible:
+    text: "Contestações"
+    timeout: 5000
+
+# Tocar no botão "Nova" para criar contestação
+- tapOn: "Nova"
+
+# Verificar tela de criação
+- assertVisible:
+    text: "Nova Contestação"
+    timeout: 5000

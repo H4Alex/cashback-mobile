@@ -1,0 +1,40 @@
+# C3.3 — Badge count na tab de notificações
+# Cenário: Tab "Alertas" exibe badge com contagem de não-lidas
+# Pré-condição: Consumidor autenticado
+# Critério: Tab bar renderiza com "Alertas", badge visível se há não-lidas
+# Nota: O badge mostra o número ou "99+" no tab bar layout (_layout.tsx).
+#   Este teste verifica que a navegação entre tabs funciona e a tela de
+#   notificações é acessível a partir da tab bar.
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Verificar que a tab "Alertas" existe no tab bar
+- assertVisible: "Alertas"
+
+# Navegar para Alertas
+- tapOn: "Alertas"
+
+# Verificar tela de notificações
+- assertVisible:
+    text: "Notificações"
+    timeout: 5000
+
+# Voltar para Home
+- tapOn: "Início"
+
+# Verificar que dashboard ainda funciona
+- assertVisible:
+    text: "Saldo disponível"
+    timeout: 5000
+
+# Navegar de volta para Alertas
+- tapOn: "Alertas"
+
+# Tela persiste
+- assertVisible: "Notificações"

@@ -19,11 +19,15 @@ maestro/
 │   └── navigate_to_qrcode.yaml  # Navegar para tela de QR Code
 └── flows/
     ├── 01-08_*.yaml             # Flows originais (monolíticos, regressão)
-    └── p0/                      # Testes P0 atômicos (20 testes)
-        ├── onboarding/          # B1.1–B1.5 (5 testes)
-        ├── login/               # B2.1–B2.4 (4 testes)
-        ├── saldo/               # B3.1–B3.5 (5 testes)
-        └── qr-cashback/         # B4.1–B4.6 (6 testes)
+    ├── p0/                      # Testes P0 atômicos (20 testes)
+    │   ├── onboarding/          # B1.1–B1.5 (5 testes)
+    │   ├── login/               # B2.1–B2.4 (4 testes)
+    │   ├── saldo/               # B3.1–B3.5 (5 testes)
+    │   └── qr-cashback/         # B4.1–B4.6 (6 testes)
+    └── p1/                      # Testes P1 atômicos (11 testes)
+        ├── contestacao/         # C1.1–C1.4 (4 testes)
+        ├── perfil/              # C2.1–C2.4 (4 testes)
+        └── push/                # C3.1–C3.3 (3 testes)
 ```
 
 ## Pré-requisitos
@@ -140,12 +144,30 @@ npm run test:e2e:mobile:validate
 | B4.5 | QR | Erro saldo insuficiente | ✅ Criado |
 | B4.6 | QR | Empty state sem saldo | ✅ Criado |
 
-## Próximas etapas
+## Testes P1 — Catálogo
 
-### P1 (~11 testes)
-- Contestação (4): criar, upload foto, acompanhar, notificação
-- Perfil (4): editar dados, mudar senha, preferências notificação, sessões
-- Push notifications (3): receber, tap para abrir, badge count
+| ID | Grupo | Cenário | Status |
+|----|-------|---------|--------|
+| C1.1 | Contestação | Listar contestações | ✅ Criado |
+| C1.2 | Contestação | Criar nova contestação | ✅ Criado |
+| C1.3 | Contestação | Filtrar por status | ✅ Criado |
+| C1.4 | Contestação | Acompanhar contestação | ✅ Criado |
+| C2.1 | Perfil | Editar dados | ✅ Criado |
+| C2.2 | Perfil | Alterar senha | ✅ Criado |
+| C2.3 | Perfil | Preferências notificação | ✅ Criado |
+| C2.4 | Perfil | Menu completo + sessões | ✅ Criado |
+| C3.1 | Push | Lista notificações | ✅ Criado |
+| C3.2 | Push | Marcar todas lidas | ✅ Criado |
+| C3.3 | Push | Badge count + navegação | ✅ Criado |
+
+### Scripts P1
+```bash
+npm run test:e2e:mobile:p1              # Apenas P1
+npm run test:e2e:mobile:all             # P0 + P1
+maestro test maestro/flows/p1/contestacao/  # Grupo específico
+```
+
+## Próximas etapas
 
 ### P2 (~11 testes)
 - Offline state (4): banner, cache saldo, retry, sync

@@ -1,0 +1,27 @@
+# C3.1 — Lista de notificações
+# Cenário: Tab "Alertas" → tela de notificações com header, ações, lista ou empty state
+# Pré-condição: Consumidor autenticado
+# Critério: Tela "Notificações" renderiza com header, link "Preferências"
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para Notificações via tab
+- tapOn: "Alertas"
+
+# Verificar tela de notificações
+- assertVisible:
+    text: "Notificações"
+    timeout: 5000
+
+# Verificar link para preferências
+- assertVisible: "Preferências"
+
+# Tela funcional — pode ter notificações ou empty state
+# Se empty: "Nenhuma notificação" visível
+# Se com dados: lista agrupada por dia

@@ -1,0 +1,35 @@
+# C1.4 — Acompanhar contestação existente
+# Cenário: Lista exibe contestações com status, tipo, empresa, data e resposta
+# Pré-condição: Consumidor autenticado (pode ter contestações ou empty state)
+# Critério: Tela renderiza sem crash, exibe conteúdo ou empty state
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para Contestações
+- tapOn: "Contestações"
+
+- assertVisible:
+    text: "Contestações"
+    timeout: 5000
+
+# Scroll para ver mais contestações (se houver)
+- scroll:
+    direction: DOWN
+    duration: 1000
+
+# Verificar que tela continua funcional
+- assertVisible: "Contestações"
+
+# Scroll de volta
+- scroll:
+    direction: UP
+    duration: 500
+
+# Verificar header intacto
+- assertVisible: "Acompanhe suas contestações"

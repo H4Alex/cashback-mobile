@@ -1,0 +1,29 @@
+# C3.2 — Marcar todas notificações como lidas
+# Cenário: Se há notificações não lidas, botão "✓ Todas" aparece e funciona
+# Pré-condição: Consumidor autenticado (pode ter ou não notificações)
+# Critério: Tela renderiza, "✓ Todas" é clicável quando disponível
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para Notificações
+- tapOn: "Alertas"
+
+# Verificar tela
+- assertVisible:
+    text: "Notificações"
+    timeout: 5000
+
+# Tentar marcar todas como lidas (botão opcional — só aparece se há não-lidas)
+- tapOn:
+    text: "✓ Todas"
+    optional: true
+
+# Verificar que tela continua funcional após a ação
+- assertVisible: "Notificações"
+- assertVisible: "Preferências"

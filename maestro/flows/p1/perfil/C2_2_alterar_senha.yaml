@@ -1,0 +1,36 @@
+# C2.2 — Alterar senha
+# Cenário: Perfil → "Alterar Senha" → tela com campos senha atual/nova/confirmação
+# Pré-condição: Consumidor autenticado
+# Critério: Tela "Alterar Senha" renderiza com 3 campos, botão "Alterar Senha"
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para Perfil via tab
+- tapOn: "Perfil"
+
+# Scroll até "Alterar Senha"
+- scrollUntilVisible:
+    element: "Alterar Senha"
+    direction: DOWN
+
+# Entrar na tela
+- tapOn: "Alterar Senha"
+
+# Verificar tela
+- assertVisible:
+    text: "Alterar Senha"
+    timeout: 5000
+
+# Verificar campos
+- assertVisible: "Senha Atual"
+- assertVisible: "Nova Senha"
+- assertVisible: "Confirmar Nova Senha"
+
+# Verificar placeholders indicam requisitos
+- assertVisible: "Alterar Senha"

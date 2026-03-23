@@ -29,7 +29,9 @@
     "submit:all": "eas submit --platform all --latest",
     "test:pipeline": "bash scripts/run-test-pipeline.sh",
     "test:e2e:mobile": "maestro test maestro/flows/p0/",
-    "test:e2e:mobile:validate": "node -e \"const fs=require('fs');const p=require('path');function scan(d){fs.readdirSync(d,{withFileTypes:true}).forEach(e=>{const f=p.join(d,e.name);if(e.isDirectory())scan(f);else if(e.name.endsWith('.yaml')){console.log('OK:',f)}})}scan('maestro/flows/p0');scan('maestro/subflows');console.log('All YAML files validated')\""
+    "test:e2e:mobile:p1": "maestro test maestro/flows/p1/",
+    "test:e2e:mobile:all": "maestro test maestro/flows/p0/ && maestro test maestro/flows/p1/",
+    "test:e2e:mobile:validate": "node -e \"const fs=require('fs');const p=require('path');function scan(d){fs.readdirSync(d,{withFileTypes:true}).forEach(e=>{const f=p.join(d,e.name);if(e.isDirectory())scan(f);else if(e.name.endsWith('.yaml')){console.log('OK:',f)}})}scan('maestro/flows/p0');scan('maestro/flows/p1');scan('maestro/subflows');console.log('All YAML files validated')\""
   },
   "dependencies": {
     "@expo/vector-icons": "~14.0.4",
