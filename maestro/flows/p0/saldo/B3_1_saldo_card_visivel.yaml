@@ -1,0 +1,28 @@
+# B3.1 — Saldo card visível na home
+# Cenário: Dashboard exibe card com saldo formatado (R$ X,XX)
+# Pré-condição: Consumidor autenticado
+# Critério: Card de saldo visível com valor em R$, nome do usuário presente
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Verificar card de saldo
+- assertVisible:
+    text: "Saldo disponível"
+    timeout: 5000
+
+# Verificar que saldo está formatado em R$
+- assertVisible: "R$"
+
+# Verificar header com nome do usuário
+- assertVisible: "Olá,"
+
+# Verificar quick actions visíveis
+- assertVisible: "Extrato"
+- assertVisible: "Histórico"
+- assertVisible: "Contestações"

@@ -1,0 +1,36 @@
+# C2.1 — Editar dados do perfil
+# Cenário: Perfil → "Editar Perfil" → tela de edição com campos nome/email/telefone
+# Pré-condição: Consumidor autenticado
+# Critério: Tela "Editar Perfil" renderiza com campos preenchidos, botão "Salvar"
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para Perfil via tab
+- tapOn: "Perfil"
+
+# Verificar tela de perfil
+- assertVisible:
+    text: "Editar Perfil"
+    timeout: 5000
+
+# Entrar na edição
+- tapOn: "Editar Perfil"
+
+# Verificar tela de edição
+- assertVisible:
+    text: "Editar Perfil"
+    timeout: 5000
+
+# Verificar campos
+- assertVisible: "Nome"
+- assertVisible: "Email"
+- assertVisible: "Telefone"
+
+# Verificar botão salvar
+- assertVisible: "Salvar"

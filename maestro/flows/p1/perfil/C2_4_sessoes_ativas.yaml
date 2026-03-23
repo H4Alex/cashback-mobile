@@ -1,0 +1,47 @@
+# C2.4 — Tela de perfil com informações do usuário
+# Cenário: Tab Perfil exibe avatar, nome, email e menu de opções
+# Pré-condição: Consumidor autenticado
+# Critério: Avatar com inicial, nome e email do usuário, menu completo visível
+# Nota: A tela "Sessões Ativas" não existe como tela separada no app.
+#   Este teste valida a tela de perfil completa com todas as opções de menu.
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para Perfil via tab
+- tapOn: "Perfil"
+
+# Verificar informações do usuário
+- assertVisible:
+    text: "Editar Perfil"
+    timeout: 5000
+
+# Verificar menu items
+- assertVisible: "Alterar Senha"
+
+- scrollUntilVisible:
+    element: "Preferências de Notificação"
+    direction: DOWN
+- assertVisible: "Preferências de Notificação"
+
+- scrollUntilVisible:
+    element: "Política de Privacidade"
+    direction: DOWN
+- assertVisible: "Política de Privacidade"
+
+# Verificar botão de logout
+- scrollUntilVisible:
+    element: "Sair"
+    direction: DOWN
+- assertVisible: "Sair"
+
+# Verificar botão de excluir conta
+- scrollUntilVisible:
+    element: "Excluir Conta"
+    direction: DOWN
+- assertVisible: "Excluir Conta"

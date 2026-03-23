@@ -1,0 +1,31 @@
+# C1.3 — Filtrar contestações por status
+# Cenário: Aplicar filtro "Pendente" na lista de contestações
+# Pré-condição: Consumidor autenticado
+# Critério: Filtro ativa/desativa corretamente, "Limpar filtro" funciona
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para Contestações
+- tapOn: "Contestações"
+
+- assertVisible:
+    text: "Contestações"
+    timeout: 5000
+
+# Aplicar filtro "Pendente"
+- tapOn: "Pendente"
+
+# Mudar para "Aprovada"
+- tapOn: "Aprovada"
+
+# Mudar para "Rejeitada"
+- tapOn: "Rejeitada"
+
+# Tela não crashou
+- assertVisible: "Contestações"

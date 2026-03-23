@@ -1,0 +1,30 @@
+# C1.1 — Listar contestações
+# Cenário: Consumidor navega para lista de contestações → tela renderiza
+# Pré-condição: Consumidor autenticado
+# Critério: Tela "Contestações" exibe header, botão "Nova", filtros
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para Contestações via quick action na home
+- tapOn: "Contestações"
+
+# Verificar tela
+- assertVisible:
+    text: "Contestações"
+    timeout: 5000
+
+- assertVisible: "Acompanhe suas contestações"
+
+# Botão para criar nova
+- assertVisible: "Nova"
+
+# Filtros disponíveis
+- assertVisible: "Pendente"
+- assertVisible: "Aprovada"
+- assertVisible: "Rejeitada"

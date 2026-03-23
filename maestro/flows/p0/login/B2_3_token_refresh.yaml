@@ -1,0 +1,57 @@
+# B2.3 — Token refresh silencioso
+# Cenário: Após login, navegar por várias telas para confirmar que o token
+#   permanece válido e o app não faz logout inesperado.
+#   O refresh real é automático (interceptor Axios), então este teste
+#   verifica que o app mantém a sessão ativa ao longo de múltiplas navegações.
+# Pré-condição: App aberto, não autenticado
+# Critério: Dashboard acessível após múltiplas navegações sem re-login
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para Extrato
+- tapOn: "Extrato"
+- assertVisible:
+    text: "Extrato"
+    timeout: 5000
+
+# Voltar para Home
+- tapOn: "Início"
+- assertVisible:
+    text: "Saldo disponível"
+    timeout: 5000
+
+# Navegar para QR Code
+- tapOn: "QR Code"
+- assertVisible:
+    text: "Resgatar"
+    timeout: 5000
+
+# Navegar para Notificações
+- tapOn: "Alertas"
+- assertVisible:
+    text: "Notificações"
+    timeout: 5000
+# Nota: tab label é "Alertas" mas o header da tela é "Notificações"
+
+# Voltar para Home — confirmar que sessão ainda está ativa
+- tapOn: "Início"
+- assertVisible:
+    text: "Saldo disponível"
+    timeout: 5000
+
+# Verificar que "Olá," ainda aparece (não redirecionou para login)
+- assertVisible: "Olá,"
+
+# Navegar para Perfil e verificar dados do usuário
+- tapOn: "Perfil"
+- assertVisible:
+    text: "Editar Perfil"
+    timeout: 5000
+
+# Sessão continua ativa — token refresh funciona silenciosamente

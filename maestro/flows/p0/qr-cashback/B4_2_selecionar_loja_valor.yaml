@@ -1,0 +1,38 @@
+# B4.2 — Selecionar loja e inserir valor
+# Cenário: Após abrir tela QR, selecionar uma loja → campo de valor aparece
+# Pré-condição: Consumidor autenticado com saldo em pelo menos 1 loja
+# Critério: Ao selecionar loja, input de valor e botão "GERAR QR CODE" aparecem
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para QR Code
+- runFlow: ../../subflows/navigate_to_qrcode.yaml
+
+# Verificar que há lojas disponíveis
+- assertVisible:
+    text: "Selecione a loja"
+    timeout: 5000
+
+# Selecionar a primeira loja (tap no primeiro card de loja)
+# Lojas são listadas com nome_fantasia e saldo
+- assertVisible: "Saldo:"
+
+# Tap na primeira loja visível que tem "Saldo:" (card de loja)
+- tapOn: "Saldo:"
+
+# Após selecionar loja, campo de valor aparece
+- assertVisible:
+    text: "Valor do resgate"
+    timeout: 3000
+
+# Verificar valor máximo exibido
+- assertVisible: "Máx:"
+
+# Verificar botão de gerar (inicialmente desabilitado — sem valor)
+- assertVisible: "GERAR QR CODE"

@@ -1,0 +1,22 @@
+# Subflow: Login como consumidor
+# Uso: - runFlow: ../subflows/login_consumer.yaml
+# Pré-condição: App aberto na tela inicial (não autenticado, onboarding completo)
+# Pós-condição: Autenticado no dashboard do consumidor
+appId: com.h4alex.cashback
+
+---
+- tapOn: "Entrar"
+
+- tapOn:
+    id: "input-email"
+- inputText: "${CONSUMER_EMAIL}"
+
+- tapOn:
+    id: "input-password"
+- inputText: "${CONSUMER_PASSWORD}"
+
+- tapOn: "Entrar"
+
+- assertVisible:
+    text: "Saldo disponível"
+    timeout: 10000

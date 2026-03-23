@@ -1,0 +1,23 @@
+# Subflow: Login como lojista
+# Uso: - runFlow: ../subflows/login_merchant.yaml
+# Pré-condição: App aberto na tela inicial (não autenticado)
+# Pós-condição: Autenticado no dashboard do lojista
+appId: com.h4alex.cashback
+
+---
+- tapOn: "Entrar"
+- tapOn: "Lojista"
+
+- tapOn:
+    id: "input-email"
+- inputText: "${MERCHANT_EMAIL}"
+
+- tapOn:
+    id: "input-password"
+- inputText: "${MERCHANT_PASSWORD}"
+
+- tapOn: "Entrar"
+
+- assertVisible:
+    text: "Dashboard"
+    timeout: 10000

@@ -1,0 +1,46 @@
+# B4.3 — Tela de confirmação / QR gerado com countdown
+# Cenário: Inserir valor válido → gerar QR → tela exibe QR code com countdown "Expira em"
+# Pré-condição: Consumidor autenticado com saldo ≥ valor digitado
+# Critério: QR code gerado, countdown visível, botão "Gerar Novo" presente
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para QR Code
+- runFlow: ../../subflows/navigate_to_qrcode.yaml
+
+# Selecionar loja
+- assertVisible:
+    text: "Selecione a loja"
+    timeout: 5000
+
+- tapOn: "Saldo:"
+
+# Digitar valor válido (pequeno para garantir que não excede saldo)
+- assertVisible:
+    text: "Valor do resgate"
+    timeout: 3000
+
+- tapOn: "R$"
+- inputText: "1"
+
+# Gerar QR Code
+- tapOn: "GERAR QR CODE"
+
+# Verificar tela do QR gerado
+- assertVisible:
+    text: "Expira em"
+    timeout: 10000
+
+# QR não expirou
+- assertNotVisible:
+    text: "Expirado"
+    timeout: 2000
+
+# Botão para gerar novo QR
+- assertVisible: "Gerar Novo"

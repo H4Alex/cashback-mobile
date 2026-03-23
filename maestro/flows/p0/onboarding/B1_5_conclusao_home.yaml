@@ -1,0 +1,51 @@
+# B1.5 — Conclusão: após onboarding + login, chega à home com saldo
+# Cenário: Completar onboarding → login → dashboard com saldo visível
+# Pré-condição: App com estado limpo
+# Critério: Fluxo completo onboarding → login → dashboard funciona end-to-end
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: true
+
+# Completar onboarding completo (3 slides)
+- assertVisible:
+    text: "Cashback de verdade"
+    timeout: 10000
+
+- tapOn: "Próximo"
+- assertVisible:
+    text: "Resgate fácil"
+    timeout: 3000
+
+- tapOn: "Próximo"
+- assertVisible:
+    text: "Fique por dentro"
+    timeout: 3000
+
+- tapOn: "Começar"
+
+# Tela de login
+- assertVisible:
+    text: "Entrar"
+    timeout: 5000
+
+# Login com credenciais
+- tapOn:
+    id: "input-email"
+- inputText: "${CONSUMER_EMAIL}"
+
+- tapOn:
+    id: "input-password"
+- inputText: "${CONSUMER_PASSWORD}"
+
+- tapOn: "Entrar"
+
+# Dashboard com saldo
+- assertVisible:
+    text: "Saldo disponível"
+    timeout: 10000
+
+- assertVisible: "R$"
+- assertVisible: "Olá,"
+- assertVisible: "Últimas transações"

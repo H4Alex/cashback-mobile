@@ -1,0 +1,9 @@
+# Maestro E2E — Configuração global
+# Referência: https://maestro.mobile.dev/reference/configuration
+appId: com.h4alex.cashback
+name: H4Cashback Mobile E2E
+
+# Timeouts padrão
+onFlowStart:
+  - launchApp:
+      clearState: true
