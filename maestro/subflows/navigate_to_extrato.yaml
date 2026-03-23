@@ -1,0 +1,12 @@
+# Subflow: Navegar para tela de Extrato completo
+# Uso: - runFlow: ../subflows/navigate_to_extrato.yaml
+# Pré-condição: Autenticado no dashboard do consumidor
+# Pós-condição: Tela de Extrato visível
+appId: com.h4alex.cashback
+
+---
+- tapOn: "Extrato"
+
+- assertVisible:
+    text: "Extrato"
+    timeout: 5000

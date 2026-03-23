@@ -1,0 +1,39 @@
+# B4.5 — Erro: valor excede saldo disponível
+# Cenário: Digitar valor maior que o saldo → mensagem de erro inline
+# Pré-condição: Consumidor autenticado com saldo em pelo menos 1 loja
+# Critério: Mensagem "Valor excede o saldo disponível" aparece, botão desabilitado
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para QR Code
+- runFlow: ../../subflows/navigate_to_qrcode.yaml
+
+# Selecionar loja
+- assertVisible:
+    text: "Selecione a loja"
+    timeout: 5000
+
+- tapOn: "Saldo:"
+
+# Digitar valor muito alto (999999) para garantir que excede qualquer saldo
+- assertVisible:
+    text: "Valor do resgate"
+    timeout: 3000
+
+- tapOn: "R$"
+- inputText: "999999"
+
+# Verificar mensagem de erro inline
+- assertVisible:
+    text: "Valor excede o saldo disponível"
+    timeout: 3000
+
+# Botão "GERAR QR CODE" deve estar presente mas desabilitado
+# (visualmente cinza, não clicável — Maestro apenas verifica visibilidade)
+- assertVisible: "GERAR QR CODE"

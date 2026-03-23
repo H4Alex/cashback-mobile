@@ -1,0 +1,48 @@
+# B4.4 — Sucesso: gerar QR e depois resetar para novo
+# Cenário: Após gerar QR com sucesso, botão "Gerar Novo" reseta o formulário
+# Pré-condição: Consumidor autenticado com saldo
+# Critério: "Gerar Novo" volta para tela de seleção de loja
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para QR Code
+- runFlow: ../../subflows/navigate_to_qrcode.yaml
+
+# Selecionar loja e gerar QR
+- assertVisible:
+    text: "Selecione a loja"
+    timeout: 5000
+
+- tapOn: "Saldo:"
+
+- assertVisible:
+    text: "Valor do resgate"
+    timeout: 3000
+
+- tapOn: "R$"
+- inputText: "1"
+
+- tapOn: "GERAR QR CODE"
+
+# Verificar QR gerado
+- assertVisible:
+    text: "Expira em"
+    timeout: 10000
+
+# Tap "Gerar Novo" para resetar
+- tapOn: "Gerar Novo"
+
+# Verificar que voltou para tela de seleção
+- assertVisible:
+    text: "Resgatar"
+    timeout: 5000
+
+- assertVisible:
+    text: "Selecione a loja"
+    timeout: 3000

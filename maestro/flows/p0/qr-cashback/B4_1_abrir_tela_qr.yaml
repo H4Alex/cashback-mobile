@@ -1,0 +1,27 @@
+# B4.1 — Abrir tela de QR Code (GATE do grupo B4)
+# Cenário: Consumidor navega para tab QR Code → tela de "Resgatar" exibe lojas com saldo
+# Pré-condição: Consumidor autenticado com saldo em pelo menos 1 loja
+# Critério: Tela "Resgatar" renderiza com lista de lojas ou empty state
+# Nota: No app H4Cashback, o consumidor GERA o QR (não escaneia).
+#   O lojista é quem escaneia via (merchant)/cashback/qr-scan.
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para QR Code via tab bar
+- tapOn: "QR Code"
+
+# Verificar tela de QR Code
+- assertVisible:
+    text: "Resgatar"
+    timeout: 5000
+
+# Verificar que a tela mostra conteúdo (lojas ou empty state)
+# Se há lojas com saldo: "Selecione a loja" visível
+# Se não há saldo: "Nenhuma loja com saldo" visível
+# Ambos são estados válidos — o importante é que a tela renderizou

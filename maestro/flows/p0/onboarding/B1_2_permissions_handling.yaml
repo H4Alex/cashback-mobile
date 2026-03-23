@@ -1,0 +1,46 @@
+# B1.2 — Handling de permissões (notificação, câmera)
+# Cenário: Após completar onboarding, o app solicita permissões do dispositivo
+# Pré-condição: App com estado limpo (primeiro acesso)
+# Critério: App apresenta solicitação de permissões e funciona com accept/deny
+# Nota: No Expo managed workflow, permissões são solicitadas on-demand (não no onboarding).
+#   O PushRegistration component em _layout.tsx solicita permissão de notificações.
+#   Câmera é solicitada quando o QR scanner é aberto.
+#   Este teste verifica que o app não crasha ao lidar com permissões.
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: true
+
+# Completar onboarding rapidamente
+- assertVisible:
+    text: "Cashback de verdade"
+    timeout: 10000
+
+- tapOn: "Próximo"
+- assertVisible:
+    text: "Resgate fácil"
+    timeout: 3000
+
+- tapOn: "Próximo"
+- assertVisible:
+    text: "Fique por dentro"
+    timeout: 3000
+
+- tapOn: "Começar"
+
+# Após onboarding, deve ir para tela de login
+- assertVisible:
+    text: "Entrar"
+    timeout: 10000
+
+# Verificar que a tela de login renderiza completamente (sem crash de permissão)
+- assertVisible:
+    id: "input-email"
+
+- assertVisible:
+    id: "input-password"
+
+# O app deve estar funcional mesmo sem conceder permissões
+- assertVisible: "Cadastre-se"
+- assertVisible: "Esqueceu a senha?"

@@ -1,0 +1,43 @@
+# B1.1 — Welcome screens renderizam na sequência correta
+# Cenário: Primeiro acesso → 3 slides de onboarding exibidos em sequência
+# Pré-condição: App com estado limpo (primeiro acesso, sem onboarding_completed)
+# Critério: Cada slide exibe título e descrição corretos, dots de paginação visíveis
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: true
+
+# Slide 1: "Cashback de verdade"
+- assertVisible:
+    text: "Cashback de verdade"
+    timeout: 10000
+
+- assertVisible: "Receba dinheiro de volta"
+
+# Verificar botões de navegação
+- assertVisible: "Próximo"
+- assertVisible: "Pular"
+
+# Avançar para slide 2
+- tapOn: "Próximo"
+
+# Slide 2: "Resgate fácil"
+- assertVisible:
+    text: "Resgate fácil"
+    timeout: 5000
+
+- assertVisible: "QR Code"
+
+# Avançar para slide 3
+- tapOn: "Próximo"
+
+# Slide 3: "Fique por dentro"
+- assertVisible:
+    text: "Fique por dentro"
+    timeout: 5000
+
+- assertVisible: "notificações"
+
+# No último slide, botão muda para "Começar"
+- assertVisible: "Começar"

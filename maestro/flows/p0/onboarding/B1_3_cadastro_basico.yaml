@@ -1,0 +1,65 @@
+# B1.3 — Cadastro básico (registro de novo consumidor)
+# Cenário: Preencher nome, email, CPF, telefone, senha → aceitar termos → conta criada
+# Pré-condição: App na tela de login (onboarding completo)
+# Critério: Formulário aceita dados, submete e navega para consentimento LGPD
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: true
+
+# Completar onboarding via skip
+- assertVisible:
+    text: "Cashback de verdade"
+    timeout: 10000
+- tapOn: "Pular"
+
+# Tela de login
+- assertVisible:
+    text: "Entrar"
+    timeout: 5000
+
+# Ir para registro
+- tapOn: "Cadastre-se"
+
+# Preencher nome
+- tapOn:
+    id: "input-nome"
+- inputText: "Teste E2E Maestro"
+
+# Preencher email
+- tapOn:
+    id: "input-email"
+- inputText: "e2e_maestro_p0@teste.com"
+
+# Preencher CPF
+- tapOn:
+    id: "input-cpf"
+- inputText: "52998224725"
+
+# Preencher telefone
+- tapOn:
+    id: "input-telefone"
+- inputText: "11988887777"
+
+# Preencher senha
+- tapOn:
+    id: "input-password"
+- inputText: "Senha@E2E123"
+
+# Confirmar senha
+- tapOn:
+    id: "input-confirm-password"
+- inputText: "Senha@E2E123"
+
+# Aceitar termos
+- tapOn:
+    id: "checkbox-termos"
+
+# Submeter cadastro
+- tapOn: "Cadastrar"
+
+# Verificar navegação para consentimento LGPD
+- assertVisible:
+    text: "Consentimento"
+    timeout: 10000

@@ -1,0 +1,26 @@
+# B3.2 — Extrato lista transações recentes
+# Cenário: Tela de extrato exibe transações com empresa, data e valor
+# Pré-condição: Consumidor autenticado com histórico de transações
+# Critério: Tela de Extrato renderiza, mostra header e lista de transações
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para Extrato via quick action
+- tapOn: "Extrato"
+
+# Verificar header da tela de extrato
+- assertVisible:
+    text: "Extrato"
+    timeout: 5000
+
+- assertVisible: "Todas as suas movimentações de cashback"
+
+# Verificar que há chips de filtro visíveis
+- assertVisible: "Pendente"
+- assertVisible: "Confirmado"

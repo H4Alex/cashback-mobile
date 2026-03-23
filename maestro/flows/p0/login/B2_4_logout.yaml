@@ -1,0 +1,40 @@
+# B2.4 — Logout
+# Cenário: Botão logout → retorna para tela de login, sessão invalidada
+# Pré-condição: App aberto, não autenticado
+# Critério: Após logout, tela de login visível e dashboard inacessível
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Verificar que estamos no dashboard
+- assertVisible:
+    text: "Saldo Total"
+    timeout: 5000
+
+# Navegar para Perfil
+- tapOn: "Perfil"
+
+# Scroll até encontrar "Sair"
+- scrollUntilVisible:
+    element: "Sair"
+    direction: DOWN
+
+# Tap em Sair
+- tapOn: "Sair"
+
+# Confirmar logout no dialog
+- tapOn: "Sair"
+
+# Verificar retorno à tela de login
+- assertVisible:
+    text: "Entrar"
+    timeout: 5000
+
+# Verificar que o dashboard não é mais acessível (tela de login persistente)
+- assertVisible:
+    id: "input-email"

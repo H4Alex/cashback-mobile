@@ -1,0 +1,21 @@
+# Subflow: Logout do app
+# Uso: - runFlow: ../subflows/logout.yaml
+# Pré-condição: Autenticado em qualquer dashboard
+# Pós-condição: Tela de login visível
+appId: com.h4alex.cashback
+
+---
+- tapOn: "Perfil"
+
+- scrollUntilVisible:
+    element: "Sair"
+    direction: DOWN
+
+- tapOn: "Sair"
+
+# Confirmar logout no dialog
+- tapOn: "Sair"
+
+- assertVisible:
+    text: "Entrar"
+    timeout: 5000

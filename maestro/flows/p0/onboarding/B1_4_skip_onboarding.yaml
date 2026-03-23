@@ -1,0 +1,31 @@
+# B1.4 — Skip do onboarding funciona
+# Cenário: Usuário toca "Pular" no primeiro slide → vai direto para tela de login
+# Pré-condição: App com estado limpo (primeiro acesso)
+# Critério: Botão "Pular" navega para login sem passar pelos slides restantes
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: true
+
+# Verificar primeiro slide
+- assertVisible:
+    text: "Cashback de verdade"
+    timeout: 10000
+
+# Tocar "Pular" imediatamente
+- tapOn: "Pular"
+
+# Deve ir para tela de login (não slide 2)
+- assertVisible:
+    text: "Entrar"
+    timeout: 5000
+
+# Verificar que tela de login renderiza completa
+- assertVisible:
+    id: "input-email"
+
+- assertVisible:
+    id: "input-password"
+
+- assertVisible: "Cadastre-se"

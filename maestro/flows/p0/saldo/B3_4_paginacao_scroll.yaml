@@ -1,0 +1,48 @@
+# B3.4 — Paginação via infinite scroll
+# Cenário: Scroll no extrato carrega mais itens (FlatList onEndReached)
+# Pré-condição: Consumidor autenticado com múltiplas transações
+# Critério: Scroll para baixo não crasha, lista continua renderizando
+appId: com.h4alex.cashback
+
+---
+- launchApp:
+    clearState: false
+
+# Login
+- runFlow: ../../subflows/login_consumer.yaml
+
+# Navegar para Extrato
+- runFlow: ../../subflows/navigate_to_extrato.yaml
+
+# Verificar que a lista renderizou
+- assertVisible:
+    text: "Extrato"
+    timeout: 5000
+
+# Scroll para baixo para trigger de paginação
+- scroll:
+    direction: DOWN
+    duration: 1500
+
+# Verificar que não crashou — tela de extrato ainda funciona
+- assertVisible:
+    text: "Extrato"
+    timeout: 3000
+
+# Scroll mais para exercitar paginação
+- scroll:
+    direction: DOWN
+    duration: 1500
+
+# Tela continua funcional
+- assertVisible:
+    text: "Extrato"
+    timeout: 3000
+
+# Scroll de volta para o topo
+- scroll:
+    direction: UP
+    duration: 1000
+
+# Verificar header intacto
+- assertVisible: "Todas as suas movimentações de cashback"
